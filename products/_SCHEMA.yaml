@@ -74,6 +74,14 @@ copywriting:
 subject_dna: null         # Populated by bosmax-subject-dna. Locked for Mode C.
 last_source_image_handoff: null  # Populated after Mode A. Locked for Mode C.
 
+# MARKET-ANGLE INTELLIGENCE POINTERS (optional, nullable) — Unit 16 / STEP 0.5
+# These are pointers only. Generated angle packs are NEVER stored inside product_record.
+angle_taxonomy_file: ""          # Optional path to approved angle taxonomy registry
+                                 # (e.g. registries/<product>_copywriting_angle_taxonomy.yaml).
+                                 # When present, bosmax-market-angle-intelligence loads it as TIER 1.
+competitor_research_policy: ""   # Optional: ALLOWED | RESTRICTED | REVIEW_ONLY (blank = unset).
+                                 # Gates source-backed competitor research at STEP 0.5.
+
 # METADATA
 registered_by: ""         # Email of registrant
 registered_date: ""       # YYYY-MM-DD

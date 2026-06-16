@@ -71,6 +71,7 @@ No product currently has locked `subject_dna` or `last_source_image_handoff` in 
 
 ## Latest High-Value Milestones
 
+- `2026-06-17`: v11.11 — Market-Angle Intelligence layer added. Opt-in PRE-FLIGHT STEP 0.5 (`bosmax-market-angle-intelligence`, Unit 16) emits `angle_intelligence_pack` (poster `overlay_safe_text` + video `spoken_dialogue_seed`, forbidden_claims, landbank candidate rows). Intelligence-only: no final creative, no Notion write, no compliance-gate bypass, no product-truth override. Competitor research defaults `NOT_RUN`, source-gated. Role inventory reconciled (Units 14/15/16). Schema: `registries/angle_intelligence_pack.schema.yaml`.
 - `2026-06-14`: v11.10 ecosystem cleanup — Notion row intake adapter wired, legacy file blocked, subhook + operator_scene_direction added, canonical naming enforced, 03A-P1 template role clarified
 - `2026-06-11`: MINYAK_WARISAN_TOK_CAP_BURUNG_25ML registered (active product registry for 25ml green glass bottle)
 - `2026-06-03`: UGC / PGC / HYBRID authority stack installed

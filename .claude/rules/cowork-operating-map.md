@@ -32,6 +32,9 @@ The BOSMAX Cowork surface expects these files to exist in `.claude/skills/`:
 11. `bosmax-video-analyst.md`
 12. `bosmax-commercial-poster-director.md`
 13. `bosmax-notion-row-intake-adapter.md`  ← ADDED v11.10: Notion row → pipeline bridge
+14. `bosmax-final-output-agent.md`
+15. `bosmax-dialogue-wps-enforcer.md`
+16. `bosmax-market-angle-intelligence.md`  ← ADDED v11.11: opt-in STEP 0.5 angle intelligence (Unit 16)
 
 ## Template Files — Active
 
@@ -51,6 +54,24 @@ Sibling templates (not yet built): `03A-P2` (avatar+product), `03A-P3` (copy swa
 ## Pipeline Sequences
 
 ```text
+Opt-in Market Angle Intelligence (PRE-FLIGHT STEP 0.5) — feeds poster/video/landbank:
+User (asks for angle/research/competitor/landbank/copy pack)
+  -> BOSMAX [PRE-FLIGHT STEP 0: bosmax-product-intelligence -> product_record]
+  -> BOSMAX [PRE-FLIGHT STEP 0.5: bosmax-market-angle-intelligence]
+        (loads angle_taxonomy_file as TIER 1; competitor_research default NOT_RUN)
+  -> emit angle_intelligence_pack  (intelligence only — NO final creative)
+  -> downstream consumption:
+       poster route   -> bosmax-commercial-poster-director (overlay_safe_text)
+       video route    -> bosmax-script-generator (spoken_dialogue_seed)
+       landbank route -> recommended_next_action.notion_landbank_ready_rows
+                         (candidate rows only; PR #51 governance is the sole writer)
+  -> bosmax-compliance-gate still audits ALL final creative (never bypassed)
+
+NOTE: STEP 0.5 is opt-in only and never sits in the mandatory STEP 0 hot path.
+      Approved taxonomy wins over generated packs; REVIEW_ONLY stays REVIEW_ONLY.
+      Packs are session_only by default; persisted to registries/angle_packs/<product_id>.yaml
+      only on explicit operator promotion after audit.
+
 Full Image Pipeline (Notion Row → SELLING_POSTER):
 Notion Row -> BOSMAX [NOTION ROW DETECTION] -> bosmax-notion-row-intake-adapter
           -> BOSMAX [PRE-FLIGHT STEP 0: product lookup with canonical name]

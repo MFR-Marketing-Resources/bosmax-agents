@@ -75,6 +75,9 @@ BOSMAX Orchestrator (.claude/CLAUDE.md)
   ├─ VISUAL INTAKE GATE (if image/video uploaded — runs before PRE-FLIGHT)
   ├─ PRE-FLIGHT PROTOCOL
   │    ├─ STEP 0: Product Intelligence Lookup (bosmax-product-intelligence)
+  │    ├─ STEP 0.5: Market Angle Intelligence (bosmax-market-angle-intelligence)
+  │    │            [OPT-IN ONLY — after STEP 0; emits angle_intelligence_pack;
+  │    │             no final creative; source-gated competitor research]
   │    ├─ STEP 1: Extract Requirements
   │    ├─ STEP 2: Validate All Fields
   │    ├─ STEP 3: Multi-Block Protocol (if duration > engine max)
@@ -189,6 +192,8 @@ This contract reflects BOSMAX v11.6 architecture. Any change to:
 | `docs/agents/BOSMAX_RAW_SEED_TO_FINAL_PROMPT_FLOW_v1.md` | End-to-end flow from raw seed to generator render |
 | `docs/agents/BOSMAX_FINAL_OUTPUT_HANDOFF_CONTRACT_v1.md` | Final output formatting and delivery rules |
 | `docs/agents/BOSMAX_RAW_SEED_TEAM_CONTRACT_v1.md` | Future Raw Prompt Seed Team contract |
+| `docs/agents/BOSMAX_MARKET_ANGLE_INTELLIGENCE_CONTRACT_v1.md` | Unit 16 — opt-in PRE-FLIGHT STEP 0.5 angle intelligence layer |
+| `registries/angle_intelligence_pack.schema.yaml` | angle_intelligence_pack output schema (Unit 16) |
 | `.claude/CLAUDE.md` | Canonical orchestrator — BOSMAX v11.6 |
 | `.claude/rules/cowork-operating-map.md` | Pipeline sequences and skill file registry |
 | `.claude/rules/video-output-enforcement.md` | Pre-output enforcement checklist for video |
