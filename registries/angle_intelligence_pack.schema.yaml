@@ -1,0 +1,240 @@
+# BOSMAX ANGLE INTELLIGENCE PACK — SCHEMA REGISTRY
+# Version: v1.0 | Created: 2026-06-17
+# Authority: BOSMAX Systems Architecture
+# Owner unit: Unit 16 — bosmax-market-angle-intelligence
+# Status: ACTIVE — schema contract (descriptive, not executable)
+# ─────────────────────────────────────────────────────────────────────────────
+# Purpose:
+#   Canonical shape of the angle_intelligence_pack emitted by
+#   bosmax-market-angle-intelligence at PRE-FLIGHT STEP 0.5 (opt-in).
+#   The pack is upstream INTELLIGENCE only. It is NOT final creative.
+#   It never generates poster prompts, video scripts, or Notion rows,
+#   and it never bypasses bosmax-compliance-gate.
+#
+# Consumption (downstream):
+#   - Poster route (bosmax-commercial-poster-director) consumes
+#     copy_candidates[].overlay_safe_text
+#   - Video route (bosmax-script-generator) consumes
+#     copy_candidates[].spoken_dialogue_seed
+#   - Notion/landbank append (PR #51 governance) consumes
+#     recommended_next_action.notion_landbank_ready_rows as CANDIDATE rows only
+#
+# Authority surfaces this schema defers to:
+#   - products/*.yaml                            (product truth — sovereign)
+#   - registries/product_copy_router.yaml        (route_mode, risk, forbidden_claim_patterns)
+#   - registries/<product>_*_angle_taxonomy.yaml (approved MCA taxonomy — TIER 1)
+#   - bosmax-compliance-gate.md                  (terminal audit — never bypassed)
+# ─────────────────────────────────────────────────────────────────────────────
+
+schema_version: "1.0"
+
+# ─────────────────────────────────────────────
+# ENUMS — exact values, no variants
+# ─────────────────────────────────────────────
+enums:
+  angle_source:
+    - REGISTRY_TAXONOMY     # built entirely from an existing approved taxonomy
+    - GENERATED             # newly generated this session (session_only)
+    - HYBRID                # approved taxonomy + new generated candidates
+  route_mode:               # mirrors registries/product_copy_router.yaml
+    - REGISTERED_PRODUCT
+    - FAMILY_MATCHED_PRODUCT
+    - ON_THE_FLY_PRODUCT
+    - REVIEW_ONLY_PRODUCT
+  source_status_product_identity:
+    - VERIFIED
+    - PARTIAL
+    - NOT_VERIFIED
+  source_status_competitor_research:
+    - VERIFIED
+    - PARTIAL
+    - NOT_RUN               # DEFAULT when no verified source is present
+  competitor_source_kind:
+    - NONE                  # DEFAULT
+    - FASTMOSS
+    - OPERATOR_PASTED
+    - OPERATOR_SCREENSHOT
+    - OPERATOR_EXPORT
+    - WEB_EVIDENCE
+    - OTHER_VERIFIED
+    # NOTE: source adapters may be expanded later. Add new kinds here only when a
+    # real, verifiable adapter exists in the repo/environment. Do NOT pre-list
+    # tools (Motion / WebSearch / WebFetch / TikTok / Shopee / Lazada / Meta)
+    # as guaranteed source kinds; map them to WEB_EVIDENCE / OTHER_VERIFIED only
+    # when actually available and cited.
+  claims_safety:
+    - PASSED
+    - WARNING
+    - BLOCKED
+  claim_status:
+    - VERIFIED              # backed by product_record / approved taxonomy / cited source
+    - INFERRED              # reasoned from product truth + safe first principles
+    - NOT_VERIFIED          # speculative — must carry proof_required: true
+  risk_class:
+    - GREEN
+    - YELLOW
+    - RED
+    - REVIEW_ONLY
+  suitability:
+    - HIGH
+    - MEDIUM
+    - LOW
+    - BLOCKED
+
+# ─────────────────────────────────────────────
+# PACK STRUCTURE
+# ─────────────────────────────────────────────
+angle_intelligence_pack:
+
+  pack_header:
+    pack_id: ""                 # session-unique id, e.g. AIP_<product_id>_<n>
+    product_id: ""              # must match a resolved product_record.product_id
+    product_name: ""            # canonical product name
+    session_only: true          # DEFAULT true — not persisted unless promoted after audit
+    do_not_autopublish: true    # DEFAULT true — never auto-write anywhere
+    generated_at: ""            # operator/session timestamp (passed in, not invented)
+    angle_source: ""            # enums.angle_source
+    route_mode: ""              # enums.route_mode (from product_copy_router resolution)
+
+  source_status:
+    product_identity: ""        # enums.source_status_product_identity
+    competitor_research: "NOT_RUN"   # enums.source_status_competitor_research (DEFAULT NOT_RUN)
+    competitor_source_kind: "NONE"   # enums.competitor_source_kind (DEFAULT NONE)
+    claims_safety: ""           # enums.claims_safety
+
+  product_context:
+    product_name: ""
+    product_id: ""
+    category: ""
+    sub_category: ""
+    variant: ""
+    platform: ""                # TikTok Shop MY default unless operator overrides
+    target_audience: ""
+    use_case: ""
+    price_band: ""
+    form_factor: ""
+    product_truth_source: ""    # e.g. products/<file>.yaml (sovereign truth pointer)
+
+  market_observations:
+    # If source_status.competitor_research == NOT_RUN:
+    #   competitor_patterns MUST be empty []
+    #   customer_language MUST contain no sourced entries (source must not be fabricated)
+    competitor_patterns:
+      - pattern: ""
+        source: ""             # REQUIRED non-empty if present; else block is NOT_RUN
+        confidence: ""         # HIGH | MEDIUM | LOW
+        risk_class: ""         # enums.risk_class
+    customer_language:
+      - phrase: ""
+        source: ""             # citation or OPERATOR_* origin; INFERRED if reasoned
+        usage_context: ""
+        claim_status: ""       # enums.claim_status
+        safe_to_use: ""        # true | false (gated by forbidden_claims)
+
+  angle_bank:
+    - angle_id: ""
+      angle_name: ""
+      buyer_problem: ""
+      product_turn: ""         # how the product answers the problem (truth-anchored)
+      emotional_frame: ""
+      proof_available: ""      # true | false
+      compliance_risk: ""      # human-readable note
+      risk_class: ""           # enums.risk_class
+      poster_suitability: ""   # enums.suitability
+      video_dialogue_suitability: ""  # enums.suitability
+
+  copy_candidates:
+    - angle_id: ""             # must reference an angle_bank.angle_id
+      # POSTER consumption surface — compact, overlay-safe
+      overlay_safe_text:
+        hook: ""
+        subhook: ""
+        usp_1: ""
+        usp_2: ""
+        usp_3: ""
+        cta: ""                # TikTok Shop MY: "Tap ..." not "Klik ..."
+      # VIDEO consumption surface — spoken seed, NOT a final script
+      spoken_dialogue_seed:
+        hook: ""
+        problem: ""
+        product_turn: ""
+        proof_line: ""
+        cta: ""
+      copy_formula_hint: ""    # PAS | AIDA | HSO | HPAS | HPFRC | HSARC (hint only)
+      claim_status: ""         # enums.claim_status
+      risk_class: ""           # enums.risk_class
+      proof_required: ""       # true | false (true whenever claim_status != VERIFIED)
+      poster_suitability: ""   # enums.suitability
+      video_dialogue_suitability: ""  # enums.suitability
+      notes: ""
+
+  forbidden_claims:
+    # AGGREGATED from existing authorities — NOT invented. See FORBIDDEN_CLAIMS_LAW.
+    - term: ""
+      source: ""               # which authority surface this term came from
+      reason: ""
+      safer_rewrite: ""
+
+  recommended_next_action:
+    poster_ready_angles: []        # angle_ids cleared for poster route
+    video_ready_angles: []         # angle_ids cleared for video route
+    notion_landbank_ready_rows: [] # CANDIDATE rows only — never written by this skill
+    blocked_rows: []               # REVIEW_ONLY / risk-blocked — must not enter landbank
+
+# ─────────────────────────────────────────────
+# LAWS
+# ─────────────────────────────────────────────
+laws:
+
+  COMPETITOR_RESEARCH_LAW: >
+    Competitor research is optional and source-gated. Default
+    source_status.competitor_research = NOT_RUN and competitor_source_kind = NONE.
+    If no verified source exists: emit zero competitor_patterns and zero sourced
+    customer_language. Candidate angles may still be generated from product truth,
+    approved taxonomy, category archetypes, and safe first principles, marked
+    claim_status: INFERRED and proof_required: true. Never fabricate a source.
+    Never assume external tools are available; map a real, cited source to
+    WEB_EVIDENCE / OTHER_VERIFIED only when it actually exists in-session.
+
+  FORBIDDEN_CLAIMS_LAW: >
+    forbidden_claims is AGGREGATED from existing authority surfaces only:
+    product YAML label_forbidden, product YAML copywriting_safety.forbidden_phrasing,
+    registries/product_copy_router.yaml forbidden_claim_patterns, and the active
+    product taxonomy's forbidden claim styles / phrase classes if present. Do not
+    invent forbidden claims beyond these authorities unless clearly marked source:
+    "INFERRED" with reason and routed for review.
+
+  TAXONOMY_LAW: >
+    If product_record.angle_taxonomy_file exists: load it first as TIER 1. Approved
+    taxonomy wins over the generated pack. The generated pack cannot override an
+    approved MCA status. REVIEW_ONLY stays REVIEW_ONLY. A conflicting generated
+    angle is routed to recommended_next_action.blocked_rows unless the operator
+    explicitly promotes it after audit. If no taxonomy exists, the pack stays
+    session_only and must be explicitly approved/persisted before it becomes
+    registry truth.
+
+  POSTER_VS_VIDEO_LAW: >
+    Poster route consumes copy_candidates[].overlay_safe_text (compact, overlay-safe
+    hook/subhook/USP chips/CTA). Video route consumes
+    copy_candidates[].spoken_dialogue_seed (a seed for bosmax-script-generator, NOT a
+    final script). Do not reuse poster overlay copy blindly as spoken dialogue. Video
+    overlays remain forbidden by default unless explicitly requested elsewhere.
+
+  NOTION_BOUNDARY_LAW: >
+    The skill may emit recommended_next_action.notion_landbank_ready_rows as candidate
+    rows only. It must not create CSV files by itself unless explicitly routed to the
+    Notion append workflow, must not write Notion, must not update a Notion database,
+    and must not decide final import numbering. The existing PR #51 governance remains
+    the sole append path: live Notion proof -> delta CSV only -> high-water-mark custom
+    ID -> collision check -> manifest -> QA checklist
+    (.claude/protocols/notion-csv-append-protocol.md).
+
+  COMPLIANCE_LAW: >
+    The pack pre-classifies risk for routing convenience only. It does NOT replace or
+    weaken bosmax-compliance-gate. Every final creative is still re-audited by the
+    terminal gate. The pack is never a compliance bypass.
+
+  PERSISTENCE_LAW: >
+    Packs are session_only by default. Persisted packs live at
+    registries/angle_packs/<product_id>.yaml and are created only on explicit operator
+    promotion after audit. Do not auto-persist.

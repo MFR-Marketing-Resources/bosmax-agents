@@ -17,21 +17,28 @@ This rule loads when working on BOSMAX skills, product registry files, or author
 
 ## Required Skill Files
 
-The BOSMAX Cowork surface expects these files to exist in `.claude/skills/`:
+The BOSMAX Cowork surface expects these files to exist in `.claude/skills/`.
+Unit numbers align with `docs/agents/BOSMAX_AGENT_ROLE_INVENTORY_v1.md`
+(Unit 00 is the orchestrator `.claude/CLAUDE.md`, not a skill file).
 
-1. `bosmax-compliance-gate.md`
-2. `bosmax-subject-dna.md`
-3. `bosmax-scene-engine.md`
-4. `bosmax-mode-c-executor.md`
-5. `bosmax-script-generator.md`
-6. `bosmax-product-registration.md`
-7. `bosmax-bulk-generator.md`
-8. `bosmax-requirement-analyst.md`
-9. `bosmax-product-intelligence.md`
-10. `bosmax-image-analyst.md`
-11. `bosmax-video-analyst.md`
-12. `bosmax-commercial-poster-director.md`
-13. `bosmax-notion-row-intake-adapter.md`  ← ADDED v11.10: Notion row → pipeline bridge
+| Unit | Skill File | Role / Category |
+|---|---|---|
+| 01 | `bosmax-requirement-analyst.md` | Pre-dispatch intelligence |
+| 02 | `bosmax-product-intelligence.md` | Pre-dispatch intelligence |
+| 03 | `bosmax-commercial-poster-director.md` | Image prompt specialist |
+| 04 | `bosmax-scene-engine.md` | Image prompt specialist |
+| 05 | `bosmax-subject-dna.md` | Image prompt specialist |
+| 06 | `bosmax-script-generator.md` | Video prompt specialist |
+| 07 | `bosmax-mode-c-executor.md` | Video prompt specialist |
+| 08 | `bosmax-image-analyst.md` | Analysis / reverse engineering |
+| 09 | `bosmax-video-analyst.md` | Analysis / reverse engineering |
+| 10 | `bosmax-compliance-gate.md` | QA / compliance (terminal gate) |
+| 11 | `bosmax-bulk-generator.md` | Bulk / scale |
+| 12 | `bosmax-product-registration.md` | Registry management |
+| 13 | `bosmax-final-output-agent.md` | Final Output / Handoff |
+| 14 | `bosmax-dialogue-wps-enforcer.md` | QA / compliance (video dialogue) |
+| 15 | `bosmax-notion-row-intake-adapter.md` | Intake / adapter (added v11.10) |
+| 16 | `bosmax-market-angle-intelligence.md` | Pre-dispatch intelligence (opt-in STEP 0.5, added v11.11) |
 
 ## Template Files — Active
 
@@ -51,6 +58,24 @@ Sibling templates (not yet built): `03A-P2` (avatar+product), `03A-P3` (copy swa
 ## Pipeline Sequences
 
 ```text
+Opt-in Market Angle Intelligence (PRE-FLIGHT STEP 0.5) — feeds poster/video/landbank:
+User (asks for angle/research/competitor/landbank/copy pack)
+  -> BOSMAX [PRE-FLIGHT STEP 0: bosmax-product-intelligence -> product_record]
+  -> BOSMAX [PRE-FLIGHT STEP 0.5: bosmax-market-angle-intelligence]
+        (loads angle_taxonomy_file as TIER 1; competitor_research default NOT_RUN)
+  -> emit angle_intelligence_pack  (intelligence only — NO final creative)
+  -> downstream consumption:
+       poster route   -> bosmax-commercial-poster-director (overlay_safe_text)
+       video route    -> bosmax-script-generator (spoken_dialogue_seed)
+       landbank route -> recommended_next_action.notion_landbank_ready_rows
+                         (candidate rows only; PR #51 governance is the sole writer)
+  -> bosmax-compliance-gate still audits ALL final creative (never bypassed)
+
+NOTE: STEP 0.5 is opt-in only and never sits in the mandatory STEP 0 hot path.
+      Approved taxonomy wins over generated packs; REVIEW_ONLY stays REVIEW_ONLY.
+      Packs are session_only by default; persisted to registries/angle_packs/<product_id>.yaml
+      only on explicit operator promotion after audit.
+
 Full Image Pipeline (Notion Row → SELLING_POSTER):
 Notion Row -> BOSMAX [NOTION ROW DETECTION] -> bosmax-notion-row-intake-adapter
           -> BOSMAX [PRE-FLIGHT STEP 0: product lookup with canonical name]

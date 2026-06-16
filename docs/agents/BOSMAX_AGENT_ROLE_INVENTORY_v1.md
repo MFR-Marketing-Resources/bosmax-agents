@@ -1,15 +1,19 @@
 # BOSMAX Agent Role Inventory
-# Version: v1.1
+# Version: v1.2
 # Authority: BOSMAX Systems Architecture
 # Status: ACTIVE — docs-only contract
-# Last updated: 2026-06-08
+# Last updated: 2026-06-17
 # Changelog v1.1: Added Unit 13 — Final Output Agent (PR #30A)
+# Changelog v1.2: Inventory reconcile — backfilled Unit 14 (Dialogue WPS Enforcer)
+#                 and Unit 15 (Notion Row Intake Adapter), which existed as skill
+#                 files but were unnumbered; added Unit 16 (Market-Angle
+#                 Intelligence). Unit count updated 14 → 17.
 
 ---
 
 ## IMPORTANT: AGENT NATURE
 
-All 14 units listed below are **Claude Code prompt-level skill personas**.
+All 17 units listed below are **Claude Code prompt-level skill personas**.
 They are `.md` instruction files. They are NOT autonomous runtime processes, NOT deployed containers,
 and NOT background services. They execute within a human-initiated Claude Code session only.
 
@@ -266,6 +270,62 @@ and NOT background services. They execute within a human-initiated Claude Code s
 
 ---
 
+## UNIT 14 — Dialogue WPS Enforcer
+
+| Field | Value |
+|-------|-------|
+| **File** | `.claude/skills/bosmax-dialogue-wps-enforcer.md` |
+| **Role** | Universal pre-output dialogue corridor (WPS) hard gate for spoken-dialogue video |
+| **Category** | QA / compliance (video dialogue) |
+| **Trigger** | Appointed before final video prompt output whenever `dialogue_required = YES` (all spoken-dialogue engines: GROK, GOOGLE_FLOW, VEO family, KLING_3_0, SEEDANCE_2_0) |
+| **Inputs** | engine_id, total_duration_seconds, block_plan, block_duration, language, pace_class, dialogue_required, candidate_dialogue_by_block |
+| **Outputs** | `PASS` or `BLOCKED` (internal rewrite up to 3 attempts; no audit scaffolding leaks to the final prompt) |
+| **Upstream** | `bosmax-script-generator` / STORYBOARD GATE |
+| **Downstream** | Final prompt assembly → `bosmax-compliance-gate` |
+| **Status** | Prompt-level Claude Code persona — NOT autonomous runtime |
+| **Authority** | `registries/dialogue_budget_corridor.yaml` (per-block corridor — sole accept/reject authority); `registries/video_engine_duration_contracts.yaml` |
+| **Hard rule** | Compliance scrub runs first (medical / infant-adjacent / stealth) → `BLOCKED` with no rewrite. Per-block corridor wins over total-duration budget. Never leak WPS metadata, counts, or status enums into the final prompt. |
+| **Inventory note** | Pre-existing skill file backfilled into the inventory in v1.2 (was previously unnumbered). |
+
+---
+
+## UNIT 15 — Notion Row Intake Adapter
+
+| Field | Value |
+|-------|-------|
+| **File** | `.claude/skills/bosmax-notion-row-intake-adapter.md` |
+| **Role** | Notion Copywriting Landbank row → BOSMAX pipeline bridge; also the append-only delta-CSV governance lane |
+| **Category** | Intake / adapter |
+| **Trigger** | Front-door detection (before NLU) when input contains 3+ Notion column keys (`Product:` `Mode:` `Angle:` `Hook:` `Subhook:` `USP 1/2/3:` `CTA:` `Visual Seed:` `Output:`), OR a database-growth/append request |
+| **Inputs** | Compact Notion row(s) for prompt generation, OR an append/landbank growth request |
+| **Outputs** | `notion_row_intake` object for Route A SELLING_POSTER; OR append-mode blocked/delta-CSV guidance with mandatory live-DB proof |
+| **Upstream** | BOSMAX Orchestrator front-door (before NLU parsing) |
+| **Downstream** | PRE-FLIGHT STEP 0 → Route A SELLING_POSTER flow |
+| **Status** | Prompt-level Claude Code persona — NOT autonomous runtime |
+| **Authority** | `.claude/protocols/notion-csv-append-protocol.md` (PR #51 governance) |
+| **Hard rule** | Never treat a row as a final prompt. Enforce canonical product naming, TikTok "Tap" CTA rule, and copy-contamination pre-check. Append jobs require verified live DB state. Never write Notion. |
+| **Inventory note** | Pre-existing skill file (added v11.10) backfilled into the inventory in v1.2 (was previously unnumbered). |
+
+---
+
+## UNIT 16 — Market-Angle Intelligence
+
+| Field | Value |
+|-------|-------|
+| **File** | `.claude/skills/bosmax-market-angle-intelligence.md` |
+| **Role** | Opt-in upstream angle intelligence — emits `angle_intelligence_pack` at PRE-FLIGHT STEP 0.5 |
+| **Category** | Pre-dispatch intelligence |
+| **Trigger** | Opt-in STEP 0.5 (operator asks for angle / market angle / research / competitor / landbank / copy pack / angle bank / hook-subhook-USP-CTA generation), AFTER `product_record` is resolved by Unit 02 |
+| **Inputs** | product_record, platform, language, operator_intent, `angle_taxonomy_file`, `competitor_research_policy`, optional operator-supplied competitor source |
+| **Outputs** | `angle_intelligence_pack` (source_status, product_context, market_observations, angle_bank, copy_candidates with `overlay_safe_text` + `spoken_dialogue_seed`, forbidden_claims, recommended_next_action) |
+| **Upstream** | `bosmax-product-intelligence` (Unit 02, STEP 0) |
+| **Downstream** | `bosmax-commercial-poster-director` (overlay_safe_text), `bosmax-script-generator` (spoken_dialogue_seed), PR #51 landbank append (candidate rows only) |
+| **Status** | Prompt-level Claude Code persona — NOT autonomous runtime |
+| **Authority** | `registries/angle_intelligence_pack.schema.yaml` + `docs/agents/BOSMAX_MARKET_ANGLE_INTELLIGENCE_CONTRACT_v1.md` |
+| **Hard rule** | Intelligence only — no final poster prompt, no final video script, no Notion write, no compliance-gate bypass, no product-truth or approved-taxonomy override. Competitor research defaults `NOT_RUN` and is source-gated; never fabricate sources. |
+
+---
+
 ## SUMMARY TABLE
 
 | Unit | File | Category | Status |
@@ -284,5 +344,8 @@ and NOT background services. They execute within a human-initiated Claude Code s
 | 11 | `bosmax-bulk-generator.md` | Bulk / scale | Prompt-level persona |
 | 12 | `bosmax-product-registration.md` | Registry management | Prompt-level persona |
 | 13 | `bosmax-final-output-agent.md` | Final Output / Handoff | Prompt-level persona |
+| 14 | `bosmax-dialogue-wps-enforcer.md` | QA / compliance (video dialogue) | Prompt-level persona |
+| 15 | `bosmax-notion-row-intake-adapter.md` | Intake / adapter | Prompt-level persona |
+| 16 | `bosmax-market-angle-intelligence.md` | Pre-dispatch intelligence | Prompt-level persona |
 
-**None of the above are autonomous runtime processes. All require a human-initiated Claude Code session.**
+**17 units total (Unit 00 orchestrator + Units 01–16 specialist personas). None of the above are autonomous runtime processes. All require a human-initiated Claude Code session.**

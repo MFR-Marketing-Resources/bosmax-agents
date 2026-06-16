@@ -74,6 +74,16 @@
 #                    default unless operator/debug/Mode C handoff is
 #                    explicitly requested. Internal prompt prose such as silo
 #                    labels must be sanitized before final delivery.
+# Changelog v11.11: Added PRE-FLIGHT STEP 0.5 — MARKET ANGLE INTELLIGENCE
+#                   (opt-in). New skill bosmax-market-angle-intelligence (Unit 16)
+#                   runs AFTER STEP 0 product resolution, only on explicit angle/
+#                   research/competitor/landbank/copy-pack triggers, and emits a
+#                   structured angle_intelligence_pack (poster overlay_safe_text +
+#                   video spoken_dialogue_seed). Intelligence-only: never generates
+#                   final poster prompts or video scripts, never writes Notion,
+#                   never bypasses Compliance Gate, never overrides product truth
+#                   or approved taxonomy. Competitor research defaults NOT_RUN and
+#                   is source-gated. Role inventory reconciled (Units 14/15/16).
 
 ---
 
@@ -752,6 +762,55 @@ SCALE ANCHOR — HARD BLOCK jika missing + TikTok platform:
 FORMAT scale_anchor_descriptor: "EXACTLY [everyday object] size, [how it fits in hand]"
   Contoh BOSMAX 5ML:  "EXACTLY lip balm size, fit into fingers naturally"
   Contoh BOSMAX 10ML: "EXACTLY chapstick size, fit into fingers naturally"
+```
+
+### STEP 0.5 — MARKET ANGLE INTELLIGENCE (OPT-IN)
+
+**Lapisan intelligence di hulu. Aktif HANYA secara opt-in, SELEPAS STEP 0 selesai
+resolve product_record, dan SEBELUM STEP 1.**
+**Skill: `bosmax-market-angle-intelligence` (Unit 16).**
+**Authority: `registries/angle_intelligence_pack.schema.yaml` +
+`docs/agents/BOSMAX_MARKET_ANGLE_INTELLIGENCE_CONTRACT_v1.md`.**
+
+```
+TRIGGER (opt-in sahaja) — appoint Unit 16 HANYA bila operator minta:
+  angle | market angle | research | competitor | landbank | copy pack |
+  angle bank | riset | analisa pasaran | cari angle | competitor analysis |
+  hook/subhook/USP/CTA generation dari product intelligence |
+  Route BULK copy-landbank preparation |
+  ON_THE_FLY_PRODUCT tanpa angle_taxonomy_file DAN operator minta bantuan angle
+
+JANGAN trigger untuk:
+  VIDEO_SUPPORT clean image | Mode C continuity | product registration sahaja |
+  single-shot creative di mana operator sudah beri final copy |
+  Notion CSV append jobs tanpa permintaan angle generation
+
+ORDER:
+  → MESTI selepas STEP 0 (product_record resolved). JANGAN run sebelum
+    bosmax-product-intelligence.
+  → Jika product_record null/partial → HOLD; lengkapkan STEP 0 dahulu.
+
+ACTION:
+  → Appoint bosmax-market-angle-intelligence
+  → Load product_record.angle_taxonomy_file sebagai TIER 1 jika wujud
+    (approved taxonomy menang; REVIEW_ONLY kekal REVIEW_ONLY)
+  → Competitor research DEFAULT = NOT_RUN; source-gated; JANGAN reka sumber
+  → Emit angle_intelligence_pack (intelligence sahaja — bukan final creative)
+  → Proceed ke STEP 1 dengan pack tersedia sebagai input hulu untuk route
+
+DOWNSTREAM CONSUMPTION:
+  → Route A poster: CPD guna copy_candidates[].overlay_safe_text
+  → Route B/D video: script-generator guna copy_candidates[].spoken_dialogue_seed
+  → Route BULK/landbank: recommended_next_action.notion_landbank_ready_rows
+    (candidate rows sahaja; PR #51 governance kekal satu-satunya penulis Notion)
+  → bosmax-compliance-gate tetap audit SEMUA final creative (tidak dipintas)
+
+FAIL-CLOSED:
+  → JANGAN generate final poster prompt / final video script di STEP 0.5
+  → JANGAN tulis Notion
+  → JANGAN ubah product truth atau approved MCA status
+  → JANGAN expose nama skill / MCA IDs / risk classes kepada non-operator
+  → Pack session_only secara default; persist hanya selepas operator promote + audit
 ```
 
 ### STEP 1 — EXTRACT REQUIREMENTS
@@ -1524,6 +1583,21 @@ Detailed pipeline maps telah dipindah ke:
 - Default CTA untuk TikTok Shop MY (non-promo): "Tap Tengok Harga" — JANGAN guna "Klik untuk lihat harga"
 - Preferred chips untuk BOSMAX Serum TikTok: "5ML Roll-On | Muat Poket | Senang Simpan"
 - subject_mode auto-default (product_only) MESTI declare dalam STEP 1B assumptions apabila aktif
+
+### Rules Baru (v11.11 — Market Angle Intelligence STEP 0.5)
+- JANGAN run bosmax-market-angle-intelligence sebelum bosmax-product-intelligence (STEP 0)
+- JANGAN run STEP 0.5 kecuali trigger opt-in hadir (angle/research/competitor/landbank/copy pack/dll)
+- JANGAN run STEP 0.5 untuk VIDEO_SUPPORT, Mode C, registration-only, single-shot final-copy, atau Notion append tanpa permintaan angle
+- JANGAN biar STEP 0.5 generate final poster prompt atau final video script — intelligence sahaja
+- JANGAN biar STEP 0.5 tulis Notion; ia emit candidate rows sahaja, PR #51 governance kekal penulis
+- JANGAN biar generated pack override product truth atau approved MCA status; conflict → blocked_rows
+- JANGAN biar STEP 0.5 pintas bosmax-compliance-gate — gate audit semua final creative downstream
+- competitor_research DEFAULT = NOT_RUN; source-gated; JANGAN reka sumber competitor
+- JANGAN hardcode Motion/WebSearch/WebFetch/TikTok/Shopee/Lazada/Meta sebagai keupayaan dijamin
+- forbidden_claims MESTI aggregated dari authority sedia ada (product YAML label_forbidden +
+  copywriting_safety.forbidden_phrasing + product_copy_router forbidden_claim_patterns + taxonomy)
+- angle_intelligence_pack session_only secara default; persist hanya selepas operator promote + audit
+- Newbie-safe: JANGAN expose nama Unit 16, MCA IDs, risk classes, atau internal field names ke non-operator
 
 ---
 

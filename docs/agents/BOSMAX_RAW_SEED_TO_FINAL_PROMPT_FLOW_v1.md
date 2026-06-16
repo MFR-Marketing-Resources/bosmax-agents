@@ -82,6 +82,15 @@ STEP 2: PRE-FLIGHT PROTOCOL
   │    → Populates: product_record, scale_anchor_descriptor, copywriting data
   │    → HARD BLOCK: TikTok + scale_anchor_descriptor null → warn + wait
   │
+  ├─ STEP 0.5: Market Angle Intelligence (OPT-IN — bosmax-market-angle-intelligence)
+  │    → Runs only on angle/research/competitor/landbank/copy-pack triggers,
+  │      after STEP 0 product_record is resolved
+  │    → TIER 1: loads product_record.angle_taxonomy_file if present (approved wins)
+  │    → Competitor research DEFAULT NOT_RUN; source-gated; never fabricated
+  │    → Emits: angle_intelligence_pack (overlay_safe_text for poster,
+  │      spoken_dialogue_seed for video, forbidden_claims, landbank candidate rows)
+  │    → No final creative; no Notion write; never bypasses compliance gate
+  │
   ├─ STEP 1: Extract Requirements
   │    → req_platform, req_task_mode, req_engine, req_duration, etc.
   │

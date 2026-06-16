@@ -85,3 +85,27 @@ modules:
       custom ID continuation, delta-only CSV generation, collision blocking,
       and manifest proof without rewriting BOSMAX prompt-generation
       architecture.
+  market_angle_intelligence:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - .claude/skills/bosmax-market-angle-intelligence.md
+      - registries/angle_intelligence_pack.schema.yaml
+      - docs/agents/BOSMAX_MARKET_ANGLE_INTELLIGENCE_CONTRACT_v1.md
+      - docs/agents/BOSMAX_AGENT_ROLE_INVENTORY_v1.md
+      - docs/agents/BOSMAX_COWORK_AGENT_ORCHESTRATION_CONTRACT_v1.md
+      - docs/agents/BOSMAX_RAW_SEED_TO_FINAL_PROMPT_FLOW_v1.md
+      - .claude/CLAUDE.md
+      - .claude/rules/cowork-operating-map.md
+      - products/_SCHEMA.yaml
+    notes: >
+      Opt-in upstream market-angle intelligence lane (Unit 16). Adds PRE-FLIGHT
+      STEP 0.5 bosmax-market-angle-intelligence emitting a structured
+      angle_intelligence_pack (angle bank, hook/subhook/USP/CTA candidates,
+      poster overlay_safe_text vs video spoken_dialogue_seed, forbidden_claims,
+      landbank-ready candidate rows). Intelligence-only: no final poster prompt,
+      no final video script, no Notion write, no compliance-gate bypass, no
+      product-truth mutation. Competitor research defaults NOT_RUN and is
+      source-gated. Also reconciles role inventory Units 14/15/16. Does not change
+      engine rules, compliance hard gates, or PR #51 Notion append governance.
