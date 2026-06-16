@@ -10,6 +10,12 @@ Open `BOSMAX-LOG.md` only if this snapshot is insufficient or a historical audit
 
 - Active orchestrator schema: `v11.10`
 - Active posture: deterministic front-door + deterministic batch lane
+- Notion CSV database intake law:
+  - Any request to tambah row database / update database / append landbank / tambah CSV Notion defaults to `APPEND_ONLY_DELTA_CSV`
+  - Agent must verify live target database state before generating import rows
+  - Agent must generate delta rows only, never a full replacement CSV, unless the user explicitly requests full reimport
+  - Custom `Poster ID` / `Landbank Row ID` style fields continue from the live Notion high-water mark
+  - Notion auto-generated `Unique ID` / auto-increment properties must stay blank in CSV
 - Mandatory gates active:
   - `VISUAL INTAKE GATE`
   - `PRE-FLIGHT PROTOCOL`
@@ -46,7 +52,8 @@ Registered products in `products/`:
   - Current packaging truth: 25ml transparent green-tinted glass, red ribbed screw cap (NO roll-on, NO WG40)
   - Active product truth source: `products/MINYAK_WARISAN_TOK_CAP_BURUNG_25ML.yaml`
   - Template reference: `templates/poster/03A-P1_PRODUCT_ONLY_COPY_LANDBANK_POSTER.md`
-  - Notion intake: 100-row Copywriting Landbank, ANG-01 through ANG-10
+  - Last-known Notion intake snapshot: 100-row Copywriting Landbank, ANG-01 through ANG-10
+  - Snapshot law: this count is historical context only, not append authority; future append jobs must re-verify live Notion state before numbering new CSV rows
 - `CAP_BURUNG_MINYAK`  ← LEGACY — DO NOT USE
   - registry_status: LEGACY_DO_NOT_USE
   - superseded_by: MINYAK_WARISAN_TOK_CAP_BURUNG_25ML
@@ -83,6 +90,9 @@ No product currently has locked `subject_dna` or `last_source_image_handoff` in 
 - Product truth lives in `products/*.yaml`, not in session memory prose.
 - `BOSMAX-LOG.md` is append-only historical memory, not the default read surface.
 - If uploaded visual evidence conflicts with prior memory, visual evidence wins.
+- For Notion CSV append work, live database state wins over old row counts, old screenshots, and repo prose snapshots.
+- `100-row landbank` language is a last-known state marker only. It must never be treated as permanent numbering authority.
+- Append governance details live in `.claude/protocols/notion-csv-append-protocol.md`.
 - If registry is missing but product truth is visually obvious, use visual-first sandbox and ask only the missing minimum.
 - If route is ambiguous, ask one sharp clarification question and stop.
 
@@ -94,8 +104,8 @@ No product currently has locked `subject_dna` or `last_source_image_handoff` in 
 - Image handoff registry: no active handoff locked in product YAML
 - Known blocker in this repo structure:
   - `graphify-out/` missing
-  - `docs/MODULE_STATUS.yaml` missing
-  - treat this workspace as live `.claude` orchestration + product registry surface, not a full Mandor Node lane
+  - live Notion connector state is not present inside the repo; append jobs must obtain live database proof in-session or block
+  - treat this workspace as live `.claude` orchestration + product registry surface, with `docs/MODULE_STATUS.yaml` as the active domain gate
 
 ---
 

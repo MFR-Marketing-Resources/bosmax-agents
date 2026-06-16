@@ -71,3 +71,17 @@ modules:
       and matrix-mode authority. Covers raw batch prompt inference, Variant
       Plan row fields, and semantic drift guards without changing engine rules,
       product truth, or compliance contracts.
+  notion_csv_append_governance:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - .claude/BOSMAX_CURRENT_STATE.md
+      - .claude/skills/bosmax-notion-row-intake-adapter.md
+      - .claude/protocols/notion-csv-append-protocol.md
+    notes: >
+      Governance lane for append-only Notion CSV intake into Copywriting
+      Landbank style databases. Covers mandatory live database state gating,
+      custom ID continuation, delta-only CSV generation, collision blocking,
+      and manifest proof without rewriting BOSMAX prompt-generation
+      architecture.
