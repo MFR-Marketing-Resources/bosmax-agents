@@ -17,24 +17,28 @@ This rule loads when working on BOSMAX skills, product registry files, or author
 
 ## Required Skill Files
 
-The BOSMAX Cowork surface expects these files to exist in `.claude/skills/`:
+The BOSMAX Cowork surface expects these files to exist in `.claude/skills/`.
+Unit numbers align with `docs/agents/BOSMAX_AGENT_ROLE_INVENTORY_v1.md`
+(Unit 00 is the orchestrator `.claude/CLAUDE.md`, not a skill file).
 
-1. `bosmax-compliance-gate.md`
-2. `bosmax-subject-dna.md`
-3. `bosmax-scene-engine.md`
-4. `bosmax-mode-c-executor.md`
-5. `bosmax-script-generator.md`
-6. `bosmax-product-registration.md`
-7. `bosmax-bulk-generator.md`
-8. `bosmax-requirement-analyst.md`
-9. `bosmax-product-intelligence.md`
-10. `bosmax-image-analyst.md`
-11. `bosmax-video-analyst.md`
-12. `bosmax-commercial-poster-director.md`
-13. `bosmax-notion-row-intake-adapter.md`  ← ADDED v11.10: Notion row → pipeline bridge
-14. `bosmax-final-output-agent.md`
-15. `bosmax-dialogue-wps-enforcer.md`
-16. `bosmax-market-angle-intelligence.md`  ← ADDED v11.11: opt-in STEP 0.5 angle intelligence (Unit 16)
+| Unit | Skill File | Role / Category |
+|---|---|---|
+| 01 | `bosmax-requirement-analyst.md` | Pre-dispatch intelligence |
+| 02 | `bosmax-product-intelligence.md` | Pre-dispatch intelligence |
+| 03 | `bosmax-commercial-poster-director.md` | Image prompt specialist |
+| 04 | `bosmax-scene-engine.md` | Image prompt specialist |
+| 05 | `bosmax-subject-dna.md` | Image prompt specialist |
+| 06 | `bosmax-script-generator.md` | Video prompt specialist |
+| 07 | `bosmax-mode-c-executor.md` | Video prompt specialist |
+| 08 | `bosmax-image-analyst.md` | Analysis / reverse engineering |
+| 09 | `bosmax-video-analyst.md` | Analysis / reverse engineering |
+| 10 | `bosmax-compliance-gate.md` | QA / compliance (terminal gate) |
+| 11 | `bosmax-bulk-generator.md` | Bulk / scale |
+| 12 | `bosmax-product-registration.md` | Registry management |
+| 13 | `bosmax-final-output-agent.md` | Final Output / Handoff |
+| 14 | `bosmax-dialogue-wps-enforcer.md` | QA / compliance (video dialogue) |
+| 15 | `bosmax-notion-row-intake-adapter.md` | Intake / adapter (added v11.10) |
+| 16 | `bosmax-market-angle-intelligence.md` | Pre-dispatch intelligence (opt-in STEP 0.5, added v11.11) |
 
 ## Template Files — Active
 

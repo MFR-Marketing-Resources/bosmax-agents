@@ -1,5 +1,5 @@
 # BOSMAX_CURRENT_STATE.md
-## BOSMAX v11.10 — Current Operating Snapshot
+## BOSMAX v11.11 — Current Operating Snapshot
 
 Read this file first at session start.
 Open `BOSMAX-LOG.md` only if this snapshot is insufficient or a historical audit is required.
@@ -8,7 +8,7 @@ Open `BOSMAX-LOG.md` only if this snapshot is insufficient or a historical audit
 
 ## Core State
 
-- Active orchestrator schema: `v11.10`
+- Active orchestrator schema: `v11.11`
 - Active posture: deterministic front-door + deterministic batch lane
 - Notion CSV database intake law:
   - Any request to tambah row database / update database / append landbank / tambah CSV Notion defaults to `APPEND_ONLY_DELTA_CSV`
