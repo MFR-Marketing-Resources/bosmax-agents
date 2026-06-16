@@ -21,6 +21,17 @@ sub_category: "Body & Massage Oil"
 raw_category: "Beauty & Personal Care-Bath & Body Care-Body & Massage Oil"
 product_status: "Available"
 
+# MARKET-ANGLE INTELLIGENCE POINTERS (Unit 16 / PRE-FLIGHT STEP 0.5)
+# - no approved product-specific angle taxonomy exists in v1 — angle_taxonomy_file blank
+# - product is direct/provisional benchmark lane
+# - competitor/source research is RESTRICTED because packaging truth is not fully
+#   hardened and direct image evidence is limited
+# - generated angle packs must remain session_only unless operator later promotes
+#   after audit
+# - direct medical / cure / body-function claims must go to blocked_rows
+angle_taxonomy_file: ""
+competitor_research_policy: "RESTRICTED"
+
 avg_price_rm: 31.5
 commission_rate: 0.4127
 total_orders: 336
