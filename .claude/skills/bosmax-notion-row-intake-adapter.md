@@ -31,6 +31,72 @@ Do not push prompt instruction work back into Notion.
 
 ---
 
+## APPEND-ONLY DATABASE INTENT DETECTION
+
+This skill has two distinct operating lanes:
+
+1. `NOTION_ROW_TO_PROMPT`
+   - Existing lane.
+   - Use when the operator pastes one compact Notion row for prompt generation.
+2. `APPEND_ONLY_DELTA_CSV`
+   - Governance lane.
+   - Use when the operator asks to tambah row database, update database, append
+     landbank, tambah CSV Notion, add import rows, continue Poster ID numbering,
+     continue Landbank Row ID numbering, or prepare CSV for Notion import.
+
+If the request sounds like database growth rather than single-row prompt generation,
+default to `APPEND_ONLY_DELTA_CSV` and apply the mandatory gate below before any CSV
+row generation.
+
+---
+
+## NOTION DATABASE STATE GATE — MANDATORY FOR APPEND JOBS
+
+For `APPEND_ONLY_DELTA_CSV`, do not generate CSV rows until current database state
+has been proven.
+
+Required proof surface in the current session:
+
+- live Notion query / API / browser inspection, OR
+- operator-supplied fresh export / snapshot from the target database in the
+  current session with enough fields to verify numbering and collisions
+
+Minimum state that must be captured:
+
+1. target database name and URL or database ID
+2. schema for import-relevant properties
+3. current row count
+4. ID property name and type
+5. whether the numbering field is:
+   - Notion auto-generated `Unique ID` / auto-increment, OR
+   - CSV-controlled custom ID such as `Poster ID` / `Landbank Row ID`
+6. highest existing custom ID and max numeric suffix
+7. latest batch marker if the database exposes one
+8. collision scan against existing IDs and stable row keys
+
+Blocked mode:
+
+- If current database state is not available, ABORT append generation.
+- If schema is ambiguous, ABORT append generation.
+- If the ID property type cannot be determined, ABORT append generation.
+- If collision risk cannot be ruled out, ABORT append generation.
+
+Abort message shape:
+
+```
+APPEND BLOCKED — live Notion database state not verified.
+Need current database proof before BOSMAX may generate append CSV rows.
+Missing: [database state items].
+```
+
+`100-row landbank` or any other repo prose snapshot is historical context only.
+It is never sufficient proof for append numbering.
+
+Authoritative protocol:
+- `.claude/protocols/notion-csv-append-protocol.md`
+
+---
+
 ## TRIGGER DETECTION
 
 Invoke this adapter when input contains three or more of these structured column keys:
@@ -264,6 +330,11 @@ Normal Route A SELLING_POSTER flow proceeds from here.
 
 ```
 ❌ Does not generate image prompts
+❌ Does not generate append CSV rows without live database state proof
+❌ Does not treat last-known row counts as current Notion truth
+❌ Does not populate Notion auto-generated Unique ID / auto-increment fields in CSV
+❌ Does not restart custom Poster ID / Landbank Row ID numbering from stale snapshots
+❌ Does not emit full replacement CSV files for append jobs unless operator explicitly requests full reimport
 ❌ Does not return template skeletons with {{PLACEHOLDER}} unfilled
 ❌ Does not require Notion to store long prompt instructions
 ❌ Does not push overlay copy decisions back to Notion
@@ -297,6 +368,35 @@ Key handoffs:
 - `copywriting.cta` → scene-engine BOTTOM ZONE (CTA button)
 - `operator_scene_direction` → scene-engine STEP 2 BUILD SCENE (primary scene input)
 - `angle_group_id` → CPD (archetype selection context signal)
+
+---
+
+## APPEND-ONLY DELTA CSV LAW
+
+When this skill is used for database growth tasks instead of prompt generation:
+
+- Default mode = `APPEND_ONLY_DELTA_CSV`
+- Generate new rows only; never export the entire database as a replacement CSV
+- If the target ID field is a custom text/number field such as `Poster ID` or
+  `Landbank Row ID`, continue from the verified live high-water mark
+- If the target ID field is a Notion-managed `Unique ID` / auto-increment field,
+  leave it blank in CSV and let Notion populate it
+- Validate parseability, duplicate IDs, ID continuity, and collision risk before
+  finalizing any CSV
+- Emit a manifest and QA checklist with source database proof
+- If live connector access is unavailable and no fresh operator snapshot exists,
+  remain blocked; do not guess numbering
+
+Forbidden behavior:
+
+- using repo snapshots as numbering authority
+- generating a full replacement CSV for a simple append request
+- assuming Notion merge/update semantics by key
+- manually filling Notion-generated unique ID columns
+- skipping the manifest
+
+For exact checklist, manifest fields, and blocked-mode rules, follow:
+- `.claude/protocols/notion-csv-append-protocol.md`
 
 ---
 
