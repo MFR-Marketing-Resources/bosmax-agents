@@ -44,6 +44,7 @@ Registered products in `products/`:
 - `BOSMAX_SERUM`
   - Sensitive stealth lane
   - Variants: `5ML`, `10ML`
+  - Unit 16 (STEP 0.5): `angle_taxonomy_file = ""` (no normal taxonomy); `competitor_research_policy = REVIEW_ONLY`; copy authority stays SCRIPT_REGISTRY + `stealth_copy_authority_map`
 - `MINYAK_WARISAN_TOK_CAP_BURUNG_25ML`  ← ACTIVE (v11.10)
   - Canonical product name: **Minyak Warisan Tok Cap Burung**
   - Accepted aliases: Minyak Warisan Cap Burung, Cap Burung, Tok Cap Burung
@@ -51,6 +52,7 @@ Registered products in `products/`:
   - Variant: `25ML_GREEN_GLASS_BOTTLE`
   - Current packaging truth: 25ml transparent green-tinted glass, red ribbed screw cap (NO roll-on, NO WG40)
   - Active product truth source: `products/MINYAK_WARISAN_TOK_CAP_BURUNG_25ML.yaml`
+  - Unit 16 (STEP 0.5): `angle_taxonomy_file = registries/mwcb_copywriting_angle_taxonomy.yaml` (TIER 1, approved MCA wins, REVIEW_ONLY rows stay blocked_rows); `competitor_research_policy = RESTRICTED`
   - Template reference: `templates/poster/03A-P1_PRODUCT_ONLY_COPY_LANDBANK_POSTER.md`
   - Last-known Notion intake snapshot: 100-row Copywriting Landbank, ANG-01 through ANG-10
   - Snapshot law: this count is historical context only, not append authority; future append jobs must re-verify live Notion state before numbering new CSV rows

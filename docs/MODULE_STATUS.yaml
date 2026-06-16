@@ -109,3 +109,23 @@ modules:
       product-truth mutation. Competitor research defaults NOT_RUN and is
       source-gated. Also reconciles role inventory Units 14/15/16. Does not change
       engine rules, compliance hard gates, or PR #51 Notion append governance.
+  market_angle_product_pointers:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - products/MINYAK_WARISAN_TOK_CAP_BURUNG_25ML.yaml
+      - products/BOSMAX_SERUM.yaml
+      - registries/mwcb_copywriting_angle_taxonomy.yaml
+      - .claude/BOSMAX_CURRENT_STATE.md
+    notes: >
+      Surgical follow-up to PR #52: wires product-level Unit 16 pointers.
+      MINYAK_WARISAN_TOK_CAP_BURUNG_25ML -> angle_taxonomy_file
+      registries/mwcb_copywriting_angle_taxonomy.yaml (TIER 1) +
+      competitor_research_policy RESTRICTED. BOSMAX_SERUM -> angle_taxonomy_file
+      "" (no normal taxonomy; copy authority stays SCRIPT_REGISTRY +
+      stealth_copy_authority_map) + competitor_research_policy REVIEW_ONLY.
+      MWCB taxonomy metadata migrated from legacy CAP_BURUNG_MINYAK to the active
+      25ml Tok product registry; MCA IDs, approved/REVIEW_ONLY statuses, and
+      compliance_risk values unchanged. No product packaging truth, dialogue
+      authority, compliance gate, or Notion governance changes.
