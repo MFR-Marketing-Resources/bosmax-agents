@@ -1,6 +1,8 @@
 # MWCB COPYWRITING ANGLE TAXONOMY REGISTRY
 # ─────────────────────────────────────────────────────────────────────────────
-# Product:        Minyak Warisan Cap Burung (MWCB)
+# Product:        Minyak Warisan Tok Cap Burung (MWTCB; legacy alias MWCB)
+#                 Active product registry: products/MINYAK_WARISAN_TOK_CAP_BURUNG_25ML.yaml
+#                 (legacy source: products/CAP_BURUNG_MINYAK.yaml — migrated after PR #52)
 # Authority:      BOSMAX EXECUTION KERNEL CONTRACT v1, G-04 COPY_AUTHORITY_GATE
 # Version:        v1.0
 # Created:        2026-06-05
@@ -10,10 +12,16 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 metadata:
-  product_id: "CAP_BURUNG_MINYAK"
-  product_name: "Minyak Warisan Cap Burung"
+  product_id: "MINYAK_WARISAN_TOK_CAP_BURUNG_25ML"
+  product_name: "Minyak Warisan Tok Cap Burung"
+  legacy_source_product_id: "CAP_BURUNG_MINYAK"
+  supersedes_legacy_product_file: "products/CAP_BURUNG_MINYAK.yaml"
+  migration_note: >
+    Metadata migrated to active 25ml Tok product registry after PR #52.
+    MCA statuses and risk classifications unchanged.
   authority_source:
-    - "products/CAP_BURUNG_MINYAK.yaml"
+    - "products/MINYAK_WARISAN_TOK_CAP_BURUNG_25ML.yaml"
+    - "products/CAP_BURUNG_MINYAK.yaml (legacy source)"
     - "uploaded label source (verified 2026-06-01)"
   mode: "DIRECT"
   source_status:

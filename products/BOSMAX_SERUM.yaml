@@ -32,6 +32,15 @@ product_status: "Available"
 packaging_type: "Slim cylindrical black-on-black portable oil bottle system with glossy black cap, matte black label body, and discreet masculine presentation"
 packaging_color: "Black monochrome packaging with white BOSMAX branding, minimal herbal icon mark, and premium discreet men's-health styling"
 
+# MARKET-ANGLE INTELLIGENCE POINTERS (Unit 16 / PRE-FLIGHT STEP 0.5)
+# - no normal angle taxonomy is approved in v1 — angle_taxonomy_file intentionally blank
+# - dialogue/copy authority remains SCRIPT_REGISTRY_UNIFIED.md + SCRIPT_VARIANT_LIBRARY.md
+#   + registries/stealth_copy_authority_map.yaml (see dialogue_authority below)
+# - Unit 16 may emit intelligence only; competitor research stays REVIEW_ONLY and
+#   direct performance/medical/sexual claims must go to blocked_rows
+angle_taxonomy_file: ""
+competitor_research_policy: "REVIEW_ONLY"
+
 # MARKET DATA — to be auto-populated by bosmax-product-intelligence on Fastmoss lookup
 avg_price_rm: null
 commission_rate: null

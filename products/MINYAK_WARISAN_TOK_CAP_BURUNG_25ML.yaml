@@ -30,6 +30,16 @@ raw_category: "Health-Traditional Medicine-Minyak Angin & Urut"
 product_status: "Available"
 
 # ─────────────────────────────────────────────
+# MARKET-ANGLE INTELLIGENCE POINTERS (Unit 16 / PRE-FLIGHT STEP 0.5)
+# ─────────────────────────────────────────────
+# - taxonomy below is active TIER 1 for bosmax-market-angle-intelligence
+#   (approved MCA statuses win; REVIEW_ONLY taxonomy rows remain blocked_rows)
+# - competitor research is source-gated and RESTRICTED due to traditional
+#   remedy / health-adjacent / family-care claim risk
+angle_taxonomy_file: "registries/mwcb_copywriting_angle_taxonomy.yaml"
+competitor_research_policy: "RESTRICTED"
+
+# ─────────────────────────────────────────────
 # PRODUCT PROFILE — CURRENT SOURCE OF TRUTH
 # ─────────────────────────────────────────────
 tagline: "Petua Turun Temurun."
