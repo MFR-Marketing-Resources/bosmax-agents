@@ -31,6 +31,16 @@ product_status: "Available"
 packaging_type: "5-bottle premium set with slim cylindrical bottles, black caps, and black masculine carton packaging"
 packaging_color: "Black carton presentation with gold/silver accents, horse logo, and mixed visible oil tones inside slim bottles"
 
+# MARKET-ANGLE INTELLIGENCE POINTERS (Unit 16 / PRE-FLIGHT STEP 0.5)
+# - no normal angle taxonomy is approved in v1 — angle_taxonomy_file intentionally blank
+# - product is STEALTH and sensitive male-care
+# - copy/dialogue authority remains SCRIPT_REGISTRY_UNIFIED.md + SCRIPT_VARIANT_LIBRARY.md
+#   (see dialogue_authority below)
+# - Unit 16 may emit intelligence only; competitor research stays REVIEW_ONLY and
+#   direct anatomy / medical / sexual-performance claims must go to blocked_rows
+angle_taxonomy_file: ""
+competitor_research_policy: "REVIEW_ONLY"
+
 avg_price_rm: 77.5
 commission_rate: 0.27
 total_orders: 960

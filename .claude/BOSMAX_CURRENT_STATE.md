@@ -63,9 +63,11 @@ Registered products in `products/`:
 - `MAVERIX_MAXOIL`
   - Sensitive stealth lane
   - Variant: `SET_5_BOTTLES`
+  - Unit 16 (STEP 0.5): `angle_taxonomy_file = ""`; `competitor_research_policy = REVIEW_ONLY`; copy authority stays SCRIPT_REGISTRY
 - `JUNGLE_GIRL_MINYAK`
   - Provisional direct-product benchmark lane
   - Variant: `30ML_JG01`
+  - Unit 16 (STEP 0.5): `angle_taxonomy_file = ""`; `competitor_research_policy = RESTRICTED`; provisional direct lane; generated packs session_only unless promoted after audit
 
 No product currently has locked `subject_dna` or `last_source_image_handoff` in `products/*.yaml`.
 
