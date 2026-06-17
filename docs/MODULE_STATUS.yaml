@@ -43,6 +43,34 @@ modules:
       final prompt underfill blocking, hard ceiling blocking, and default
       AVATAR_PRODUCT_UGC routing for dialogue-driven multi-block TikTok Shop
       MY UGC while leaving Notion and page 04/06 batch lanes untouched.
+  video_template_compiler_runtime:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - registries/video_template_schema.yaml
+      - scripts/video_template_parser.py
+      - scripts/video_storyboard_builder.py
+      - scripts/video_prompt_compiler.py
+      - scripts/validate_video_template_schema.py
+      - scripts/validate_video_prompt_compiler.py
+      - scripts/validate_video_template_export_readiness.py
+      - scripts/build_batch_video_prompts.py
+      - samples/notion/video_single_block_templates.yaml
+      - samples/notion/video_multi_block_templates.yaml
+      - samples/notion/batch_multi_block_templates.yaml
+      - samples/video_template_compiler/**
+      - tests/video_template_compiler/**
+      - outputs/batch_prompts/**
+      - docs/video_template_compiler_runtime.md
+    notes: >
+      Separate governed runtime lane for BOSMAX video template parsing,
+      normalization, master storyboard generation, block script generation,
+      engine-specific prompt compilation, QA validation, and Notion-ready
+      export. Authorized surfaces are limited to the video template compiler
+      runtime files listed above. This lane does not authorize 100-row Notion
+      generation, production prompt generation, product-truth rewrites outside
+      lane-owned runtime artifacts, or edits to unrelated module scopes.
   output:
     status: IN_PROGRESS
     owner: CODEX
