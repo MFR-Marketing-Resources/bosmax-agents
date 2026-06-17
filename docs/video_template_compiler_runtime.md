@@ -108,6 +108,22 @@ Compiled exports produce:
   - `qa_status`
   - `production_ready`
   - `notion_ready`
+  - `copywriting_landbank_row_id`
+  - `commercial_angle_id`
+  - `commercial_angle_name`
+  - `hook`
+  - `body_copy`
+  - `cta`
+  - `risk_class`
+  - `claim_class`
+  - `platform`
+  - `pilot_batch`
+
+  The parent CSV uses `template_id` as the import key; the legacy
+  `parent_row_id` duplicate column is no longer emitted. The first 18 fields
+  are the compiler-owned spine; the trailing 10 are copywriting landbank
+  traceability metadata (blank when the input seed does not supply them). The
+  child CSV is unchanged.
 - child rows
   - `parent_template_id`
   - `block_id`
