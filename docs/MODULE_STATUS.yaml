@@ -48,10 +48,13 @@ modules:
     owner: CODEX
     scope:
       - docs/MODULE_STATUS.yaml
+      - docs/video_raw_prompt_template_contract_v1.md
+      - docs/notion_operator_pages/bosmax_video_raw_prompt_templates_v1.md
       - registries/video_template_schema.yaml
       - scripts/video_template_parser.py
       - scripts/video_storyboard_builder.py
       - scripts/video_prompt_compiler.py
+      - scripts/validate_video_raw_prompt_template_contract.py
       - scripts/validate_video_template_schema.py
       - scripts/validate_video_prompt_compiler.py
       - scripts/validate_video_template_export_readiness.py
@@ -59,6 +62,7 @@ modules:
       - samples/notion/video_single_block_templates.yaml
       - samples/notion/video_multi_block_templates.yaml
       - samples/notion/batch_multi_block_templates.yaml
+      - samples/video_raw_prompt_templates/**
       - samples/video_template_compiler/**
       - tests/video_template_compiler/**
       - outputs/batch_prompts/**

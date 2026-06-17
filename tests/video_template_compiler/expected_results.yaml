@@ -2,15 +2,23 @@ expected_results:
   bosmax_grok_frames_single_6s:
     qa_status: PASS
     engine_adapter: GROK_EXTENSION_V1
+    output_mode: SINGLE_PROMPT
+    prompt_set_count: 1
   bosmax_flow_frames_multi_8x8:
     qa_status: PASS
     engine_adapter: FLOW_EXTEND_UI_V1
+    output_mode: MULTI_PROMPT_SET
+    prompt_set_count: 2
   bosmax_hybrid_multi_8x8:
     qa_status: PASS
     engine_adapter: VEO_CLIP_CHAIN_V1
+    output_mode: MULTI_PROMPT_SET
+    prompt_set_count: 2
   mwtcb_product_demo_single_6s:
     qa_status: PASS
     engine_adapter: GROK_EXTENSION_V1
+    output_mode: SINGLE_PROMPT
+    prompt_set_count: 1
   unsafe_claim_seed:
     qa_status: FAIL
     error_contains: unsafe claim blocked

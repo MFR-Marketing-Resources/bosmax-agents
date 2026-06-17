@@ -66,6 +66,14 @@ def main() -> None:
     expect(all(row["raw_prompt_seed"] != row["final_prompt_text"] for row in parent_rows), "raw seed and final prompt text must remain separate")
     expect(all(row["qa_status"] for row in parent_rows), "parent rows missing qa_status")
     expect(all(row["notion_ready"] in {"True", "False"} for row in parent_rows), "parent rows missing notion_ready boolean")
+    expect(all(row["output_mode"] in {"SINGLE_PROMPT", "MULTI_PROMPT_SET"} for row in parent_rows), "parent rows missing output_mode")
+    expect(all(int(row["prompt_set_count"]) >= 1 for row in parent_rows), "parent rows missing prompt_set_count")
+    for row in parent_rows:
+        block_count = int(row["block_count"])
+        prompt_set_count = int(row["prompt_set_count"])
+        expect(prompt_set_count == block_count, f"parent row prompt_set_count mismatch for {row['template_id']}")
+        if block_count > 1:
+            expect("MULTI-PROMPT SET" in row["final_prompt_text"], f"multi-block parent row missing MULTI-PROMPT SET label for {row['template_id']}")
 
     child_ids = [row["child_row_id"] for row in child_rows]
     expect(len(child_ids) == len(set(child_ids)), "duplicate child_row_id detected")
@@ -73,6 +81,8 @@ def main() -> None:
     for row in child_rows:
         expect(row["parent_template_id"] in parent_map, f"child row missing parent linkage: {row}")
         expect(bool(row["final_prompt_block_text"]), f"child row missing final prompt text: {row}")
+        expect(row["dialogue_budget_status"] in {"PASS", "WARN", "FAIL"}, f"child row missing dialogue_budget_status: {row}")
+        expect(bool(row["set_role"]), f"child row missing set_role: {row}")
 
     expected_child_count = sum(template["duration"]["block_count"] for template in compiled_templates)
     expect(len(child_rows) == expected_child_count, "child row count does not match compiled block count")

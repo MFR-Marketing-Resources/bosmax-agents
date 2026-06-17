@@ -24,8 +24,9 @@ This lane does not authorize production prompt generation at scale.
    - validates BOSMAX planner math against `scripts/video_block_plan.py`
    - builds `master_storyline`, `master_storyboard`, continuity locks, and `block_script_json`
 3. `scripts/video_prompt_compiler.py`
-   - compiles block scripts into engine-adapted final prompt text
-   - blocks unsafe claims, internal marker leakage, missing multi-block continuity, and WPS overflow
+   - compiles block scripts into engine-adapted final prompt text plus structured `prompt_sets[]`
+   - emits `output_mode`, `prompt_set_count`, and one complete 9-section prompt per block
+   - blocks unsafe claims, internal marker leakage, missing multi-block continuity, collapsed multi-block output, and WPS overflow
 4. `scripts/build_batch_video_prompts.py`
    - exports compiled parent/child Notion-ready rows while preserving the legacy batch exporter contract
 
@@ -49,6 +50,19 @@ This lane does not authorize production prompt generation at scale.
 
 - `[4,4,4,4]` is explicitly blocked in this lane.
 - Any declared block plan that diverges from `scripts/video_block_plan.py` fails closed.
+
+## Multi-Prompt Set Law
+
+Whenever `block_count > 1`, the compiler must emit:
+
+- `output_mode = MULTI_PROMPT_SET`
+- `prompt_set_count = block_count`
+- `prompt_sets.length = block_count`
+- one complete 9-section prompt set per block
+
+The compiler must fail closed if a multi-block runtime collapses into one
+combined prompt surface, hides split timing inside a single prompt, or drifts
+GROK 16s away from `[10,6]`.
 
 ## Mode Semantics
 
@@ -113,6 +127,7 @@ Compilation fails when any of the following appear:
 - internal markers such as `CTX_`, `DNA_`, `BLOCK_`, `SCENE_`, `IMG_`, `VID_`
 - missing multi-block `master_storyboard`
 - dialogue word count above block `safe_max_words`
+- multi-block output presented as a single prompt instead of `MULTI_PROMPT_SET`
 - overlay / subtitle / on-screen-text instructions in seed or storyboard surfaces
   when `parsed.overlay_allowed` is not explicitly set (Section 9 defaults to NO_OVERLAY)
 
@@ -132,6 +147,8 @@ Compiled exports produce:
   - `block_mode`
   - `block_count`
   - `block_plan`
+  - `output_mode`
+  - `prompt_set_count`
   - `raw_prompt_seed`
   - `master_storyline`
   - `master_storyboard`
@@ -159,10 +176,14 @@ Compiled exports produce:
   - `parent_template_id`
   - `block_id`
   - `block_duration`
+  - `set_role`
+  - `continuation_from_previous_set`
   - `narrative_function`
   - `visual_action`
   - `dialogue_or_copy`
   - `wps_budget`
+  - `safe_max_words`
+  - `dialogue_budget_status`
   - `start_state`
   - `end_state`
   - `continuity_anchor`

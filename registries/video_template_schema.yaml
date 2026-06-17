@@ -48,6 +48,9 @@ enums:
     - DRAFT
     - COMPILED
     - BLOCKED
+  output_mode:
+    - SINGLE_PROMPT
+    - MULTI_PROMPT_SET
 required_paths:
   - template_id
   - template_name
@@ -70,6 +73,9 @@ required_paths:
   - storyboard.block_script_json
   - compiler.engine_adapter
   - compiler.compiler_version
+  - compiler.output_mode
+  - compiler.prompt_set_count
+  - compiler.prompt_sets
   - compiler.final_prompt_text
   - compiler.final_prompt_blocks
   - compiler.prompt_surface_status
@@ -133,6 +139,9 @@ sections:
   compiler:
     engine_adapter: Engine adapter selected by compiler.
     compiler_version: Compiler build string.
+    output_mode: SINGLE_PROMPT for one block, MULTI_PROMPT_SET for any multi-block export.
+    prompt_set_count: Number of final prompt sets emitted by the compiler.
+    prompt_sets: Structured per-set prompt payloads with 9 sections, per-block WPS reporting, and continuation metadata.
     final_prompt_text: Joined final prompt surface.
     final_prompt_blocks: Per-block final prompt surfaces.
     prompt_surface_status: Draft versus compiled versus blocked.
@@ -169,3 +178,4 @@ governance_rules:
   - Section 9 overlay defaults to NO_OVERLAY; overlay, subtitle, or on-screen-text instructions are blocked unless overlay_allowed is explicitly set, and any allowed overlay must stay bounded and never cover the product label or visual truth.
   - The operator supplies engine, duration, and intake_mode only; the runtime derives block_plan deterministically. Operators must not hand-author block_plan, child block rows, or final_prompt_text.
   - Google Flow runs two deterministic lanes that never mix inside one render. FLOW_EXTEND_UI is the 8s chain (8, 16=[8,8], 24=[8,8,8]); FLOW_EXTEND_10S is the 10s extend lane (10, 18=[10,8], 20=[10,10], 30/40/50/60 repeated 10s). Google Flow must never use the GROK [10,6] split, and GROK must never use an 8s block.
+  - Any multi-block runtime must export output_mode=MULTI_PROMPT_SET, prompt_set_count=len(block_plan), and one complete 9-section prompt per block. Multi-block prompts must never collapse into one combined 9-section surface.
