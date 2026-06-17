@@ -83,7 +83,7 @@ OUTPUT_COLUMNS: list[str] = [
 ]
 
 PARENT_OUTPUT_COLUMNS: list[str] = [
-    "parent_row_id",
+    # Verified compiler-owned parent spine (no parent_row_id — template_id is the key).
     "template_id",
     "template_name",
     "product_lane",
@@ -102,6 +102,17 @@ PARENT_OUTPUT_COLUMNS: list[str] = [
     "production_ready",
     "export_ready",
     "notion_ready",
+    # Copywriting landbank traceability metadata (parent registry only).
+    "copywriting_landbank_row_id",
+    "commercial_angle_id",
+    "commercial_angle_name",
+    "hook",
+    "body_copy",
+    "cta",
+    "risk_class",
+    "claim_class",
+    "platform",
+    "pilot_batch",
 ]
 
 CHILD_OUTPUT_COLUMNS: list[str] = [
@@ -598,10 +609,10 @@ def export_compiled_templates(
         storyboard = template.get("storyboard") or {}
         compiler = template.get("compiler") or {}
         qa = template.get("qa") or {}
+        parsed = template.get("parsed") or {}
         template_id = str(template.get("template_id") or "")
 
         parent_rows.append({
-            "parent_row_id": template_id,
             "template_id": template_id,
             "template_name": str(template.get("template_name") or ""),
             "product_lane": str(identity.get("product_lane") or ""),
@@ -620,6 +631,18 @@ def export_compiled_templates(
             "production_ready": bool(qa.get("production_ready")),
             "export_ready": bool(qa.get("export_ready")),
             "notion_ready": bool(qa.get("notion_ready")),
+            # Copywriting landbank traceability — sourced from the compiled
+            # template sections, blank when the input seed did not supply them.
+            "copywriting_landbank_row_id": str(input_block.get("source_landbank_row") or ""),
+            "commercial_angle_id": str(identity.get("commercial_angle_id") or identity.get("source_angle_id") or ""),
+            "commercial_angle_name": str(identity.get("commercial_angle_name") or ""),
+            "hook": str(parsed.get("hook") or ""),
+            "body_copy": str(parsed.get("body") or ""),
+            "cta": str(parsed.get("cta") or ""),
+            "risk_class": str(parsed.get("risk_class") or ""),
+            "claim_class": str(parsed.get("claim_class") or ""),
+            "platform": str(identity.get("platform") or ""),
+            "pilot_batch": str(identity.get("pilot_batch") or ""),
         })
 
         block_map = {

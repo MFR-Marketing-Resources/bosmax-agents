@@ -84,6 +84,9 @@ sections:
     mode: Template authoring mode.
     template_category: Logical template family.
     output_type: Expected downstream output surface.
+    commercial_angle_id: Optional commercial angle id for landbank traceability (falls back to source_angle_id on export).
+    commercial_angle_name: Optional human-readable commercial angle name.
+    pilot_batch: Optional operator batch tag for pilot/100-row import grouping.
   duration:
     duration_seconds: Total requested video duration in seconds.
     duration_label: Human-readable duration label.

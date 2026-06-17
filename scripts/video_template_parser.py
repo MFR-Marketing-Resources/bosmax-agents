@@ -274,6 +274,9 @@ def build_canonical_template(
             "mode": mode,
             "template_category": str(_get(payload, "template_category", default="VIDEO_TEMPLATE_COMPILER")).strip() or "VIDEO_TEMPLATE_COMPILER",
             "output_type": str(_get(payload, "output_type", default="NOTION_READY_VIDEO_PROMPT")).strip() or "NOTION_READY_VIDEO_PROMPT",
+            "commercial_angle_id": str(_get(payload, "commercial_angle_id", "source_angle_id", "angle_id", default="")).strip(),
+            "commercial_angle_name": str(_get(payload, "commercial_angle_name", "angle_name", default="")).strip(),
+            "pilot_batch": str(_get(payload, "pilot_batch", "batch_id", default="")).strip(),
         },
         "duration": {
             "duration_seconds": duration_seconds,
