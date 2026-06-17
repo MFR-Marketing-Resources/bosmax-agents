@@ -1,0 +1,45 @@
+# BOSMAX RAW PROMPT TEMPLATE — FRAMES / READY_FRAME — GROK 16s
+# Layer: user-facing raw prompt template (operator copy-paste).
+# Authority: docs/video_raw_prompt_template_contract_v1.md
+# One finished frame is uploaded (avatar + product + scene already exist).
+# The runtime derives block_plan (GROK 16s = [10, 6]); continuation only.
+
+template_id: BOSMAX_RAW_READY_FRAME_GROK_16S
+template_name: BOSMAX Ready-Frame Continuation (GROK 16s)
+
+# --- routing (operator-supplied) ---
+engine: GROK
+duration: 16s
+intake_mode: FRAMES            # normalizes to READY_FRAME
+platform: TikTok
+language: Malay
+product_lane: BOSMAX
+# block_plan: intentionally absent — runtime derives GROK 16s = [10, 6]
+
+# --- visual truth = the uploaded finished frame (do NOT rebuild) ---
+ready_frame_input: "One uploaded finished frame already containing avatar + product + scene."
+visual_authority: USER_UPLOAD
+frame_truth_lock: >
+  The uploaded finished frame is the single visual truth source. Lock identity,
+  wardrobe, pose, product position, grip, label orientation, product scale,
+  scene, and lighting from the frame. Motion-delta only. Do NOT rebuild the
+  avatar, product, scene, wardrobe, lighting, grip, or product scale from
+  scratch. Read the product name and scale from the frame; do not invent a
+  different product or rescale it.
+product_truth_ref: products/BOSMAX_SERUM.yaml
+
+# --- continuation action + dialogue (continuation only; spoken Malay) ---
+continuation_action_seed: "Hold the product naturally, slight tilt, small natural hand movement, natural expression while speaking. No new scene setup."
+dialogue_seed: "Continue from a natural opening line; relief (practical/easy); spoken CTA. Per-block budget respected for GROK 16s [10,6]."
+hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
+body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."
+cta: "Tap tengok harga sekarang, boss."
+# General specialist wording: the uploaded frame varies, so describe avatar /
+# product in general terms; the frame is the truth, not assumptions.
+visual_seed: "Continue from the uploaded frame; brisk UGC energy; keep identity, product position, and label readable as in the frame."
+
+# --- safety / overlay ---
+overlay_allowed: false         # Section 9 defaults NO_OVERLAY
+safety_guardrails: "No medical cure / guaranteed-result / sexual-performance claims; no risky direct-body-use instructions."
+forbidden_claims:
+  - menyembuhkan penyakit
