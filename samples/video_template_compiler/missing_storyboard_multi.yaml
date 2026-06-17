@@ -1,0 +1,101 @@
+template_id: MISSING_STORYBOARD_MULTI
+template_name: Missing Storyboard Multi
+identity:
+  source_angle_id: ""
+  copypack_id: ""
+  product_lane: BOSMAX
+  platform: TikTok
+  engine: GOOGLE_FLOW
+  mode: FRAMES
+  template_category: VIDEO_TEMPLATE_COMPILER
+  output_type: NOTION_READY_VIDEO_PROMPT
+duration:
+  duration_seconds: 16
+  duration_label: 16s
+  block_mode: MULTI_BLOCK
+  block_count: 2
+  block_plan: [8, 8]
+  prompt_execution_mode: FLOW_EXTEND_UI
+  continuity_requirement: REQUIRED
+input:
+  raw_prompt_seed: "Flow continuity should exist but storyboard fields are empty."
+  source_landbank_row: ""
+  visual_seed: "Bathroom counter proof setup."
+  copy_seed: "Flow continuity should exist but storyboard fields are empty."
+  overlay_seed: ""
+  product_truth_ref: products/BOSMAX_SERUM.yaml
+  compliance_notes: ""
+parsed:
+  parsed_brief: "Flow continuity should exist but storyboard fields are empty."
+  hook: "Masuk terus dengan produk."
+  body: "Sambung tanpa reset."
+  cta: "Tengok harga sekarang."
+  risk_class: LOW
+  claim_class: STANDARD
+  forbidden_claims: []
+  forbidden_visuals: []
+storyboard:
+  master_storyline: "A two-block continuity story exists."
+  master_storyboard: ""
+  narrative_arc: [HOOK_PAIN_FRICTION, RELIEF_CTA]
+  character_continuity_lock: ""
+  product_continuity_lock: ""
+  setting_camera_lock: ""
+  block_script_json:
+    - block_id: MISSING_STORYBOARD_MULTI_BLOCK_01
+      block_index: 1
+      block_duration: 8
+      block_narrative_function: HOOK_PAIN_FRICTION
+      block_visual_action: "Open with product in hand."
+      block_dialogue_or_copy: "Masuk terus dengan produk dan sambung cerita tanpa reset."
+      block_dialogue_word_count: 9
+      block_wps_budget:
+        duration_seconds: 8
+        minimum_words: 19
+        target_min_words: 20
+        target_max_words: 21
+        safe_max_words: 22
+      block_start_state: "Open from zero."
+      block_end_state: "Carry product forward."
+      block_continuity_anchor: "Keep same hand position."
+      block_allowed_changes: []
+      block_forbidden_changes: []
+    - block_id: MISSING_STORYBOARD_MULTI_BLOCK_02
+      block_index: 2
+      block_duration: 8
+      block_narrative_function: RELIEF_CTA
+      block_visual_action: "Continue same shot family."
+      block_dialogue_or_copy: "Akhiri dengan CTA ringkas dan produk kekal jelas."
+      block_dialogue_word_count: 8
+      block_wps_budget:
+        duration_seconds: 8
+        minimum_words: 19
+        target_min_words: 20
+        target_max_words: 21
+        safe_max_words: 22
+      block_start_state: "Carry product forward."
+      block_end_state: "CTA finish."
+      block_continuity_anchor: "Resume exact frame line."
+      block_allowed_changes: []
+      block_forbidden_changes: []
+compiler:
+  engine_adapter: ""
+  compiler_version: video_template_compiler_runtime@1.0.0
+  final_prompt_text: ""
+  final_prompt_blocks: []
+  prompt_surface_status: DRAFT
+  compiler_errors: []
+  compiler_warnings: []
+qa:
+  qa_status: NOT_RUN
+  qa_errors: []
+  qa_warnings: []
+  production_ready: false
+  export_ready: false
+  notion_ready: false
+  source_traceability:
+    source_path: samples/video_template_compiler/missing_storyboard_multi.yaml
+    schema_path: registries/video_template_schema.yaml
+    required_paths: []
+  generated_at: 2026-06-17T00:00:00+00:00
+  generated_by: samples/video_template_compiler/missing_storyboard_multi.yaml

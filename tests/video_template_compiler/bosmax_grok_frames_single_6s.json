@@ -1,0 +1,15 @@
+{
+	"template_id": "BOSMAX_GROK_FRAMES_SINGLE_6S_JSON",
+	"template_name": "BOSMAX GROK Frames Single 6s JSON",
+	"product_lane": "BOSMAX",
+	"platform": "TikTok",
+	"engine": "GROK",
+	"mode": "FRAMES",
+	"duration": "6s",
+	"block_plan": [6],
+	"hook": "Rasa tak selesa bila panas mula datang?",
+	"body": "BOSMAX roll-on kecil, sapu ringkas dan kekal kemas.",
+	"cta": "Masuk poket, terus standby bila perlu.",
+	"visual_seed": "Close handheld UGC framing with product in palm.",
+	"product_truth_ref": "products/BOSMAX_SERUM.yaml"
+}

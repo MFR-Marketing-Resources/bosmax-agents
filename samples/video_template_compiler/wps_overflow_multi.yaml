@@ -1,0 +1,20 @@
+template_id: WPS_OVERFLOW_MULTI
+template_name: WPS Overflow Multi
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+mode: FRAMES
+duration: 16s
+block_plan: [8, 8]
+hook: >
+  Creator terus bercakap laju tentang semua manfaat sekaligus tanpa ruang
+  bernafas, sambil produk, ekspresi, dan framing cuba bergerak serentak.
+body: >
+  Dia sambung lagi dengan terlalu banyak klausa, terlalu banyak janji kecil,
+  terlalu banyak penerangan visual, dan semuanya cuba dimasukkan dalam satu
+  chain sambungan yang padat melampau untuk dua blok lapan saat.
+cta: >
+  Akhir sekali masih tambah arahan beli, arahan repeat, arahan urgency, dan
+  penerangan tambahan sampai setiap blok melepasi had selamat dialog.
+visual_seed: "Flow continuity stays the same, but the dialogue is intentionally overloaded."
+product_truth_ref: products/BOSMAX_SERUM.yaml

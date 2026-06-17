@@ -1,0 +1,13 @@
+template_id: BOSMAX_HYBRID_MULTI_8X8
+template_name: BOSMAX Hybrid Multi 8x8
+product_lane: BOSMAX
+platform: TikTok
+engine: VEO_3_1_LITE
+mode: HYBRID
+duration: 16s
+block_plan: [8, 8]
+hook: "Creator terus bercakap sambil produk muncul di tangan."
+body: "Cap dibuka, roll-on bergerak kemas, label kekal jelas."
+cta: "Akhir clip tunjuk packaging hero dan ajak semak harga."
+visual_seed: "Hybrid UGC plus proof-demo cadence with consistent bathroom shelf and skin-safe lighting."
+product_truth_ref: products/BOSMAX_SERUM.yaml

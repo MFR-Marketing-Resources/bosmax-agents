@@ -1,0 +1,11 @@
+template_id: MARKER_LEAK_SEED
+template_name: Marker Leak Seed
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+mode: FRAMES
+duration: 6s
+hook: "CTX_AVATAR masuk frame sambil produk dipegang kemas."
+body: "DNA_LOCK kekal sama dan BLOCK_02 patut sambung tanpa reset."
+cta: "TRG audience terus klik tengok harga."
+visual_seed: "SCENE_LOCK bathroom mirror."

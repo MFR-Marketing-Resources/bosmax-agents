@@ -1,0 +1,12 @@
+template_id: RAW_KEY_VALUE_GROK_SINGLE_6S
+template_name: Raw Key Value GROK Single 6s
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+mode: FRAMES
+duration: 6s
+hook: Cepat capai bila perlu.
+body: Produk kecil kekal kemas dalam genggaman.
+cta: Tengok harga sekarang.
+visual_seed: Close handheld product demo.
+product_truth_ref: products/BOSMAX_SERUM.yaml

@@ -70,7 +70,7 @@ variants:
     variant_name: "25ml Capped Green Glass Bottle"
     price_rm: null
 
-    scale_anchor_descriptor: "A short compact 25ml transparent green glass oil bottle with a red ribbed screw cap, small enough for home shelf, pouch, bedside, or family-care storage."
+    scale_anchor_descriptor: "EXACTLY a short compact 25ml transparent green glass oil bottle with a red ribbed screw cap, small enough for home shelf, pouch, bedside, or family-care storage."
 
     label_dna:
       label_shape: "Rectangular label panel on compact bottle body"
