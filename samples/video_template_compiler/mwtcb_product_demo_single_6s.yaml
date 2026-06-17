@@ -1,0 +1,12 @@
+template_id: MWTCB_PRODUCT_DEMO_SINGLE_6S
+template_name: MWTCB Product Demo Single 6s
+product_lane: MINYAK_WARISAN_TOK
+platform: TikTok
+engine: GROK
+mode: INGREDIENTS
+duration: 6s
+hook: "Lenguh datang, minyak ini cepat capai."
+body: "Botol jelas, sapuan ringkas terus kemas."
+cta: "Simpan dalam beg bila perlu."
+visual_seed: "Simple product demo on wood table with warm heritage tone and readable label."
+product_truth_ref: products/MINYAK_WARISAN_TOK_CAP_BURUNG_25ML.yaml

@@ -1,0 +1,14 @@
+template_id: UNSAFE_CLAIM_SEED
+template_name: Unsafe Claim Seed
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+mode: FRAMES
+duration: 6s
+raw_prompt_seed: >
+  Produk ini guaranteed cure masalah seksual lelaki dan terus pulihkan libido
+  dalam satu malam tanpa gagal.
+hook: "Guaranteed cure masalah seksual lelaki."
+body: "Terus pulihkan libido dalam satu malam tanpa gagal."
+cta: "Sapu sekarang untuk hasil pasti."
+visual_seed: "Fast hero demo."

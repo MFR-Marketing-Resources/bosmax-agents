@@ -1,0 +1,13 @@
+template_id: BOSMAX_FLOW_FRAMES_MULTI_8X8
+template_name: BOSMAX Flow Frames Multi 8x8
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+mode: FRAMES
+duration: 16s
+block_plan: [8, 8]
+hook: "Mula dengan wajah yakin, produk sudah di tangan dari beat pertama."
+body: "Tunjuk sapuan ringkas, close-up label jelas, kemudian terus ke reaksi lega tanpa potong identiti atau lokasi."
+cta: "Akhiri dengan hero hold stabil dan ajak tengok harga sekarang."
+visual_seed: "Warm bathroom mirror setup, handheld UGC energy, label readability preserved."
+product_truth_ref: products/BOSMAX_SERUM.yaml

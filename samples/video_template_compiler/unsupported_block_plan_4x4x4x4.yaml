@@ -1,0 +1,13 @@
+template_id: UNSUPPORTED_BLOCK_PLAN_4X4X4X4
+template_name: Unsupported Block Plan 4x4x4x4
+product_lane: BOSMAX
+platform: TikTok
+engine: VEO_3_1
+mode: FRAMES
+duration: 16s
+block_plan: [4, 4, 4, 4]
+hook: "Empat blok kecil ini sengaja dipaksa untuk uji fail-closed."
+body: "Planner BOSMAX sebenar untuk 16s VEO tidak membenarkan susunan ini."
+cta: "Validator mesti hentikan compile."
+visual_seed: "Neutral proof setup."
+product_truth_ref: products/BOSMAX_SERUM.yaml

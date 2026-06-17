@@ -82,6 +82,44 @@ OUTPUT_COLUMNS: list[str] = [
     "final_prompt_text",
 ]
 
+PARENT_OUTPUT_COLUMNS: list[str] = [
+    "parent_row_id",
+    "template_id",
+    "template_name",
+    "product_lane",
+    "engine",
+    "mode",
+    "duration",
+    "block_mode",
+    "block_count",
+    "block_plan",
+    "prompt_execution_mode",
+    "raw_prompt_seed",
+    "master_storyline",
+    "master_storyboard",
+    "final_prompt_text",
+    "qa_status",
+    "production_ready",
+    "export_ready",
+    "notion_ready",
+]
+
+CHILD_OUTPUT_COLUMNS: list[str] = [
+    "child_row_id",
+    "parent_template_id",
+    "block_id",
+    "block_duration",
+    "narrative_function",
+    "visual_action",
+    "dialogue_or_copy",
+    "wps_budget",
+    "start_state",
+    "end_state",
+    "continuity_anchor",
+    "final_prompt_block_text",
+    "qa_status",
+]
+
 _REVIEW_ONLY_COMPLIANCE_CLASSES = frozenset({"HIGH", "REVIEW_ONLY", "RED"})
 _REVIEW_ONLY_KEYWORDS = frozenset({
     "baby", "bayi", "maternity", "pregnancy", "pregnant", "hamil",
@@ -462,6 +500,7 @@ def export_rows(
     rows: list[dict[str, Any]],
     workflow: str,
     output_dir: Path | None = None,
+    stem_override: str | None = None,
 ) -> dict[str, Path]:
     """
     Write rows to CSV, Markdown, and JSONL files.
@@ -473,7 +512,7 @@ def export_rows(
 
     ts = _timestamp_utc()
     tag = _safe_tag(workflow)
-    stem = f"batch_prompts_{tag}_{ts}"
+    stem = stem_override or f"batch_prompts_{tag}_{ts}"
     paths: dict[str, Path] = {}
 
     # CSV
@@ -502,6 +541,150 @@ def export_rows(
                 val = str(row.get(col) or "")
                 val = val.replace("|", "\\|").replace("\n", " ")
                 cells.append(val)
+            fh.write("| " + " | ".join(cells) + " |\n")
+    paths["md"] = md_path
+
+    return paths
+
+
+# ---------------------------------------------------------------------------
+# Compiler runtime exporter — parent/child Notion-ready rows
+# ---------------------------------------------------------------------------
+
+def _json_like_load(path: Path) -> Any:
+    raw = path.read_text(encoding="utf-8")
+    if path.suffix.lower() == ".json":
+        return json.loads(raw)
+    return yaml.safe_load(raw) or {}
+
+
+def _looks_like_compiled_template(payload: Any) -> bool:
+    return isinstance(payload, dict) and "identity" in payload and "compiler" in payload
+
+
+def _coerce_compiled_templates(payload: Any) -> list[dict[str, Any]]:
+    if _looks_like_compiled_template(payload):
+        return [payload]
+    if isinstance(payload, dict) and isinstance(payload.get("compiled_templates"), list):
+        items = payload["compiled_templates"]
+        if all(_looks_like_compiled_template(item) for item in items):
+            return list(items)
+    if isinstance(payload, list) and all(_looks_like_compiled_template(item) for item in payload):
+        return list(payload)
+    raise ExporterError("Input is not a compiled video_template_compiler payload.")
+
+
+def export_compiled_templates(
+    compiled_templates: list[dict[str, Any]],
+    workflow: str = "VIDEO_TEMPLATE_COMPILER",
+    output_dir: Path | None = None,
+    stem_override: str | None = None,
+) -> dict[str, Path]:
+    out_dir = output_dir if output_dir is not None else OUTPUT_DIR
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    ts = _timestamp_utc()
+    tag = _safe_tag(workflow)
+    stem = stem_override or f"video_template_compiler_{tag}_{ts}"
+    paths: dict[str, Path] = {}
+
+    parent_rows: list[dict[str, Any]] = []
+    child_rows: list[dict[str, Any]] = []
+
+    for template in compiled_templates:
+        identity = template.get("identity") or {}
+        duration = template.get("duration") or {}
+        input_block = template.get("input") or {}
+        storyboard = template.get("storyboard") or {}
+        compiler = template.get("compiler") or {}
+        qa = template.get("qa") or {}
+        template_id = str(template.get("template_id") or "")
+
+        parent_rows.append({
+            "parent_row_id": template_id,
+            "template_id": template_id,
+            "template_name": str(template.get("template_name") or ""),
+            "product_lane": str(identity.get("product_lane") or ""),
+            "engine": str(identity.get("engine") or ""),
+            "mode": str(identity.get("mode") or ""),
+            "duration": str(duration.get("duration_label") or duration.get("duration_seconds") or ""),
+            "block_mode": str(duration.get("block_mode") or ""),
+            "block_count": int(duration.get("block_count") or 0),
+            "block_plan": json.dumps(duration.get("block_plan") or [], ensure_ascii=False),
+            "prompt_execution_mode": str(duration.get("prompt_execution_mode") or ""),
+            "raw_prompt_seed": str(input_block.get("raw_prompt_seed") or ""),
+            "master_storyline": str(storyboard.get("master_storyline") or ""),
+            "master_storyboard": str(storyboard.get("master_storyboard") or ""),
+            "final_prompt_text": str(compiler.get("final_prompt_text") or ""),
+            "qa_status": str(qa.get("qa_status") or ""),
+            "production_ready": bool(qa.get("production_ready")),
+            "export_ready": bool(qa.get("export_ready")),
+            "notion_ready": bool(qa.get("notion_ready")),
+        })
+
+        block_map = {
+            str(item.get("block_id")): item
+            for item in (storyboard.get("block_script_json") or [])
+        }
+        for compiled_block in compiler.get("final_prompt_blocks") or []:
+            block_id = str(compiled_block.get("block_id") or "")
+            block_meta = block_map.get(block_id, {})
+            child_rows.append({
+                "child_row_id": block_id,
+                "parent_template_id": template_id,
+                "block_id": block_id,
+                "block_duration": str(block_meta.get("block_duration") or ""),
+                "narrative_function": str(block_meta.get("block_narrative_function") or ""),
+                "visual_action": str(block_meta.get("block_visual_action") or ""),
+                "dialogue_or_copy": str(block_meta.get("block_dialogue_or_copy") or ""),
+                "wps_budget": json.dumps(block_meta.get("block_wps_budget") or {}, ensure_ascii=False),
+                "start_state": str(block_meta.get("block_start_state") or ""),
+                "end_state": str(block_meta.get("block_end_state") or ""),
+                "continuity_anchor": str(block_meta.get("block_continuity_anchor") or ""),
+                "final_prompt_block_text": str(compiled_block.get("final_prompt_block_text") or ""),
+                "qa_status": str(compiled_block.get("qa_status") or qa.get("qa_status") or ""),
+            })
+
+    parent_csv_path = out_dir / f"{stem}_parents.csv"
+    with parent_csv_path.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=PARENT_OUTPUT_COLUMNS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(parent_rows)
+    paths["parent_csv"] = parent_csv_path
+
+    child_csv_path = out_dir / f"{stem}_children.csv"
+    with child_csv_path.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=CHILD_OUTPUT_COLUMNS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(child_rows)
+    paths["child_csv"] = child_csv_path
+
+    jsonl_path = out_dir / f"{stem}.jsonl"
+    with jsonl_path.open("w", encoding="utf-8") as fh:
+        for row in parent_rows:
+            fh.write(json.dumps({"row_type": "parent", **row}, ensure_ascii=False) + "\n")
+        for row in child_rows:
+            fh.write(json.dumps({"row_type": "child", **row}, ensure_ascii=False) + "\n")
+    paths["jsonl"] = jsonl_path
+
+    md_path = out_dir / f"{stem}.md"
+    with md_path.open("w", encoding="utf-8") as fh:
+        fh.write("| " + " | ".join(PARENT_OUTPUT_COLUMNS) + " |\n")
+        fh.write("| " + " | ".join(["---"] * len(PARENT_OUTPUT_COLUMNS)) + " |\n")
+        for row in parent_rows:
+            cells: list[str] = []
+            for col in PARENT_OUTPUT_COLUMNS:
+                val = str(row.get(col) or "")
+                cells.append(val.replace("|", "\\|").replace("\n", " "))
+            fh.write("| " + " | ".join(cells) + " |\n")
+        fh.write("\n")
+        fh.write("| " + " | ".join(CHILD_OUTPUT_COLUMNS) + " |\n")
+        fh.write("| " + " | ".join(["---"] * len(CHILD_OUTPUT_COLUMNS)) + " |\n")
+        for row in child_rows:
+            cells = []
+            for col in CHILD_OUTPUT_COLUMNS:
+                val = str(row.get(col) or "")
+                cells.append(val.replace("|", "\\|").replace("\n", " "))
             fh.write("| " + " | ".join(cells) + " |\n")
     paths["md"] = md_path
 
@@ -543,8 +726,33 @@ def main() -> None:
         print(f"ERROR: Input file not found: {input_path}", file=sys.stderr)
         sys.exit(1)
 
-    with input_path.open("r", encoding="utf-8") as fh:
-        batch_input = yaml.safe_load(fh) or {}
+    batch_input = _json_like_load(input_path)
+
+    if _looks_like_compiled_template(batch_input) or (
+        isinstance(batch_input, dict) and "compiled_templates" in batch_input
+    ) or isinstance(batch_input, list):
+        try:
+            templates = _coerce_compiled_templates(batch_input)
+        except ExporterError as exc:
+            print(f"EXPORT ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
+
+        print(f"Resolved {len(templates)} compiled template(s)  workflow=VIDEO_TEMPLATE_COMPILER")
+        if args.dry_run:
+            print("  (dry-run: no files written)")
+            for template in templates:
+                print(
+                    f"  [{template.get('template_id', 'UNKNOWN')}]"
+                    f" status={template.get('qa', {}).get('qa_status', '')}"
+                    f" blocks={template.get('duration', {}).get('block_count', 0)}"
+                )
+            return
+
+        out_dir = Path(args.output_dir)
+        paths = export_compiled_templates(templates, output_dir=out_dir)
+        for fmt, path in sorted(paths.items()):
+            print(f"  [{fmt.upper():10s}] {path}")
+        return
 
     try:
         rows = run_batch(batch_input)

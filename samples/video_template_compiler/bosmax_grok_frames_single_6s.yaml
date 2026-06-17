@@ -1,0 +1,14 @@
+template_id: BOSMAX_GROK_FRAMES_SINGLE_6S
+template_name: BOSMAX GROK Frames Single 6s
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+mode: FRAMES
+duration: 6s
+hook: "Rasa panas mula ganggu badan?"
+body: "BOSMAX roll-on kecil, sapu ringkas."
+cta: "Masuk poket, standby bila perlu."
+visual_seed: "Close handheld UGC framing with product in palm and quick cap-open motion."
+product_truth_ref: products/BOSMAX_SERUM.yaml
+forbidden_claims:
+  - menyembuhkan penyakit

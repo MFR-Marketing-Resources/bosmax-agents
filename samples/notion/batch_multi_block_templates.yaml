@@ -1,21 +1,22 @@
 # BOSMAX Batch Multi-Block Notion Templates
 # Surface: operator-facing batch multi-block template design
-# Status: CONTRACT_READY_NOT_IMPLEMENTED
+# Status: IMPLEMENTED_VIA_VIDEO_TEMPLATE_COMPILER_RUNTIME
 #
-# The build_batch_video_prompts.py exporter currently emits single-block rows.
-# Multi-block batch output requires a future exporter extension.
-# This file documents the authoritative design for that extension.
+# The legacy run_batch() exporter still emits single-block rows for registered
+# product batch YAML inputs. Multi-block parent/child export is now implemented
+# through the video_template_compiler_runtime compiled-template path in
+# scripts/build_batch_video_prompts.py.
 #
 # Authority: docs/batch_multiblock_output_contract_v1.md
 #            docs/prompt_template_readiness_contract_v1.md
 #            registries/video_engine_duration_contracts.yaml
 
-implementation_status: CONTRACT_READY_NOT_IMPLEMENTED
+implementation_status: IMPLEMENTED_VIA_VIDEO_TEMPLATE_COMPILER_RUNTIME
 description: >
-  Multi-block batch templates define the parent/child row shape for future
-  exporter extension. Do not use these with build_batch_video_prompts.py v1
-  — the current exporter will ignore block_plan fields and produce
-  single-block output only.
+  Multi-block batch templates define the parent/child row shape consumed by the
+  video_template_compiler_runtime compiled-template export path. Legacy
+  registered-product batch YAML inputs still resolve through the original
+  single-block exporter contract.
 
 templates:
 

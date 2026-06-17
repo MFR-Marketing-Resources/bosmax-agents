@@ -1,0 +1,150 @@
+version: 1
+module_lane: video_template_compiler_runtime
+status: IN_PROGRESS
+purpose: >
+  Governed executable runtime for BOSMAX video template parsing, normalization,
+  master storyboard generation, block script generation, engine-specific prompt
+  compilation, QA validation, and Notion-ready export.
+enums:
+  product_lane:
+    - BOSMAX
+    - MINYAK_WARISAN_TOK
+    - MULTI_PRODUCT
+    - ON_THE_FLY
+  engine:
+    - GROK
+    - GOOGLE_FLOW
+    - VEO
+    - VEO_3_1
+    - VEO_3_1_LITE
+  mode:
+    - FRAMES
+    - INGREDIENTS
+    - HYBRID
+  block_mode:
+    - SINGLE_BLOCK
+    - MULTI_BLOCK
+  prompt_execution_mode:
+    - ONE_SHOT
+    - SEQUENTIAL
+    - EXTENSION_CHAIN
+    - EXTENSION
+    - CLIP_CHAIN
+    - FLOW_EXTEND_UI
+  qa_status:
+    - PASS
+    - WARN
+    - FAIL
+    - NOT_RUN
+  prompt_surface_status:
+    - DRAFT
+    - COMPILED
+    - BLOCKED
+required_paths:
+  - template_id
+  - template_name
+  - identity.product_lane
+  - identity.platform
+  - identity.engine
+  - identity.mode
+  - duration.duration_seconds
+  - duration.block_mode
+  - duration.block_count
+  - duration.block_plan
+  - duration.prompt_execution_mode
+  - input.raw_prompt_seed
+  - parsed.parsed_brief
+  - parsed.hook
+  - parsed.body
+  - parsed.cta
+  - storyboard.master_storyline
+  - storyboard.master_storyboard
+  - storyboard.block_script_json
+  - compiler.engine_adapter
+  - compiler.compiler_version
+  - compiler.final_prompt_text
+  - compiler.final_prompt_blocks
+  - compiler.prompt_surface_status
+  - qa.qa_status
+  - qa.qa_errors
+  - qa.qa_warnings
+  - qa.production_ready
+  - qa.export_ready
+  - qa.notion_ready
+  - qa.source_traceability
+  - qa.generated_at
+  - qa.generated_by
+sections:
+  identity:
+    source_angle_id: Optional upstream angle intelligence identifier.
+    copypack_id: Optional copywriting record identifier.
+    product_lane: Canonical product lane anchor.
+    platform: Requested publishing platform.
+    engine: Canonical BOSMAX engine key.
+    mode: Template authoring mode.
+    template_category: Logical template family.
+    output_type: Expected downstream output surface.
+  duration:
+    duration_seconds: Total requested video duration in seconds.
+    duration_label: Human-readable duration label.
+    block_mode: Single-block versus multi-block runtime mode.
+    block_count: Deterministic number of runtime blocks.
+    block_plan: Deterministic block duration array.
+    prompt_execution_mode: Engine-specific execution mode.
+    continuity_requirement: Runtime continuity rule.
+  input:
+    raw_prompt_seed: Canonical raw seed retained separately from final prompts.
+    source_landbank_row: Optional landbank trace.
+    visual_seed: Optional visual seed text.
+    copy_seed: Optional copy seed text.
+    overlay_seed: Optional overlay seed text.
+    product_truth_ref: Product truth reference path or record.
+    compliance_notes: Free-form compliance notes.
+  parsed:
+    parsed_brief: Normalized brief summary.
+    hook: Opening spoken or visual hook.
+    body: Development/proof body.
+    cta: Closing CTA.
+    risk_class: Simple risk grade for early screening.
+    claim_class: Claim handling class.
+    forbidden_claims: Explicit forbidden claim phrases.
+    forbidden_visuals: Explicit forbidden visual phrases.
+  storyboard:
+    master_storyline: High-level story arc sentence.
+    master_storyboard: Cross-block storyboard summary.
+    narrative_arc: Ordered narrative beat labels.
+    character_continuity_lock: Character continuity anchor.
+    product_continuity_lock: Product continuity anchor.
+    setting_camera_lock: Setting and camera continuity anchor.
+    block_script_json: Deterministic per-block script payload.
+  compiler:
+    engine_adapter: Engine adapter selected by compiler.
+    compiler_version: Compiler build string.
+    final_prompt_text: Joined final prompt surface.
+    final_prompt_blocks: Per-block final prompt surfaces.
+    prompt_surface_status: Draft versus compiled versus blocked.
+  qa:
+    qa_status: Runtime QA result.
+    qa_errors: Hard fail reasons.
+    qa_warnings: Non-blocking warnings.
+    production_ready: Hard gate for production execution.
+    export_ready: Export gate.
+    notion_ready: Notion handoff gate.
+    source_traceability: Input/output provenance data.
+    generated_at: UTC timestamp.
+    generated_by: Runtime identifier.
+supported_block_plans:
+  - [6]
+  - [8]
+  - [10]
+  - [10, 6]
+  - [8, 8]
+  - [10, 10]
+  - [8, 8, 8]
+unsupported_block_plans:
+  - [4, 4, 4, 4]
+governance_rules:
+  - Multi-block templates must carry a master storyboard and continuity locks before compilation.
+  - Raw seed text and compiled final prompt text must remain separate export surfaces.
+  - Marker tokens such as CTX_, CAM_, CLASS_, SCRIPT_, DNA_, ANCHOR_, TRG, TEMP_, SCENE_, BLOCK_, INTERVAL_, REF_, IMG_, VID_, AUDIO_, GEN_, and RENDER_ must not leak into final prompt output.
+  - Unsafe claims such as cure, guaranteed result, sexual-performance uplift, or risky direct-body-use instructions must block production readiness.
