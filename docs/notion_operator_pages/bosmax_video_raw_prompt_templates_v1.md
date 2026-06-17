@@ -3,8 +3,9 @@
 > **Page purpose:** This is the **operator surface** for sending raw / very raw / rough
 > video prompt requests to BOSMAX Agents. You provide **engine + duration + intake_mode +
 > creative details**; the runtime derives everything mechanical (block plan, per-block
-> dialogue budget, storyboard, continuity) and the compiler writes the final 9-section /
-> Google Flow prompt. You never hand-author the mechanical layers.
+> dialogue budget, storyboard, continuity) and the compiler writes the final prompt
+> surface. Single-block runs emit one complete 9-section prompt. Multi-block runs emit
+> a `MULTI-PROMPT SET` with one complete 9-section prompt per block.
 
 ---
 
@@ -24,6 +25,8 @@
 - Operators must **not** hand-author `final_prompt_text` or child block prompts.
 - **Dialogue is spoken by default.** **CTA is spoken by default.**
 - **Section 9 defaults `NO_OVERLAY`.** Text overlay only if explicitly requested.
+- If the derived plan has more than one block, the final output must say
+  **`MULTI-PROMPT SET`** — never `one final 9-section prompt`.
 
 ---
 
@@ -65,6 +68,39 @@
 | 60s | `[10,10,10,10,10,10]` |
 
 > You never type the block plan. The runtime derives it from `engine` + `duration`.
+
+---
+
+## 3A. Multi-Block Output Law
+
+For any engine/duration where the derived `block_plan` has more than one block:
+
+- Final output = **`MULTI-PROMPT SET`**
+- `prompt_set_count = len(block_plan)`
+- each block becomes its own complete **9-section prompt set**
+- continuation sets continue from the prior set and do **not** restart the
+  scene, product intro, avatar identity, lighting, scale, wardrobe, camera
+  style, or commercial arc
+- CTA normally sits in the **final prompt set** unless the operator explicitly
+  overrides it
+
+Required examples:
+
+- GROK 16s -> `SET 1 = 10s`, `SET 2 = 6s`
+- GROK 20s -> `SET 1 = 10s`, `SET 2 = 10s`
+- GROK 30s -> `SET 1 = 10s`, `SET 2 = 10s`, `SET 3 = 10s`
+
+**Notion field guidance**
+
+If a downstream field is named `FINAL CLAUDE COPY-PASTE PROMPT`, then for any
+multi-block runtime it must say **`MULTI-PROMPT SET`** and must explicitly show:
+
+- `SET 1`, `SET 2`, etc.
+- each set duration
+- 9 sections per set
+- continuation rules
+
+It must **not** say `one final 9-section prompt`.
 
 ---
 
@@ -299,6 +335,8 @@ safety_guardrails: "No medical cure / guaranteed-result / sexual-performance cla
 - ❌ Do **not** write `[10,6]` for Google Flow — Flow never uses the GROK split.
 - ❌ Do **not** add text overlay unless explicitly needed (`overlay_allowed` stays false).
 - ❌ Do **not** paste a final 9-section prompt into a raw template field.
+- ❌ Do **not** ask the runtime for `one final 9-section prompt` when the derived
+  plan has more than one block.
 - ❌ Do **not** use Notion as the source of truth — the repo contract is.
 - ❌ Do **not** delete old templates before audit.
 

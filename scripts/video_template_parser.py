@@ -374,6 +374,9 @@ def build_canonical_template(
         "compiler": {
             "engine_adapter": "",
             "compiler_version": "video_template_compiler_runtime@1.0.0",
+            "output_mode": "",
+            "prompt_set_count": 0,
+            "prompt_sets": [],
             "final_prompt_text": "",
             "final_prompt_blocks": [],
             "prompt_surface_status": "DRAFT",

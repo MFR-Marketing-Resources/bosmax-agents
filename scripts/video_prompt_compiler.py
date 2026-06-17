@@ -70,6 +70,25 @@ ENGINE_ADAPTERS = {
     "VEO_3_1_LITE": "VEO_CLIP_CHAIN_V1",
 }
 
+MULTI_BLOCK_COLLAPSE_PATTERNS = [
+    r"Create one 16-second GROK video prompt",
+    r"one continuous 16s video",
+    r"VISUAL STORY\s*[-:]\s*FIRST 10 SECONDS",
+    r"VISUAL STORY\s*[-:]\s*FINAL 6 SECONDS",
+]
+
+PROMPT_SET_SECTION_HEADINGS = [
+    "ROLE & OBJECTIVE",
+    "PRODUCT TRUTH LOCK",
+    "CONTINUITY & STATE LOCK",
+    "VISUAL STORY",
+    "SHOT & CAMERA RULES",
+    "SPOKEN DIALOGUE",
+    "WPS & DIALOGUE BUDGET",
+    "CTA & END FRAME",
+    "NO_OVERLAY",
+]
+
 
 class CompilerError(RuntimeError):
     """Raised when the prompt compiler is blocked by governance or QA."""
@@ -183,29 +202,24 @@ def _validate_word_budgets(template: dict[str, Any]) -> tuple[list[str], list[st
     return errors, warnings
 
 
-def _build_block_prompt(template: dict[str, Any], block: dict[str, Any], total_blocks: int) -> str:
-    identity = template["identity"]
-    storyboard = template["storyboard"]
-    is_first = int(block["block_index"]) == 1
-    lines = [
-        f"Engine adapter: {ENGINE_ADAPTERS[identity['engine']]}",
-        f"Product lane: {identity['product_lane']}",
-        f"Platform: {identity['platform']}",
-        f"Mode: {identity['mode']}",
-        f"Master storyline: {storyboard['master_storyline']}",
-        f"Master storyboard: {storyboard['master_storyboard']}",
-        f"Character continuity lock: {storyboard['character_continuity_lock']}",
-        f"Product continuity lock: {storyboard['product_continuity_lock']}",
-        f"Setting/camera lock: {storyboard['setting_camera_lock']}",
-        f"Block duration: {block['block_duration']}s",
-        f"Narrative function: {block['block_narrative_function']}",
-        f"Visual action: {block['block_visual_action']}",
-        f"Dialogue or copy: {block['block_dialogue_or_copy']}",
-        f"Start state: {block['block_start_state']}",
-        f"End state target: {block['block_end_state']}",
-        f"Continuity anchor: {block['block_continuity_anchor']}",
-    ]
+def _compute_dialogue_budget_status(words: int, budget: dict[str, Any]) -> str:
+    minimum_words = int(budget.get("minimum_words", 0))
+    target_min = int(budget.get("target_min_words", 0))
+    target_max = int(budget.get("target_max_words", 0))
+    safe_max = int(budget.get("safe_max_words", 0))
+    if safe_max and words > safe_max:
+        return "FAIL"
+    if minimum_words and words < minimum_words:
+        return "WARN"
+    if target_min and words < target_min:
+        return "WARN"
+    if target_max and words > target_max:
+        return "WARN"
+    return "PASS"
 
+
+def _build_engine_rules(identity: dict[str, Any], block: dict[str, Any], is_first: bool) -> str:
+    lines: list[str] = []
     if identity["engine"] == "GROK":
         if not is_first:
             lines.extend([
@@ -227,10 +241,217 @@ def _build_block_prompt(template: dict[str, Any], block: dict[str, Any], total_b
             "Keep Veo clip-chain continuity strict across identity, product label, packaging scale, and scene framing.",
             "Use a passable last frame for the next clip without resetting the commercial arc.",
         ])
+    return " ".join(line for line in lines if line).strip()
 
-    if int(block["block_index"]) == total_blocks:
-        lines.append("Close with a clear CTA-ready hero state and no overlay text.")
+
+def _build_prompt_set_sections(
+    template: dict[str, Any],
+    block: dict[str, Any],
+    total_blocks: int,
+) -> tuple[list[dict[str, Any]], str, int]:
+    identity = template["identity"]
+    is_first = int(block["block_index"]) == 1
+    is_final = int(block["block_index"]) == total_blocks
+    storyboard = template["storyboard"]
+    dialogue = str(block.get("block_dialogue_or_copy", ""))
+    dialogue_words = _word_count(dialogue)
+    wps_budget = dict(block.get("block_wps_budget") or {})
+    safe_max_words = int(wps_budget.get("safe_max_words", 0))
+    dialogue_budget_status = _compute_dialogue_budget_status(dialogue_words, wps_budget)
+    cta = str(template["parsed"].get("cta", "")).strip()
+    continuation_text = (
+        "Continue directly from the previous prompt set. Do not restart the scene, product intro, avatar identity, lighting, scale, wardrobe, camera style, or commercial arc."
+        if not is_first
+        else "This is the opening prompt set. Establish the scene cleanly without implying any prior unseen clip."
+    )
+    cta_text = (
+        f"Deliver the spoken CTA naturally: {cta} End frame: {block['block_end_state']}"
+        if is_final
+        else f"No CTA yet unless the operator explicitly overrides it. End frame: {block['block_end_state']} Carry the commercial tension into Set {int(block['block_index']) + 1}."
+    )
+    overlay_text = (
+        "NO_OVERLAY. No visual text layer of any kind. Spoken hook/body/CTA must remain spoken and never be converted into visual copy."
+        if not template["parsed"].get("overlay_allowed", False)
+        else "Overlay is operator-enabled. Keep any text minimal and never cover the product label, avatar identity, or visual truth."
+    )
+    budget_line = (
+        f"dialogue_word_count={dialogue_words}; safe_max_words={safe_max_words}; "
+        f"dialogue_budget_status={dialogue_budget_status}; "
+        f"language={wps_budget.get('language', '')}; pace_class={wps_budget.get('pace_class', '')}; "
+        f"target_min_words={wps_budget.get('target_min_words', 0)}; "
+        f"target_max_words={wps_budget.get('target_max_words', 0)}."
+    )
+    sections = [
+        {
+            "section_index": 1,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[0],
+            "section_text": (
+                f"Set {block['block_index']} of {total_blocks}. Build a complete {block['block_duration']}-second "
+                f"{identity['engine']} prompt for the {block['block_narrative_function']} beat. "
+                f"output_mode={'MULTI_PROMPT_SET' if total_blocks > 1 else 'SINGLE_PROMPT'}. "
+                f"block_source={block['block_id']}."
+            ),
+        },
+        {
+            "section_index": 2,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[1],
+            "section_text": storyboard["product_continuity_lock"],
+        },
+        {
+            "section_index": 3,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[2],
+            "section_text": (
+                f"{continuation_text} Character continuity: {storyboard['character_continuity_lock']} "
+                f"Setting/camera continuity: {storyboard['setting_camera_lock']} "
+                f"Start state: {block['block_start_state']} Continuity anchor: {block['block_continuity_anchor']}"
+            ),
+        },
+        {
+            "section_index": 4,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[3],
+            "section_text": (
+                f"Visual action: {block['block_visual_action']} "
+                f"Narrative function: {block['block_narrative_function']}."
+            ),
+        },
+        {
+            "section_index": 5,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[4],
+            "section_text": _build_engine_rules(identity, block, is_first),
+        },
+        {
+            "section_index": 6,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[5],
+            "section_text": f"Spoken dialogue only: {dialogue}",
+        },
+        {
+            "section_index": 7,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[6],
+            "section_text": budget_line,
+        },
+        {
+            "section_index": 8,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[7],
+            "section_text": cta_text,
+        },
+        {
+            "section_index": 9,
+            "section_heading": PROMPT_SET_SECTION_HEADINGS[8],
+            "section_text": overlay_text,
+        },
+    ]
+    prompt_set_header = f"SET {block['block_index']} - {block['block_duration']} SECONDS"
+    return sections, dialogue_budget_status, safe_max_words
+
+
+def _render_prompt_set_text(prompt_set: dict[str, Any]) -> str:
+    lines = [f"SET {prompt_set['set_index']} - {prompt_set['set_duration']} SECONDS"]
+    for section in prompt_set["final_prompt_9_sections"]:
+        lines.append(f"SECTION {section['section_index']} - {section['section_heading']}")
+        lines.append(str(section["section_text"]))
     return "\n".join(lines)
+
+
+def _render_final_prompt_text(output_mode: str, prompt_sets: list[dict[str, Any]]) -> str:
+    header = "MULTI-PROMPT SET" if output_mode == "MULTI_PROMPT_SET" else "SINGLE PROMPT"
+    lines = [header, f"prompt_set_count: {len(prompt_sets)}"]
+    for prompt_set in prompt_sets:
+        lines.append("")
+        lines.append(_render_prompt_set_text(prompt_set))
+    return "\n".join(lines).strip()
+
+
+def validate_compiled_prompt_structure(template: dict[str, Any]) -> list[str]:
+    compiler = template.get("compiler") or {}
+    duration = template.get("duration") or {}
+    storyboard = template.get("storyboard") or {}
+    block_plan = [int(item) for item in (duration.get("block_plan") or [])]
+    block_count = int(duration.get("block_count") or len(block_plan) or 0)
+    output_mode = str(compiler.get("output_mode") or "")
+    prompt_set_count = int(compiler.get("prompt_set_count") or 0)
+    prompt_sets = compiler.get("prompt_sets") or []
+    final_prompt_blocks = compiler.get("final_prompt_blocks") or []
+    final_prompt_text = str(compiler.get("final_prompt_text") or "")
+    overlay_allowed = bool(template.get("parsed", {}).get("overlay_allowed", False))
+    findings: list[str] = []
+
+    if block_count <= 1:
+        if output_mode != "SINGLE_PROMPT":
+            findings.append("single-block output must use SINGLE_PROMPT")
+        if prompt_set_count != 1:
+            findings.append("single-block output must expose prompt_set_count=1")
+    else:
+        if output_mode != "MULTI_PROMPT_SET":
+            findings.append("multi-block output must use MULTI_PROMPT_SET")
+        if prompt_set_count != block_count:
+            findings.append("multi-block output prompt_set_count must equal block_count")
+        if "MULTI-PROMPT SET" not in final_prompt_text:
+            findings.append("multi-block final_prompt_text must declare MULTI-PROMPT SET")
+
+    if len(prompt_sets) != block_count:
+        findings.append("prompt_sets length must match block_count")
+    if len(final_prompt_blocks) != block_count:
+        findings.append("final_prompt_blocks length must match block_count")
+
+    block_map = {
+        str(item.get("block_id")): item
+        for item in (storyboard.get("block_script_json") or [])
+    }
+
+    for index, prompt_set in enumerate(prompt_sets, start=1):
+        expected_duration = block_plan[index - 1] if index - 1 < len(block_plan) else None
+        sections = prompt_set.get("final_prompt_9_sections") or []
+        if int(prompt_set.get("set_index") or 0) != index:
+            findings.append(f"prompt_set {index} set_index mismatch")
+        if expected_duration is not None and int(prompt_set.get("set_duration") or 0) != expected_duration:
+            findings.append(f"prompt_set {index} set_duration mismatch")
+        if bool(prompt_set.get("continuation_from_previous_set")) != (index > 1):
+            findings.append(f"prompt_set {index} continuation flag mismatch")
+        if not isinstance(sections, list) or len(sections) != 9:
+            findings.append(f"prompt_set {index} must contain exactly 9 sections")
+        else:
+            section_indexes = [int(section.get("section_index") or 0) for section in sections]
+            if section_indexes != list(range(1, 10)):
+                findings.append(f"prompt_set {index} section indexes must run 1..9")
+            if not overlay_allowed and "NO_OVERLAY" not in str(sections[8].get("section_text") or ""):
+                findings.append(f"prompt_set {index} section 9 must preserve NO_OVERLAY")
+
+        block_source = str(prompt_set.get("block_source") or "")
+        block_meta = block_map.get(block_source)
+        if not block_meta:
+            findings.append(f"prompt_set {index} block_source missing from storyboard")
+            continue
+        wps_budget = prompt_set.get("wps_budget") or {}
+        budget_duration = int(wps_budget.get("duration_seconds") or 0)
+        set_duration = int(prompt_set.get("set_duration") or 0)
+        total_duration = int(duration.get("duration_seconds") or 0)
+        if budget_duration <= 0 or budget_duration > set_duration:
+            findings.append(f"prompt_set {index} WPS budget duration must stay within the block duration")
+        if block_count > 1 and budget_duration == total_duration:
+            findings.append(f"prompt_set {index} WPS budget duration must not use the total multi-block duration")
+        expected_words = int(block_meta.get("block_dialogue_word_count") or 0)
+        if int(prompt_set.get("dialogue_word_count") or 0) != expected_words:
+            findings.append(f"prompt_set {index} dialogue_word_count mismatch")
+        safe_max_words = int(wps_budget.get("safe_max_words") or 0)
+        if int(prompt_set.get("safe_max_words") or 0) != safe_max_words:
+            findings.append(f"prompt_set {index} safe_max_words mismatch")
+        if str(prompt_set.get("dialogue_budget_status") or "") == "FAIL":
+            findings.append(f"prompt_set {index} dialogue budget failed safe_max_words")
+
+    if template.get("identity", {}).get("engine") == "GROK" and int(duration.get("duration_seconds") or 0) == 16:
+        if block_plan != [10, 6]:
+            findings.append("GROK 16s must derive [10,6]")
+        if block_plan == [8, 8]:
+            findings.append("GROK 16s must never use [8,8]")
+
+    surfaces = [final_prompt_text]
+    surfaces.extend(str(block.get("final_prompt_block_text") or "") for block in final_prompt_blocks)
+    for surface in surfaces:
+        for pattern in MULTI_BLOCK_COLLAPSE_PATTERNS:
+            if re.search(pattern, surface, flags=re.IGNORECASE):
+                findings.append(f"forbidden multi-block collapse pattern: {pattern}")
+
+    return findings
 
 
 def compile_template(template: dict[str, Any]) -> dict[str, Any]:
@@ -252,24 +473,56 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
     warnings.extend(budget_warnings)
 
     blocks = template["storyboard"].get("block_script_json", [])
+    prompt_sets: list[dict[str, Any]] = []
     final_prompt_blocks: list[dict[str, Any]] = []
     for block in blocks:
+        sections, dialogue_budget_status, safe_max_words = _build_prompt_set_sections(
+            template,
+            block,
+            len(blocks),
+        )
+        prompt_set = {
+            "set_index": block["block_index"],
+            "set_duration": block["block_duration"],
+            "set_role": block["block_narrative_function"],
+            "block_source": block["block_id"],
+            "continuation_from_previous_set": int(block["block_index"]) > 1,
+            "wps_budget": dict(block.get("block_wps_budget") or {}),
+            "dialogue_word_count": block.get("block_dialogue_word_count", 0),
+            "safe_max_words": safe_max_words,
+            "dialogue_budget_status": dialogue_budget_status,
+            "final_prompt_9_sections": sections,
+        }
+        prompt_set_text = _render_prompt_set_text(prompt_set)
+        prompt_sets.append(prompt_set)
         final_prompt_blocks.append(
             {
                 "block_id": block["block_id"],
                 "block_index": block["block_index"],
-                "final_prompt_block_text": _build_block_prompt(template, block, len(blocks)),
-                "qa_status": "FAIL" if errors else "PASS",
+                "block_duration": block["block_duration"],
+                "set_role": block["block_narrative_function"],
+                "continuation_from_previous_set": int(block["block_index"]) > 1,
+                "dialogue_word_count": block.get("block_dialogue_word_count", 0),
+                "safe_max_words": safe_max_words,
+                "dialogue_budget_status": dialogue_budget_status,
+                "final_prompt_9_sections": sections,
+                "final_prompt_block_text": prompt_set_text,
+                "qa_status": "FAIL" if (errors or dialogue_budget_status == "FAIL") else ("WARN" if dialogue_budget_status == "WARN" else "PASS"),
             }
         )
 
     template["compiler"]["engine_adapter"] = ENGINE_ADAPTERS[template["identity"]["engine"]]
     template["compiler"]["compiler_version"] = "video_template_compiler_runtime@1.0.0"
+    template["compiler"]["output_mode"] = "MULTI_PROMPT_SET" if len(blocks) > 1 else "SINGLE_PROMPT"
+    template["compiler"]["prompt_set_count"] = len(prompt_sets)
+    template["compiler"]["prompt_sets"] = prompt_sets
     template["compiler"]["final_prompt_blocks"] = final_prompt_blocks
-    template["compiler"]["final_prompt_text"] = "\n\n".join(
-        block["final_prompt_block_text"] for block in final_prompt_blocks
+    template["compiler"]["final_prompt_text"] = _render_final_prompt_text(
+        template["compiler"]["output_mode"],
+        prompt_sets,
     )
-    template["compiler"]["compiler_errors"] = errors + budget_errors
+    structure_errors = validate_compiled_prompt_structure(template)
+    template["compiler"]["compiler_errors"] = errors + budget_errors + structure_errors
     template["compiler"]["compiler_warnings"] = warnings
 
     all_errors = template["compiler"]["compiler_errors"]

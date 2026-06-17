@@ -4,7 +4,7 @@
 Status:    ACTIVE — repo contract (source of truth)
 Version:   v1.0
 Scope:     Operator-facing raw video prompt templates -> parser-ready seeds ->
-           9-section / Flow final prompts via the video_template_compiler_runtime
+           final prompt set surfaces via the video_template_compiler_runtime
 Authority: registries/video_engine_duration_contracts.yaml (engine/duration),
            registries/video_template_schema.yaml (canonical record),
            registries/dialogue_budget_corridor.yaml (dialogue budget),
@@ -17,8 +17,7 @@ Authority: registries/video_engine_duration_contracts.yaml (engine/duration),
 
 This contract defines how an operator sends a **raw / very raw / rough** video
 prompt request to BOSMAX Agents, and how that request is normalized into a
-parser-ready seed and then polished into a detailed 9-section (or Google Flow)
-video prompt.
+parser-ready seed and then polished into a detailed final prompt surface.
 
 The operator declares **intent** (engine, duration, intake mode, product /
 avatar / action / dialogue / safety detail). BOSMAX derives the deterministic
@@ -42,8 +41,10 @@ downstream surfaces and must be generated only after this repo contract passes.
    / QA. Shape defined by `registries/video_template_schema.yaml`.
 3. **Block registry / child rows** — compiler / exporter generated **only**.
    Never hand-authored by the operator.
-4. **Final 9-section / Flow prompt** — compiler / Claude Cowork generated. The
-   engine-ready output. This is **not** the raw template.
+4. **Final prompt surface** — compiler / Claude Cowork generated. Single-block
+   runs emit one complete 9-section prompt. Multi-block runs emit a
+   `MULTI_PROMPT_SET` container with one complete 9-section prompt per block.
+   This is **not** the raw template.
 
 ---
 
@@ -74,15 +75,16 @@ block compilation.
 - `prompt_execution_mode` / lane — derived (e.g. Google Flow `FLOW_EXTEND_UI`
   vs `FLOW_EXTEND_10S`).
 - `block_mode`, `block_count`, per-block `dialogue_budget`, storyboard,
-  continuity locks, `final_prompt_text`, `final_prompt_blocks`, QA verdict.
+  continuity locks, `output_mode`, `prompt_set_count`, `prompt_sets`,
+  `final_prompt_text`, `final_prompt_blocks`, QA verdict.
 
 ## F. Forbidden manual fields
 
 The operator must never hand-author any of:
-`block_plan` (except a deliberate negative test), `final_prompt_text`,
-`final_prompt_blocks`, `final_prompt_block_text`, `final_block_prompt_text`,
-`block_script_json`, or child block rows. These belong to the runtime / compiler
-/ exporter only.
+`block_plan` (except a deliberate negative test), `output_mode`,
+`prompt_set_count`, `prompt_sets`, `final_prompt_text`, `final_prompt_blocks`,
+`final_prompt_block_text`, `final_block_prompt_text`, `block_script_json`, or
+child block rows. These belong to the runtime / compiler / exporter only.
 
 ---
 
@@ -121,6 +123,37 @@ The runtime derives `block_plan` deterministically (authority:
 A declared `block_plan` that diverges from the deterministic plan fails closed
 (`StoryboardError`).
 
+## H1. Multi-block output law
+
+If the derived `block_plan` contains more than one block, the final output must
+be `MULTI_PROMPT_SET`.
+
+- Each block exports as its own complete 9-section prompt set.
+- `prompt_set_count == len(block_plan)`.
+- `prompt_sets.length == len(block_plan)`.
+- Each prompt set exposes:
+  - `set_index`
+  - `set_duration`
+  - `set_role`
+  - `block_source`
+  - `continuation_from_previous_set`
+  - `wps_budget`
+  - `dialogue_word_count`
+  - `safe_max_words`
+  - `dialogue_budget_status`
+  - `final_prompt_9_sections`
+- Continuation sets must continue directly from the previous set and must not
+  restart the scene, product intro, avatar identity, lighting, scale, wardrobe,
+  camera style, or commercial arc.
+- The runtime must never collapse multiple blocks into one combined 9-section
+  prompt.
+
+Required examples:
+
+- GROK 16s -> `SET 1 = 10s` + `SET 2 = 6s`
+- GROK 20s -> `SET 1 = 10s` + `SET 2 = 10s`
+- GROK 30s -> `SET 1 = 10s` + `SET 2 = 10s` + `SET 3 = 10s`
+
 ---
 
 ## I. Dialogue law
@@ -133,6 +166,8 @@ A declared `block_plan` that diverges from the deterministic plan fails closed
   block 1 ≈ 26–28 words, block 2 ≈ 15–16 words). The raw template provides
   dialogue **intent/seed**; the compiler / script-generator writes and budgets
   the final per-block spoken lines.
+- For GROK 16s `[10,6]`, block 1 uses the 10s budget and block 2 uses the 6s
+  budget. The runtime must never budget the dialogue as one 16s spoken block.
 
 ## J. Overlay law
 
@@ -245,7 +280,17 @@ for every template under `samples/video_raw_prompt_templates/`:
 10. Spoken dialogue intent present (`dialogue_seed` or `hook`).
 11. Mode-appropriate truth lock present.
 12. Compiles through parser -> storyboard -> compiler with no QA failure.
-13. Output remains sample/test only.
+13. Single-block runs emit `output_mode=SINGLE_PROMPT`, `prompt_set_count=1`,
+    and exactly one prompt set.
+14. Multi-block runs emit `output_mode=MULTI_PROMPT_SET`,
+    `prompt_set_count=len(block_plan)`, and one 9-section prompt set per block.
+15. GROK 16s HYBRID / READY_FRAME / ASSET_SET samples all compile to two prompt
+    sets `[10,6]`, with set 2 marked as a continuation and the CTA in the final
+    set.
+16. Validator fails closed if a multi-block output collapses into one combined
+    prompt or leaks forbidden phrases such as `FIRST 10 SECONDS`, `FINAL 6
+    SECONDS`, or `[8,8]` for GROK 16s.
+17. Output remains sample/test only.
 
 Run alongside the existing suite:
 
@@ -309,5 +354,8 @@ overlay_allowed: false
   validation.
 - Notion stores raw seeds for operator reference; it does not store
   `final_prompt_text` as a source of truth and never hand-authors child rows.
+- When a downstream Notion field such as `FINAL CLAUDE COPY-PASTE PROMPT`
+  mirrors a multi-block runtime, it must declare `MULTI-PROMPT SET` and must
+  not claim `one final 9-section prompt`.
 - No Notion pages, CSV, production rows, or final production prompts are produced
   by this contract or its validator — sample/test only.

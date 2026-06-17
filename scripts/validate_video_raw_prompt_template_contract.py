@@ -66,6 +66,9 @@ INTAKE_CANON = {
 FORBIDDEN_MANUAL_KEYS = {
     "final_prompt_text",
     "final_prompt_blocks",
+    "prompt_sets",
+    "prompt_set_count",
+    "output_mode",
     "final_prompt_block_text",
     "final_block_prompt_text",
     "block_script_json",
@@ -181,6 +184,73 @@ def validate_sample(path: Path) -> None:
         compiled["compiler"]["prompt_surface_status"] == "COMPILED",
         f"{name}: prompt surface COMPILED",
     )
+    prompt_sets = compiled["compiler"]["prompt_sets"]
+    block_plan = [int(x) for x in compiled["duration"]["block_plan"]]
+    expected_output_mode = "SINGLE_PROMPT" if len(block_plan) == 1 else "MULTI_PROMPT_SET"
+    check(
+        compiled["compiler"]["output_mode"] == expected_output_mode,
+        f"{name}: output_mode is {expected_output_mode}",
+    )
+    check(
+        int(compiled["compiler"]["prompt_set_count"]) == len(block_plan),
+        f"{name}: prompt_set_count matches block_plan length",
+    )
+    check(
+        isinstance(prompt_sets, list) and len(prompt_sets) == len(block_plan),
+        f"{name}: prompt_sets length matches block_plan length",
+    )
+    for index, prompt_set in enumerate(prompt_sets, start=1):
+        check(int(prompt_set["set_index"]) == index, f"{name}: set {index} index matches order")
+        check(int(prompt_set["set_duration"]) == block_plan[index - 1], f"{name}: set {index} duration matches block_plan")
+        check(
+            isinstance(prompt_set["final_prompt_9_sections"], list) and len(prompt_set["final_prompt_9_sections"]) == 9,
+            f"{name}: set {index} contains exactly 9 sections",
+        )
+        check(
+            0 < int(prompt_set["wps_budget"]["duration_seconds"]) <= int(prompt_set["set_duration"]),
+            f"{name}: set {index} uses a block-scoped WPS duration",
+        )
+        check(
+            prompt_set["dialogue_budget_status"] in {"PASS", "WARN"},
+            f"{name}: set {index} dialogue_budget_status is PASS/WARN",
+        )
+        check(
+            "NO_OVERLAY" in str(prompt_set["final_prompt_9_sections"][8]["section_text"]),
+            f"{name}: set {index} section 9 preserves NO_OVERLAY",
+        )
+    if engine == "GROK" and dur == 16:
+        check(
+            prompt_sets[0]["continuation_from_previous_set"] is False,
+            f"{name}: GROK 16s set 1 starts fresh",
+        )
+        check(
+            prompt_sets[1]["continuation_from_previous_set"] is True,
+            f"{name}: GROK 16s set 2 is explicit continuation",
+        )
+        check(
+            int(prompt_sets[0]["wps_budget"]["duration_seconds"]) == 10,
+            f"{name}: GROK 16s set 1 WPS budget stays on 10s",
+        )
+        check(
+            int(prompt_sets[1]["wps_budget"]["duration_seconds"]) == 6,
+            f"{name}: GROK 16s set 2 WPS budget stays on 6s",
+        )
+        final_set_text = "\n".join(
+            str(section["section_text"]) for section in prompt_sets[-1]["final_prompt_9_sections"]
+        )
+        check(
+            str(compiled["parsed"]["cta"]) in final_set_text,
+            f"{name}: GROK 16s CTA lands in final prompt set",
+        )
+        forbidden_surface = str(compiled["compiler"]["final_prompt_text"])
+        for needle in (
+            "VISUAL STORY - FIRST 10 SECONDS",
+            "VISUAL STORY - FINAL 6 SECONDS",
+            "Create one 16-second GROK video prompt",
+            "one continuous 16s video",
+            "[8,8]",
+        ):
+            check(needle not in forbidden_surface, f"{name}: forbidden collapsed-output phrase absent ({needle})")
 
     # 4. runtime derives the correct deterministic plan
     derived = [int(x) for x in compiled["duration"]["block_plan"]]
