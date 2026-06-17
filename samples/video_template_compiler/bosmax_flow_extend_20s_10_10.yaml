@@ -1,0 +1,13 @@
+template_id: BOSMAX_FLOW_EXTEND_20S_10_10
+template_name: BOSMAX Google Flow 20s Extend (10+10)
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+duration: 20s
+intake_mode: READY_FRAME
+# No block_plan: the runtime derives GOOGLE_FLOW 20s = [10, 10] (FLOW_EXTEND_10S lane).
+hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus?"
+body: "Banyak produk besar menyusahkan, tak muat poket bila keluar. BOSMAX roll-on ni kecil, ringan, sapu sekali terus rasa segar. Senang bawa pergi mana-mana, simpan dalam beg pun muat tanpa menyusahkan harian anda."
+cta: "Tap tengok harga sekarang, boss."
+visual_seed: "Ready-frame continuation cadence, motion-delta only, identity and product position locked from frame, label readable."
+product_truth_ref: products/BOSMAX_SERUM.yaml

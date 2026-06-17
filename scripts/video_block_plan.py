@@ -34,6 +34,63 @@ def is_ready_mode_status(value: str) -> bool:
     return normalized in {"READY", "READY_REVIEWED_FLOW_EXTEND"}
 
 
+def _default_mode_for_duration(
+    engine_contract: dict[str, Any], total_duration_seconds: int
+) -> str | None:
+    """Deterministically pick an execution mode for a duration when none is given.
+
+    Resolution order:
+      1. explicit ``default_total_lane`` override for this exact duration
+         (used for durations valid in more than one lane, e.g. Google Flow 40s),
+      2. the unique READY mode whose valid_total_durations contains the duration,
+      3. the engine's declared ``default_execution_mode`` (which then fails closed
+         downstream if it does not actually support the duration).
+    """
+    execution_modes = engine_contract.get("execution_modes") or {}
+    overrides = {
+        int(key): str(value).upper()
+        for key, value in (engine_contract.get("default_total_lane") or {}).items()
+    }
+    if total_duration_seconds in overrides:
+        return overrides[total_duration_seconds]
+    ready_candidates: list[str] = []
+    for name, mode in execution_modes.items():
+        if not is_ready_mode_status(str(mode.get("status", ""))):
+            continue
+        totals = {int(item) for item in mode.get("valid_total_durations_seconds", [])}
+        if total_duration_seconds in totals:
+            ready_candidates.append(str(name).upper())
+    if len(ready_candidates) == 1:
+        return ready_candidates[0]
+    return str(engine_contract.get("default_execution_mode", "")).upper() or None
+
+
+def resolve_execution_mode(
+    engine_id: str, total_duration_seconds: int, explicit: str | None = None
+) -> str | None:
+    """Resolve the concrete execution mode for an engine+duration.
+
+    Returns the alias-normalized mode name for engines that use execution_modes
+    (GOOGLE_FLOW, VEO clip-chain). Returns the normalized explicit value (or
+    None) for legacy single-lane engines such as GROK that ignore execution_mode.
+    """
+    bundle = load_registry_bundle()
+    engine_contract = bundle.contracts.get("engines", {}).get(engine_id, {})
+    if "execution_modes" not in engine_contract:
+        return normalize_execution_mode(explicit)
+    aliases = {
+        str(alias).upper(): str(target).upper()
+        for alias, target in (engine_contract.get("execution_mode_aliases") or {}).items()
+    }
+    explicit_mode = normalize_execution_mode(explicit)
+    if explicit_mode:
+        return aliases.get(explicit_mode, explicit_mode)
+    resolved = _default_mode_for_duration(engine_contract, total_duration_seconds)
+    if not resolved:
+        return None
+    return aliases.get(resolved, resolved)
+
+
 def load_registry_bundle() -> RegistryBundle:
     contracts = yaml.safe_load(CONTRACT_PATH.read_text(encoding="utf-8")) or {}
     budget_data = yaml.safe_load(DIALOGUE_BUDGET_PATH.read_text(encoding="utf-8")) or {}
@@ -257,12 +314,16 @@ def build_plan(
 
     engine_contract = contracts[engine_id]
     if "execution_modes" in engine_contract:
-        mode_name = normalize_execution_mode(execution_mode) or str(engine_contract.get("default_execution_mode", "")).upper()
         aliases = {
             str(alias).upper(): str(target).upper()
             for alias, target in (engine_contract.get("execution_mode_aliases") or {}).items()
         }
-        mode_name = aliases.get(mode_name, mode_name)
+        explicit_mode = normalize_execution_mode(execution_mode)
+        if explicit_mode:
+            mode_name = aliases.get(explicit_mode, explicit_mode)
+        else:
+            resolved = _default_mode_for_duration(engine_contract, total_duration_seconds)
+            mode_name = aliases.get(resolved, resolved) if resolved else resolved
         if not mode_name:
             raise ValueError(f"{engine_id} is missing default_execution_mode")
         execution_modes = engine_contract.get("execution_modes") or {}

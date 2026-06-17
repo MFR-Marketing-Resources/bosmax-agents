@@ -21,6 +21,13 @@ enums:
     - FRAMES
     - INGREDIENTS
     - HYBRID
+  intake_mode:
+    # Optional operator-facing asset-intake pattern. Empty string when unset.
+    # Input aliases normalize: HYBRID->PRODUCT_ONLY, FRAMES->READY_FRAME,
+    # INGREDIENTS->ASSET_SET. Distinct from the compiler `mode` enum above.
+    - PRODUCT_ONLY
+    - READY_FRAME
+    - ASSET_SET
   block_mode:
     - SINGLE_BLOCK
     - MULTI_BLOCK
@@ -31,6 +38,7 @@ enums:
     - EXTENSION
     - CLIP_CHAIN
     - FLOW_EXTEND_UI
+    - FLOW_EXTEND_10S
   qa_status:
     - PASS
     - WARN
@@ -82,6 +90,7 @@ sections:
     platform: Requested publishing platform.
     engine: Canonical BOSMAX engine key.
     mode: Template authoring mode.
+    intake_mode: Optional operator-facing asset-intake pattern (PRODUCT_ONLY, READY_FRAME, ASSET_SET); empty when unset. Distinct from `mode`.
     template_category: Logical template family.
     output_type: Expected downstream output surface.
     commercial_angle_id: Optional commercial angle id for landbank traceability (falls back to source_angle_id on export).
@@ -110,6 +119,7 @@ sections:
     cta: Closing CTA.
     risk_class: Simple risk grade for early screening.
     claim_class: Claim handling class.
+    overlay_allowed: True only when the operator explicitly opts into text overlay; otherwise Section 9 stays NO_OVERLAY and overlay/subtitle text is blocked.
     forbidden_claims: Explicit forbidden claim phrases.
     forbidden_visuals: Explicit forbidden visual phrases.
   storyboard:
@@ -144,6 +154,11 @@ supported_block_plans:
   - [8, 8]
   - [10, 10]
   - [8, 8, 8]
+  - [10, 8]
+  - [10, 10, 10]
+  - [10, 10, 10, 10]
+  - [10, 10, 10, 10, 10]
+  - [10, 10, 10, 10, 10, 10]
 unsupported_block_plans:
   - [4, 4, 4, 4]
 governance_rules:
@@ -151,3 +166,6 @@ governance_rules:
   - Raw seed text and compiled final prompt text must remain separate export surfaces.
   - Marker tokens such as CTX_, CAM_, CLASS_, SCRIPT_, DNA_, ANCHOR_, TRG, TEMP_, SCENE_, BLOCK_, INTERVAL_, REF_, IMG_, VID_, AUDIO_, GEN_, and RENDER_ must not leak into final prompt output.
   - Unsafe claims such as cure, guaranteed result, sexual-performance uplift, or risky direct-body-use instructions must block production readiness.
+  - Section 9 overlay defaults to NO_OVERLAY; overlay, subtitle, or on-screen-text instructions are blocked unless overlay_allowed is explicitly set, and any allowed overlay must stay bounded and never cover the product label or visual truth.
+  - The operator supplies engine, duration, and intake_mode only; the runtime derives block_plan deterministically. Operators must not hand-author block_plan, child block rows, or final_prompt_text.
+  - Google Flow runs two deterministic lanes that never mix inside one render. FLOW_EXTEND_UI is the 8s chain (8, 16=[8,8], 24=[8,8,8]); FLOW_EXTEND_10S is the 10s extend lane (10, 18=[10,8], 20=[10,10], 30/40/50/60 repeated 10s). Google Flow must never use the GROK [10,6] split, and GROK must never use an 8s block.

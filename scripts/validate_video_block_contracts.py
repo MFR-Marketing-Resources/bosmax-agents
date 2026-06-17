@@ -7,6 +7,8 @@ from typing import Any
 import yaml
 
 from video_block_plan import CONTRACT_PATH, DIALOGUE_BUDGET_PATH, build_plan, load_registry_bundle
+from video_storyboard_builder import StoryboardError, build_storyboard  # type: ignore[import]
+from video_template_parser import build_canonical_template  # type: ignore[import]
 
 ROOT = Path(__file__).resolve().parents[1]
 HANDOFF_DOC_PATH = ROOT / "BOSMAX_NOTION_MULTI_BLOCK_VIDEO_HANDOFF_v1.md"
@@ -250,9 +252,101 @@ def validate_flow_contract(engines: dict[str, Any]) -> list[str]:
     return checks
 
 
+def validate_flow_10s_contract(engines: dict[str, Any]) -> list[str]:
+    """Google Flow 10s extend lane (FLOW_EXTEND_10S) — new dual-lane addition."""
+    flow = engines["GOOGLE_FLOW"]
+    execution_modes = flow.get("execution_modes") or {}
+    ten = execution_modes.get("FLOW_EXTEND_10S") or {}
+    require(
+        str(ten.get("status", "")).upper() == FLOW_READY_STATUS,
+        f"FLOW_EXTEND_10S must be {FLOW_READY_STATUS}",
+    )
+
+    expected_plans = {
+        10: [10],
+        18: [10, 8],
+        20: [10, 10],
+        30: [10, 10, 10],
+        40: [10, 10, 10, 10],
+        50: [10, 10, 10, 10, 10],
+        60: [10, 10, 10, 10, 10, 10],
+    }
+    checks: list[str] = []
+    for duration, expected_blocks in expected_plans.items():
+        plan = build_plan("GOOGLE_FLOW", duration, execution_mode="FLOW_EXTEND_10S")
+        actual_blocks = [int(item) for item in plan["block_durations_seconds"]]
+        require(plan["status"] == "READY", f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s must resolve READY")
+        require(actual_blocks == expected_blocks, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s mismatch: expected {expected_blocks}, got {actual_blocks}")
+        require(all(block in (8, 10) for block in actual_blocks), f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s contains invalid block duration (only 8/10 allowed)")
+        require(actual_blocks.count(8) <= 1, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s must not chain more than one 8s tail")
+        require(6 not in actual_blocks, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s must never use a 6s GROK block")
+        require(plan["requires_previous_clip_final_second"] is True, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s must require previous clip final second")
+        require(plan["requires_identity_reanchor"] is True, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s missing identity re-anchor")
+        require(plan["requires_product_reanchor"] is True, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s missing product re-anchor")
+        for block in plan["blocks"][1:]:
+            require(block["bridge_in_required"] is True, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s block {block['block_index']} missing bridge-in")
+            require(block["requires_previous_clip_final_second"] is True, f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s block {block['block_index']} missing previous clip final second")
+        # Operator writes only engine+duration: the lane must auto-derive to 10s extend.
+        default_plan = build_plan("GOOGLE_FLOW", duration)
+        require(default_plan["execution_mode"] == "FLOW_EXTEND_10S", f"GOOGLE_FLOW {duration}s default lane must resolve to FLOW_EXTEND_10S")
+        require([int(item) for item in default_plan["block_durations_seconds"]] == expected_blocks, f"GOOGLE_FLOW {duration}s default plan mismatch")
+        checks.append(f"GOOGLE_FLOW FLOW_EXTEND_10S {duration}s -> {'+'.join(str(item) for item in actual_blocks)}")
+
+    # The 8s chain must keep auto-deriving to FLOW_EXTEND_UI for its own durations.
+    for duration, expected_blocks in {8: [8], 16: [8, 8], 24: [8, 8, 8]}.items():
+        default_plan = build_plan("GOOGLE_FLOW", duration)
+        require(default_plan["execution_mode"] == "FLOW_EXTEND_UI", f"GOOGLE_FLOW {duration}s default lane must stay FLOW_EXTEND_UI")
+        require([int(item) for item in default_plan["block_durations_seconds"]] == expected_blocks, f"GOOGLE_FLOW {duration}s 8s-chain default mismatch")
+        checks.append(f"GOOGLE_FLOW default {duration}s -> FLOW_EXTEND_UI {expected_blocks}")
+    return checks
+
+
+def validate_duration_lane_negatives() -> list[str]:
+    """Negative tests: cross-engine block plans must fail closed.
+
+    GROK must never use an 8s block; Google Flow must never use the GROK [10,6]
+    split; declared block plans that diverge from the deterministic plan must
+    raise StoryboardError instead of compiling.
+    """
+    checks: list[str] = []
+    grok16 = [int(item) for item in build_plan("GROK", 16)["block_durations_seconds"]]
+    require(grok16 == [10, 6], f"GROK 16s must remain [10,6], got {grok16}")
+    require(8 not in grok16, "GROK 16s must never contain an 8s block")
+    flow16 = [int(item) for item in build_plan("GOOGLE_FLOW", 16)["block_durations_seconds"]]
+    require(flow16 == [8, 8], f"GOOGLE_FLOW 16s must remain [8,8], got {flow16}")
+    require(flow16 != [10, 6], "GOOGLE_FLOW 16s must never be the GROK [10,6] split")
+    checks.append("planner guards: GROK16=[10,6] (no 8s), FLOW16=[8,8] (no [10,6])")
+
+    bad_plans = [
+        ("GROK 16s [8,8]", "GROK", "16s", [8, 8]),
+        ("GOOGLE_FLOW 16s [10,6]", "GOOGLE_FLOW", "16s", [10, 6]),
+        ("GOOGLE_FLOW 18s [8,10]", "GOOGLE_FLOW", "18s", [8, 10]),
+        ("GOOGLE_FLOW 20s [8,8,4]", "GOOGLE_FLOW", "20s", [8, 8, 4]),
+    ]
+    for label, engine, duration, declared in bad_plans:
+        payload = {
+            "template_name": "negative-contract-fixture",
+            "product_lane": "BOSMAX",
+            "platform": "TikTok",
+            "engine": engine,
+            "duration": duration,
+            "block_plan": declared,
+            "hook": "Hook line satu",
+            "body": "Body line dua tiga empat lima",
+            "cta": "Tap tengok harga",
+        }
+        template = build_canonical_template(payload, None)
+        try:
+            build_storyboard(template)
+            fail(f"{label} must fail closed (declared plan != deterministic plan)")
+        except StoryboardError:
+            checks.append(f"{label} rejected (fail-closed)")
+    return checks
+
+
 def validate_dialogue_budget_coverage() -> list[str]:
     bundle = load_registry_bundle()
-    expected = [6, 7, 8, 10, 12, 16, 18, 20, 24, 30, 32, 40, 48, 56]
+    expected = [6, 7, 8, 10, 12, 16, 18, 20, 24, 30, 32, 40, 48, 50, 56, 60]
     checks: list[str] = []
     for duration in expected:
         budget = bundle.budgets.get(("BM", "BRISK_UGC", duration))
@@ -275,6 +369,8 @@ def main() -> None:
     veo_checks = validate_veo_contract(engines)
     veo_lite_checks = validate_veo31_lite_contract(engines)
     flow_checks = validate_flow_contract(engines)
+    flow_10s_checks = validate_flow_10s_contract(engines)
+    negative_checks = validate_duration_lane_negatives()
     budget_checks = validate_dialogue_budget_coverage()
 
     print("VALIDATION PASSED")
@@ -282,7 +378,15 @@ def main() -> None:
     print(f"Dialogue Budget Registry: {DIALOGUE_BUDGET_PATH}")
     print(f"Handoff Doc: {HANDOFF_DOC_PATH}")
     print(f"Decision Record: {DECISION_DOC_PATH}")
-    for item in grok_checks + veo_checks + veo_lite_checks + flow_checks + budget_checks:
+    for item in (
+        grok_checks
+        + veo_checks
+        + veo_lite_checks
+        + flow_checks
+        + flow_10s_checks
+        + negative_checks
+        + budget_checks
+    ):
         print(item)
 
 

@@ -98,6 +98,10 @@ def main() -> None:
         fixture_dir / "bosmax_flow_frames_multi_8x8.yaml",
         fixture_dir / "bosmax_hybrid_multi_8x8.yaml",
         fixture_dir / "mwtcb_product_demo_single_6s.yaml",
+        fixture_dir / "bosmax_flow_extend_10s_single_10s.yaml",
+        fixture_dir / "bosmax_flow_extend_18s_10_8.yaml",
+        fixture_dir / "bosmax_flow_extend_20s_10_10.yaml",
+        fixture_dir / "bosmax_grok_extend_16s_10_6.yaml",
     ]
     for fixture in success_fixtures:
         validate_fixture(fixture)

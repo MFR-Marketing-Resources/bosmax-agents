@@ -1,0 +1,15 @@
+template_id: BOSMAX_GROK_EXTEND_16S_10_6
+template_name: BOSMAX GROK 16s Extend (10+6)
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+duration: 16s
+intake_mode: HYBRID
+# No block_plan: the runtime derives GROK 16s = [10, 6]. GROK never uses an 8s block.
+hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
+body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."
+cta: "Tap tengok harga sekarang, boss."
+visual_seed: "Brisk handheld UGC framing, product in palm, quick cap-open motion, label readable."
+product_truth_ref: products/BOSMAX_SERUM.yaml
+forbidden_claims:
+  - menyembuhkan penyakit

@@ -138,6 +138,25 @@ Internal labels stay internal unless operator/debug mode explicitly asks for the
 
 ---
 
+## 4a. Raw-Template Intake Mode Mapping
+
+The operator-facing raw video template exposes a single `intake_mode` field. It
+maps deterministically onto the internal source modes below.
+
+| `intake_mode` (alias) | Internal source mode | Uploaded assets | Avatar source |
+|-----------------------|----------------------|-----------------|---------------|
+| `PRODUCT_ONLY` (`HYBRID`) | `HYBRID_PRODUCT_ANCHOR_MODE` | product image only | avatar pool / description |
+| `READY_FRAME` (`FRAMES`) | `READY_FRAME_MODE` | one finished frame (product + avatar + scene) | locked from the frame (continue / animate only) |
+| `ASSET_SET` (`INGREDIENTS`) | `REFERENCE_SET_MODE` | role-mapped set (product-truth + avatar + optional scene/style) | uploaded avatar overrides registry; product truth outranks style |
+
+Binding rules carry over unchanged: product truth outranks avatar and style;
+uploaded avatar overrides registry avatar; `READY_FRAME` is continuation-only and
+must not rebuild the scene. The operator supplies `engine`, `duration`, and
+`intake_mode`; the runtime derives the block plan and never asks the operator to
+author `block_plan`, child rows, or `final_prompt_text`.
+
+---
+
 ## 5. Asset Role Classification
 
 Every uploaded visual must be classified before storyboard or prompt generation.

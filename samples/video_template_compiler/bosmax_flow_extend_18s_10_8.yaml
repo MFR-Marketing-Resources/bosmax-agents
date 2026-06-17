@@ -1,0 +1,13 @@
+template_id: BOSMAX_FLOW_EXTEND_18S_10_8
+template_name: BOSMAX Google Flow 18s Extend (10+8)
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+duration: 18s
+intake_mode: INGREDIENTS
+# No block_plan: the runtime derives GOOGLE_FLOW 18s = [10, 8] (FLOW_EXTEND_10S lane).
+hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus kerja?"
+body: "Produk besar menyusahkan, tak muat poket bila keluar rumah. BOSMAX roll-on kecil ni sapu sekali terus rasa segar, ringan, senang bawa ke mana-mana setiap hari."
+cta: "Tap tengok harga sekarang, boss."
+visual_seed: "Asset-set UGC cadence, product truth lock from product reference, avatar interacts naturally, label readable."
+product_truth_ref: products/BOSMAX_SERUM.yaml

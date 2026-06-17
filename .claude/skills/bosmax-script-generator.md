@@ -914,6 +914,30 @@ FORBIDDEN:
 - calm premium silence sebagai default TikTok UGC pace
 ```
 
+**GOOGLE_FLOW dual-lane hard contract examples:**
+```
+Google Flow ada DUA lane deterministic — JANGAN campur dalam satu render:
+
+FLOW_EXTEND_UI (8s chain):
+  8s total   → 8s
+  16s total  → 8s + 8s
+  24s total  → 8s + 8s + 8s
+
+FLOW_EXTEND_10S (10s extend):
+  10s total  → 10s
+  18s total  → 10s + 8s
+  20s total  → 10s + 10s
+  30s total  → 10s + 10s + 10s
+  40s total  → 10s + 10s + 10s + 10s
+  50s total  → 10s + 10s + 10s + 10s + 10s
+  60s total  → 10s + 10s + 10s + 10s + 10s + 10s
+
+FORBIDDEN:
+- GOOGLE_FLOW guna split [10, 6] (itu GROK sahaja)
+- GROK guna block 8s
+- campur 8s chain dengan 10s extend dalam satu render
+```
+
 **Shot ladder mandate:**
 ```
 Untuk semua commercial video:

@@ -461,12 +461,23 @@ engines:
     engine_family: WORKFLOW_LAYER
     supports_multi_block: true
     default_execution_mode: FLOW_EXTEND_UI
-    max_block_duration_seconds: 8
-    valid_block_durations_seconds: [8]
+    max_block_duration_seconds: 10
+    valid_block_durations_seconds: [8, 10]
     decision_record: BOSMAX_VEO31_FLOW_CONTRACT_DECISION_v1.md
     shared_copywriting_avatar_resolver_payload: true
+    dual_lane_note: >
+      Google Flow now runs two deterministic lanes. FLOW_EXTEND_UI is the legacy
+      8s clip-chain (8, 16=[8,8], 24=[8,8,8], plus longer 8s arrays).
+      FLOW_EXTEND_10S is the new 10s extend lane (10, 18=[10,8], 20=[10,10],
+      30/40/50/60 repeated 10s). 16s stays [8,8]; 18s stays [10,8]; Google Flow
+      must never use the GROK [10,6] split. The 8s and 10s lanes never mix inside
+      one render.
     execution_mode_aliases:
       FLOW_EXTEND: FLOW_EXTEND_UI
+      GOOGLE_FLOW_8S_CHAIN: FLOW_EXTEND_UI
+      GOOGLE_FLOW_10S_EXTEND: FLOW_EXTEND_10S
+    default_total_lane:
+      40: FLOW_EXTEND_10S
     review_reason: >
       Google Flow and Veo Extend now have BOSMAX-reviewed deterministic
       multi-block structure for the supported Flow UI 8s surface. Vertex 7s
@@ -633,6 +644,146 @@ engines:
               bridge_out_required: true
               bridge_in_required: true
             - block_index: 7
+              role: CTA_CLOSE
+              bridge_out_required: false
+              bridge_in_required: true
+      FLOW_EXTEND_10S:
+        status: READY_REVIEWED_FLOW_EXTEND
+        extension_surface: FLOW_UI
+        extension_step_duration_seconds: 10
+        dialogue_budget_duration_seconds: 10
+        single_clip_durations_seconds: [10]
+        valid_total_durations_seconds: [10, 18, 20, 30, 40, 50, 60]
+        default_total_to_blocks:
+          10: [10]
+          18: [10, 8]
+          20: [10, 10]
+          30: [10, 10, 10]
+          40: [10, 10, 10, 10]
+          50: [10, 10, 10, 10, 10]
+          60: [10, 10, 10, 10, 10, 10]
+        requires_previous_clip_final_second: true
+        lane_note: >
+          New Google Flow 10s extend lane. Block durations are 10s, with a single
+          8s tail allowed only for the 18s plan ([10, 8]). This lane must never
+          emit the GROK [10, 6] split and must never down-mix to the 8s chain.
+        required_fields:
+          - Previous Clip Final Second State
+          - Continuity Goal
+          - Identity Reanchor
+          - Product Reanchor
+          - Copywriting ID
+          - Avatar Context ID or Avatar Pool ID
+          - Dialogue Budget
+          - Final Block Dialogue
+          - Block Dialogue Word Count
+          - Scene Continuity Notes
+          - Audio Continuity Notes
+          - Frame Bridge Notes
+          - Bridge-Out
+          - Bridge-In
+          - Block Prompt Manual Output
+          - Validator Proof
+        seam_contract:
+          require_frame_bridge: true
+          require_previous_clip_final_second: true
+          require_identity_reanchor_every_block: true
+          require_product_reanchor_every_block: true
+          require_bridge_in_on_non_first_blocks: true
+          require_bridge_out_on_non_final_blocks: true
+          continuity_goal: Continue the speech, action, and framing from the previous clip final second without reset.
+        block_role_defaults:
+          18:
+            - block_index: 1
+              role: HOOK_PAIN_FRICTION
+              bridge_out_required: true
+              bridge_in_required: false
+            - block_index: 2
+              role: RELIEF_CTA
+              bridge_out_required: false
+              bridge_in_required: true
+          20:
+            - block_index: 1
+              role: HOOK_PAIN_FRICTION
+              bridge_out_required: true
+              bridge_in_required: false
+            - block_index: 2
+              role: RELIEF_PROOF_CTA
+              bridge_out_required: false
+              bridge_in_required: true
+          30:
+            - block_index: 1
+              role: HOOK_PAIN_FRICTION
+              bridge_out_required: true
+              bridge_in_required: false
+            - block_index: 2
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 3
+              role: CTA_CLOSE
+              bridge_out_required: false
+              bridge_in_required: true
+          40:
+            - block_index: 1
+              role: HOOK_PAIN
+              bridge_out_required: true
+              bridge_in_required: false
+            - block_index: 2
+              role: FRICTION_PROOF
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 3
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 4
+              role: CTA_CLOSE
+              bridge_out_required: false
+              bridge_in_required: true
+          50:
+            - block_index: 1
+              role: HOOK_PAIN
+              bridge_out_required: true
+              bridge_in_required: false
+            - block_index: 2
+              role: FRICTION_PROOF
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 3
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 4
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 5
+              role: CTA_CLOSE
+              bridge_out_required: false
+              bridge_in_required: true
+          60:
+            - block_index: 1
+              role: HOOK_PAIN
+              bridge_out_required: true
+              bridge_in_required: false
+            - block_index: 2
+              role: FRICTION_PROOF
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 3
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 4
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 5
+              role: RELIEF_PROOF_DEVELOPMENT
+              bridge_out_required: true
+              bridge_in_required: true
+            - block_index: 6
               role: CTA_CLOSE
               bridge_out_required: false
               bridge_in_required: true

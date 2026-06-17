@@ -35,6 +35,20 @@ MODE_ALIASES = {
     "HYBRID": "HYBRID",
 }
 
+# Operator-facing intake mode (asset-upload pattern). Kept deliberately separate
+# from the compiler `mode` enum above: `mode` describes seed-authoring style,
+# `intake_mode` describes how the operator supplied product/avatar/scene assets.
+INTAKE_MODE_ALIASES = {
+    "HYBRID": "PRODUCT_ONLY",
+    "PRODUCT_ONLY": "PRODUCT_ONLY",
+    "READY_FRAME": "READY_FRAME",
+    "FRAMES": "READY_FRAME",
+    "INGREDIENTS": "ASSET_SET",
+    "ASSET_SET": "ASSET_SET",
+}
+
+_OVERLAY_TRUTHY = {"true", "yes", "allowed", "allow", "on", "1"}
+
 PRODUCT_ALIASES = {
     "BOSMAX": "BOSMAX",
     "BOSMAX_SERUM": "BOSMAX",
@@ -137,6 +151,35 @@ def normalize_mode(value: Any) -> str:
     return normalized
 
 
+def normalize_intake_mode(value: Any) -> str:
+    """Normalize the optional operator-facing intake mode.
+
+    Returns "" when not supplied (intake_mode is optional metadata and is not a
+    required schema path). Raises ParserError for an unrecognised value so bad
+    operator input fails closed instead of silently passing through.
+    """
+    token = str(value or "").strip().upper().replace("-", "_").replace(" ", "_")
+    if not token:
+        return ""
+    normalized = INTAKE_MODE_ALIASES.get(token)
+    if not normalized:
+        raise ParserError(f"Unsupported intake_mode: {value!r}")
+    return normalized
+
+
+def resolve_overlay_allowed(payload: dict[str, Any]) -> bool:
+    """Overlay is forbidden by default (NO_OVERLAY). It is only allowed when the
+    operator explicitly opts in via an overlay flag or supplies overlay text.
+    """
+    flag = _get(payload, "overlay_allowed", "allow_overlay", "overlay", default="")
+    if isinstance(flag, bool):
+        explicit = flag
+    else:
+        explicit = str(flag).strip().lower() in _OVERLAY_TRUTHY
+    overlay_seed = str(_get(payload, "overlay_seed", "overlay_text", default="")).strip()
+    return bool(explicit or overlay_seed)
+
+
 def normalize_product_lane(value: Any) -> str:
     token = str(value or "ON_THE_FLY").strip().upper().replace("-", "_")
     token = re.sub(r"\s+", "_", token)
@@ -172,12 +215,20 @@ def parse_block_plan(value: Any) -> list[int]:
     return plan
 
 
-def derive_execution_mode(engine: str, payload: dict[str, Any]) -> str:
+def derive_execution_mode(
+    engine: str, payload: dict[str, Any], duration_seconds: int
+) -> str:
     explicit = str(
         _get(payload, "prompt_execution_mode", "execution_mode", default="")
     ).strip()
     if explicit:
         return explicit.upper().replace("-", "_").replace(" ", "_")
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from video_block_plan import resolve_execution_mode  # type: ignore[import]
+
+    resolved = resolve_execution_mode(engine, duration_seconds)
+    if resolved:
+        return resolved
     return EXECUTION_MODE_BY_ENGINE[engine]
 
 
@@ -235,13 +286,16 @@ def build_canonical_template(
 
     engine = normalize_engine(_get(payload, "engine", "Engine"))
     mode = normalize_mode(_get(payload, "mode", "Mode", default="FRAMES"))
+    intake_mode = normalize_intake_mode(
+        _get(payload, "intake_mode", "intake", "Intake Mode", default="")
+    )
     product_lane = normalize_product_lane(
         _get(payload, "product_lane", "product_workflow", "Product Lane", "product_name", default="ON_THE_FLY")
     )
     duration_seconds = parse_duration_seconds(
         _get(payload, "duration", "total_duration", "Duration", "Total Duration")
     )
-    execution_mode = derive_execution_mode(engine, payload)
+    execution_mode = derive_execution_mode(engine, payload, duration_seconds)
     block_plan = parse_block_plan(_get(payload, "block_plan", "Block Plan", default=[]))
     if not block_plan:
         block_plan = derive_block_plan(
@@ -272,6 +326,7 @@ def build_canonical_template(
             "platform": str(_get(payload, "platform", "Platform", default="TikTok")).strip() or "TikTok",
             "engine": engine,
             "mode": mode,
+            "intake_mode": intake_mode,
             "template_category": str(_get(payload, "template_category", default="VIDEO_TEMPLATE_COMPILER")).strip() or "VIDEO_TEMPLATE_COMPILER",
             "output_type": str(_get(payload, "output_type", default="NOTION_READY_VIDEO_PROMPT")).strip() or "NOTION_READY_VIDEO_PROMPT",
             "commercial_angle_id": str(_get(payload, "commercial_angle_id", "source_angle_id", "angle_id", default="")).strip(),
@@ -303,6 +358,7 @@ def build_canonical_template(
             "cta": cta,
             "risk_class": str(_get(payload, "risk_class", default="LOW")).strip() or "LOW",
             "claim_class": str(_get(payload, "claim_class", default="STANDARD")).strip() or "STANDARD",
+            "overlay_allowed": resolve_overlay_allowed(payload),
             "forbidden_claims": list(_get(payload, "forbidden_claims", default=[])) if isinstance(_get(payload, "forbidden_claims", default=[]), list) else [],
             "forbidden_visuals": list(_get(payload, "forbidden_visuals", default=[])) if isinstance(_get(payload, "forbidden_visuals", default=[]), list) else [],
         },

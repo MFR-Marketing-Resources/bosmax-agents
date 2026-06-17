@@ -64,6 +64,15 @@ Sample files: `samples/notion/video_single_block_templates.yaml`
 | VEO_3_1_LITE | 24s | [8, 8, 8] | CLIP_CHAIN |
 | GROK | 16s | [10, 6] | EXTENSION |
 | GROK | 20s | [10, 10] | EXTENSION |
+| GOOGLE_FLOW (8s chain) | 16s | [8, 8] | FLOW_EXTEND_UI |
+| GOOGLE_FLOW (8s chain) | 24s | [8, 8, 8] | FLOW_EXTEND_UI |
+| GOOGLE_FLOW (10s extend) | 10s | [10] | FLOW_EXTEND_10S |
+| GOOGLE_FLOW (10s extend) | 18s | [10, 8] | FLOW_EXTEND_10S |
+| GOOGLE_FLOW (10s extend) | 20s | [10, 10] | FLOW_EXTEND_10S |
+| GOOGLE_FLOW (10s extend) | 30s | [10, 10, 10] | FLOW_EXTEND_10S |
+| GOOGLE_FLOW (10s extend) | 40s | [10, 10, 10, 10] | FLOW_EXTEND_10S |
+| GOOGLE_FLOW (10s extend) | 50s | [10, 10, 10, 10, 10] | FLOW_EXTEND_10S |
+| GOOGLE_FLOW (10s extend) | 60s | [10, 10, 10, 10, 10, 10] | FLOW_EXTEND_10S |
 
 ### Template field contract (per multi-block template)
 
@@ -105,6 +114,26 @@ Sample files: `samples/notion/video_single_block_templates.yaml`
 - requires_identity_reanchor: true
 - requires_product_reanchor: true
 - bridge_in_required: true for all non-first blocks
+
+### Google Flow dual-lane rules
+
+Google Flow now runs two deterministic lanes. They never mix inside a single
+render.
+
+- `FLOW_EXTEND_UI` — 8s chain: 8s = [8], 16s = [8, 8], 24s = [8, 8, 8]
+  (plus longer 8s arrays). 16s stays [8, 8].
+- `FLOW_EXTEND_10S` — 10s extend lane: 10s = [10], 18s = [10, 8],
+  20s = [10, 10], 30s = [10, 10, 10], 40s = [10, 10, 10, 10],
+  50s = [10, 10, 10, 10, 10], 60s = [10, 10, 10, 10, 10, 10].
+- 18s is the only 10s-lane plan that carries a single 8s tail ([10, 8]).
+- 40s is valid in both lanes; the registry `default_total_lane` override routes
+  auto-derived 40s to the 10s extend lane ([10, 10, 10, 10]). The 8s-chain 40s
+  ([8, 8, 8, 8, 8]) remains reachable only by explicitly selecting
+  `FLOW_EXTEND_UI`.
+- Google Flow must NEVER use the GROK [10, 6] split.
+- GROK must NEVER use an 8s block (GROK blocks are 6s or 10s only).
+- The operator never writes `execution_mode` or `block_plan`; the runtime
+  derives the lane and block plan from engine + duration.
 
 ### Child prompt output rule
 
@@ -252,14 +281,49 @@ operator-facing batch input YAML or Notion template fields.
 
 ---
 
+## F. Raw Prompt Template Contract (intake_mode)
+
+The operator-facing raw template requires only:
+
+- `engine` — GROK, GOOGLE_FLOW, VEO_3_1, VEO_3_1_LITE
+- `duration` — e.g. `16s`
+- `intake_mode` — one of:
+  - `PRODUCT_ONLY` (alias `HYBRID`): product image uploaded; avatar generated
+    from the avatar pool / description; scene, action, and dialogue are described
+    in the raw template.
+  - `READY_FRAME` (alias `FRAMES`): one finished image uploaded (avatar + product
+    + scene already exist); the system continues/animates from the frame; action
+    and dialogue are continuation only; do not rebuild the scene from scratch.
+  - `ASSET_SET` (alias `INGREDIENTS`): multiple uploaded images with an asset role
+    map (product-truth image, avatar image, optional scene/style image); product
+    truth outranks avatar and style.
+- product / avatar / image-role / action / dialogue details.
+
+The operator does NOT write `block_plan` — the runtime derives the lane and
+block plan deterministically from engine + duration. The operator does NOT
+hand-author child block rows or `final_prompt_text`; those are produced only by
+the compiler / export path.
+
+## G. Dialogue & Overlay Law
+
+- `dialogue_required` defaults to YES for commercial video; the CTA is spoken by default.
+- Section 9 defaults to `NO_OVERLAY`.
+- Hook / body / CTA are never auto-converted into on-screen text.
+- Text overlay is allowed only when the operator explicitly opts in
+  (`overlay_allowed: true` or an `overlay_seed`). When allowed, overlay must stay
+  bounded and must never cover the product label or visual truth.
+- The compiler blocks overlay / subtitle / on-screen-text leakage in seed and
+  storyboard surfaces whenever overlay is not explicitly allowed.
+
 ## Readiness Table
 
 | Surface | Status |
 |---|---|
 | Video single-block | READY |
 | Video multi-block (GROK 16s/20s, VEO_LITE 16s/24s) | READY |
+| Video multi-block (GOOGLE_FLOW 8s chain: 16s/24s; 10s extend: 10/18/20/30/40/50/60s) | READY |
 | Batch single-block | READY |
-| Batch multi-block | CONTRACT_READY_NOT_IMPLEMENTED |
+| Batch multi-block | IMPLEMENTED_VIA_VIDEO_TEMPLATE_COMPILER_RUNTIME |
 
 ---
 

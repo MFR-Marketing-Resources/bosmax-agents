@@ -45,6 +45,24 @@ UNSAFE_CLAIM_PATTERNS = [
     (r"\bapply directly to penis\b|\bsapu terus pada zakar\b", "risky direct-body-use instruction"),
 ]
 
+# Section 9 defaults to NO_OVERLAY. Overlay/subtitle/on-screen-text instructions
+# must not leak into the seed/storyboard surfaces unless the operator explicitly
+# opted in (parsed.overlay_allowed). Hook/body/CTA must stay spoken, never
+# auto-converted to on-screen copy.
+OVERLAY_PATTERNS = [
+    r"\boverlay\b",
+    r"text overlay",
+    r"on-?screen text",
+    r"on-?screen copy",
+    r"on-?screen caption",
+    r"\bsubtitle",
+    r"\blower[- ]?third",
+    r"\bcaption\b",
+    r"\bsari kata\b",
+    r"teks atas skrin",
+    r"teks pada skrin",
+]
+
 ENGINE_ADAPTERS = {
     "GROK": "GROK_EXTENSION_V1",
     "GOOGLE_FLOW": "FLOW_EXTEND_UI_V1",
@@ -106,6 +124,20 @@ def _scan_unsafe_claims(texts: list[str], forbidden_claims: list[str]) -> list[s
     for claim in forbidden_claims:
         if claim and claim.lower() in combined.lower():
             findings.append(f"forbidden claim phrase blocked: {claim}")
+    return findings
+
+
+def _scan_overlay_leakage(texts: list[str], overlay_allowed: bool) -> list[str]:
+    if overlay_allowed:
+        return []
+    findings: list[str] = []
+    for text in texts:
+        for pattern in OVERLAY_PATTERNS:
+            if re.search(pattern, text, flags=re.IGNORECASE):
+                findings.append(
+                    f"overlay leakage blocked (Section 9 defaults to NO_OVERLAY): "
+                    f"{pattern} in '{text[:120]}'"
+                )
     return findings
 
 
@@ -213,6 +245,9 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
     texts = _collect_text_surfaces(template)
     errors.extend(_scan_marker_leakage(texts))
     errors.extend(_scan_unsafe_claims(texts, template["parsed"].get("forbidden_claims", [])))
+    errors.extend(
+        _scan_overlay_leakage(texts, bool(template["parsed"].get("overlay_allowed", False)))
+    )
     warnings = list(template["qa"].get("qa_warnings", []))
     warnings.extend(budget_warnings)
 
