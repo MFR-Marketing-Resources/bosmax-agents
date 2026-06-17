@@ -1,0 +1,13 @@
+template_id: BOSMAX_FLOW_EXTEND_10S_SINGLE_10S
+template_name: BOSMAX Google Flow 10s Extend Single
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+duration: 10s
+intake_mode: HYBRID
+# No block_plan: the runtime derives GOOGLE_FLOW 10s = [10] (FLOW_EXTEND_10S lane).
+hook: "Tengah hari rasa lesu, badan tak bermaya lagi?"
+body: "BOSMAX roll-on kecil ni sapu sekali terus rasa segar, ringan, senang bawa."
+cta: "Tap tengok harga sekarang, boss."
+visual_seed: "Handheld UGC framing, product in palm, quick cap-open and roll-on motion, label readable."
+product_truth_ref: products/BOSMAX_SERUM.yaml

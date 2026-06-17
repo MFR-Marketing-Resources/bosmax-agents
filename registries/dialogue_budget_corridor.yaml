@@ -163,3 +163,23 @@ corridors:
     hard_ceiling_words: 168
     underfill_risk: Seven chained clip windows will feel structurally empty unless every block carries deliberate spoken intent.
     overfill_risk: Overdense dialogue overwhelms continuity management and breaks natural UGC cadence.
+  - language: BM
+    pace_class: BRISK_UGC
+    duration_seconds: 50
+    minimum_words: 119
+    target_min_words: 125
+    target_max_words: 131
+    safe_max_words: 138
+    hard_ceiling_words: 150
+    underfill_risk: Five 10s Google Flow extend blocks expose filler drift quickly if the spoken arc thins between proof beats.
+    overfill_risk: Overpacked 50s dialogue compresses seam audio and crowds out product handling.
+  - language: BM
+    pace_class: BRISK_UGC
+    duration_seconds: 60
+    minimum_words: 143
+    target_min_words: 150
+    target_max_words: 158
+    safe_max_words: 165
+    hard_ceiling_words: 180
+    underfill_risk: Six 10s Google Flow extend blocks feel structurally empty unless each block carries deliberate spoken intent.
+    overfill_risk: Overdense 60s dialogue overwhelms continuity management and breaks natural UGC cadence.

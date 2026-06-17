@@ -1,0 +1,13 @@
+template_id: OVERLAY_LEAK_SEED
+template_name: Overlay Leak Seed (must block)
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+duration: 6s
+# No overlay_allowed flag: Section 9 defaults to NO_OVERLAY, so the overlay
+# instruction in body must be blocked by the compiler overlay-leakage QA gate.
+hook: "Rasa panas ganggu badan?"
+body: "Add bold text overlay on screen showing the price."
+cta: "Tap tengok harga."
+visual_seed: "Close handheld UGC framing with product in palm."
+product_truth_ref: products/BOSMAX_SERUM.yaml

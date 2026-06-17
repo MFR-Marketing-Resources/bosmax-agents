@@ -39,6 +39,11 @@ def validate_valid_compiles() -> None:
         "bosmax_flow_frames_multi_8x8.yaml": "FLOW_EXTEND_UI_V1",
         "bosmax_hybrid_multi_8x8.yaml": "VEO_CLIP_CHAIN_V1",
         "mwtcb_product_demo_single_6s.yaml": "GROK_EXTENSION_V1",
+        # Google Flow 10s extend lane (FLOW_EXTEND_10S) + GROK 16s [10,6]
+        "bosmax_flow_extend_10s_single_10s.yaml": "FLOW_EXTEND_UI_V1",
+        "bosmax_flow_extend_18s_10_8.yaml": "FLOW_EXTEND_UI_V1",
+        "bosmax_flow_extend_20s_10_10.yaml": "FLOW_EXTEND_UI_V1",
+        "bosmax_grok_extend_16s_10_6.yaml": "GROK_EXTENSION_V1",
     }
     fixture_dir = ROOT / "samples" / "video_template_compiler"
     for name, adapter in fixtures.items():
@@ -57,6 +62,7 @@ def validate_fail_fixtures() -> None:
         "marker_leak_seed.yaml": "marker leakage detected",
         "missing_storyboard_multi.yaml": "multi-block runtime missing master_storyboard",
         "wps_overflow_multi.yaml": "exceeds safe_max_words",
+        "overlay_leak_seed.yaml": "overlay leakage blocked",
     }
     for name, needle in expected_failures.items():
         compiled = compile_fixture(fixture_dir / name)

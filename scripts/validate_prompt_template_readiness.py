@@ -173,8 +173,8 @@ def check_batch_single_block_coverage() -> None:
 def check_batch_multi_block_shape() -> None:
     data = load_yaml(BATCH_MULTI_FILE)
     status = str(data.get("implementation_status", "")).upper()
-    check("CONTRACT_READY" in status,
-          "batch_multi_block declares CONTRACT_READY implementation_status")
+    check("CONTRACT_READY" in status or "IMPLEMENTED" in status,
+          "batch_multi_block declares CONTRACT_READY or IMPLEMENTED implementation_status")
 
     templates = data.get("templates") or []
     check(len(templates) > 0,

@@ -35,12 +35,15 @@ This lane does not authorize production prompt generation at scale.
   - `GROK` 6s and 10s
   - `VEO_3_1` 4s, 6s, 8s
   - `VEO_3_1_LITE` 8s
-  - `GOOGLE_FLOW` 8s via `FLOW_EXTEND_UI`
+  - `GOOGLE_FLOW` 8s via `FLOW_EXTEND_UI`; 10s via `FLOW_EXTEND_10S`
 - Multi-block:
   - `GROK` `[10,6]`, `[10,10]`, `[6,6]`, `[6,6,6]`, `[10,10,10]`
   - `VEO_3_1` `[8,8]`, `[8,8,8]`, and longer BOSMAX clip-chain arrays
   - `VEO_3_1_LITE` `[8,8]`, `[8,8,8]`, and longer BOSMAX clip-chain arrays
-  - `GOOGLE_FLOW` `[8,8]`, `[8,8,8]`, and longer `FLOW_EXTEND_UI` arrays
+  - `GOOGLE_FLOW` 8s chain (`FLOW_EXTEND_UI`): `[8,8]`, `[8,8,8]`, and longer 8s arrays
+  - `GOOGLE_FLOW` 10s extend (`FLOW_EXTEND_10S`): `[10,8]` (18s), `[10,10]` (20s),
+    `[10,10,10]` (30s), `[10,10,10,10]` (40s), `[10,10,10,10,10]` (50s),
+    `[10,10,10,10,10,10]` (60s)
 
 ## Unsupported Plans
 
@@ -48,6 +51,9 @@ This lane does not authorize production prompt generation at scale.
 - Any declared block plan that diverges from `scripts/video_block_plan.py` fails closed.
 
 ## Mode Semantics
+
+`mode` (compiler seed-authoring style) is distinct from `intake_mode` (operator
+asset-intake pattern). Do not conflate them.
 
 - `FRAMES`
   - visual-seed-first commercial framing
@@ -59,6 +65,23 @@ This lane does not authorize production prompt generation at scale.
   - combines visual framing and structured ingredient cues
   - useful for clip-chain proof arcs where both scene and product behavior must stay locked
 
+## Intake Mode Semantics
+
+`intake_mode` is the optional operator-facing asset-intake pattern. Input
+aliases normalize to canonical values:
+
+- `PRODUCT_ONLY` (alias `HYBRID`) — product image only; avatar from pool /
+  description; scene, action, and dialogue described in the raw template.
+- `READY_FRAME` (alias `FRAMES`) — one finished frame (avatar + product + scene);
+  continue / animate the frame; action and dialogue continuation only; no scene
+  rebuild.
+- `ASSET_SET` (alias `INGREDIENTS`) — multiple role-mapped images; product truth
+  outranks avatar and style.
+
+The operator supplies engine + duration + intake_mode (plus creative detail);
+the runtime derives `block_plan`. Operators never hand-author `block_plan`,
+child block rows, or `final_prompt_text`.
+
 ## Engine Notes
 
 - `GROK`
@@ -66,6 +89,12 @@ This lane does not authorize production prompt generation at scale.
   - no greeting reset on extension blocks
   - continuity must resume within the BOSMAX seam window
 - `GOOGLE_FLOW`
+  - dual deterministic lanes that never mix in one render:
+    - `FLOW_EXTEND_UI` (8s chain): 8, 16=[8,8], 24=[8,8,8]
+    - `FLOW_EXTEND_10S` (10s extend): 10, 18=[10,8], 20=[10,10], 30/40/50/60 repeated 10s
+  - lane is auto-derived from duration; 40s is overlap-resolved to the 10s lane
+    via the registry `default_total_lane` override
+  - must never use the GROK [10,6] split
   - chronological continuation only
   - previous-clip-final-second state must be explicit for non-first blocks
   - avoid vague shorthand such as “same as last frame”
@@ -84,6 +113,8 @@ Compilation fails when any of the following appear:
 - internal markers such as `CTX_`, `DNA_`, `BLOCK_`, `SCENE_`, `IMG_`, `VID_`
 - missing multi-block `master_storyboard`
 - dialogue word count above block `safe_max_words`
+- overlay / subtitle / on-screen-text instructions in seed or storyboard surfaces
+  when `parsed.overlay_allowed` is not explicitly set (Section 9 defaults to NO_OVERLAY)
 
 Warnings are emitted for underfilled or target-range-miss dialogue, but they do not promote a blocked template to ready.
 
