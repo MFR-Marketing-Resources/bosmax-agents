@@ -115,6 +115,104 @@ def get_block_map(mode_contract: dict[str, Any]) -> dict[int, list[int]]:
     }
 
 
+def compute_block_durations(
+    total_duration_seconds: int,
+    primary_block_seconds: int,
+    tail_block_seconds: int | None = None,
+    tail_max_count: int | None = None,
+) -> list[int] | None:
+    """Deterministically derive a block-chain for a target total.
+
+    The operator only supplies engine + total duration; the chaining math is
+    computed here, never hand-specified. Greedy: use as many ``primary`` blocks
+    as possible such that the remainder is an exact multiple of the allowed
+    ``tail`` block (bounded by ``tail_max_count``), preferring the most primary
+    blocks (fewest tails). Returns ``None`` when the total is not representable
+    with the engine's block vocabulary — callers fail closed on ``None``.
+
+    This reproduces every curated ``default_total_to_blocks`` entry in the
+    registry (verified by validate_video_block_contracts.py), so curated tables
+    and computed plans never diverge.
+    """
+    if total_duration_seconds <= 0 or primary_block_seconds <= 0:
+        return None
+    max_primary = total_duration_seconds // primary_block_seconds
+    for n_primary in range(max_primary, -1, -1):
+        remainder = total_duration_seconds - n_primary * primary_block_seconds
+        if remainder == 0:
+            return [primary_block_seconds] * n_primary if n_primary else None
+        if tail_block_seconds and remainder % tail_block_seconds == 0:
+            tail_count = remainder // tail_block_seconds
+            if tail_max_count is not None and tail_count > tail_max_count:
+                continue
+            return [primary_block_seconds] * n_primary + [tail_block_seconds] * tail_count
+    return None
+
+
+def _compute_from_block_math(
+    contract: dict[str, Any], total_duration_seconds: int
+) -> list[int] | None:
+    """Resolve a block-chain from a contract's ``block_math`` config, if present."""
+    math_cfg = contract.get("block_math")
+    if not math_cfg:
+        return None
+    tail = math_cfg.get("tail_block_seconds")
+    tail_max = math_cfg.get("tail_max_count")
+    return compute_block_durations(
+        total_duration_seconds,
+        int(math_cfg["primary_block_seconds"]),
+        int(tail) if tail is not None else None,
+        int(tail_max) if tail_max is not None else None,
+    )
+
+
+def _synthesize_role_defaults(block_count: int) -> list[dict[str, Any]]:
+    """Default copy-arc roles for a computed chain that has no curated
+    block_role_defaults entry: HOOK first, CTA last, RELIEF/PROOF in between."""
+    if block_count <= 0:
+        return []
+    if block_count == 1:
+        return [
+            {
+                "block_index": 1,
+                "role": "SINGLE_BLOCK",
+                "bridge_out_required": False,
+                "bridge_in_required": False,
+            }
+        ]
+    rows: list[dict[str, Any]] = []
+    for index in range(1, block_count + 1):
+        if index == 1:
+            role, bridge_out, bridge_in = "HOOK_PAIN_FRICTION", True, False
+        elif index == block_count:
+            role, bridge_out, bridge_in = "CTA_CLOSE", False, True
+        else:
+            role, bridge_out, bridge_in = "RELIEF_PROOF_DEVELOPMENT", True, True
+        rows.append(
+            {
+                "block_index": index,
+                "role": role,
+                "bridge_out_required": bridge_out,
+                "bridge_in_required": bridge_in,
+            }
+        )
+    return rows
+
+
+def _ensure_role_defaults(
+    role_defaults: dict[int, list[dict[str, Any]]],
+    total_duration_seconds: int,
+    block_count: int,
+) -> dict[int, list[dict[str, Any]]]:
+    """Curated roles win; otherwise synthesize a sensible arc for the chain."""
+    if total_duration_seconds in role_defaults or block_count <= 0:
+        return role_defaults
+    return {
+        **role_defaults,
+        total_duration_seconds: _synthesize_role_defaults(block_count),
+    }
+
+
 def build_blocks(
     *,
     block_durations: list[int],
@@ -169,12 +267,20 @@ def build_legacy_verified_plan(
         raise ValueError(f"{engine_id} does not allow total duration {total_duration_seconds}s")
 
     block_map = get_block_map(engine_contract)
-    block_durations = block_map.get(total_duration_seconds, [total_duration_seconds])
+    # Curated split wins; otherwise compute it deterministically from block_math.
+    block_durations = block_map.get(total_duration_seconds)
+    if block_durations is None:
+        block_durations = _compute_from_block_math(engine_contract, total_duration_seconds)
+    if block_durations is None:
+        raise ValueError(
+            f"{engine_id} is missing deterministic block math for {total_duration_seconds}s"
+        )
     total_budget = get_budget(bundle, language, pace_class, total_duration_seconds)
     role_defaults = {
         int(key): value
         for key, value in (engine_contract.get("block_role_defaults") or {}).items()
     }
+    role_defaults = _ensure_role_defaults(role_defaults, total_duration_seconds, len(block_durations))
     seam_contract = engine_contract.get("seam_contract", {})
     blocks = build_blocks(
         block_durations=block_durations,
@@ -233,9 +339,12 @@ def build_mode_plan(
         single_clip_durations = {int(item) for item in mode_contract.get("single_clip_durations_seconds", [])}
         if total_duration_seconds in single_clip_durations:
             block_durations = [total_duration_seconds]
-        elif is_ready_mode_status(mode_status):
-            raise ValueError(f"{engine_id}.{mode_name} is missing deterministic block math for {total_duration_seconds}s")
         else:
+            # Curated split absent → compute the chain deterministically.
+            block_durations = _compute_from_block_math(mode_contract, total_duration_seconds)
+        if block_durations is None:
+            if is_ready_mode_status(mode_status):
+                raise ValueError(f"{engine_id}.{mode_name} is missing deterministic block math for {total_duration_seconds}s")
             block_durations = []
 
     seam_contract = mode_contract.get("seam_contract", {})
@@ -243,6 +352,7 @@ def build_mode_plan(
         int(key): value
         for key, value in (mode_contract.get("block_role_defaults") or {}).items()
     }
+    role_defaults = _ensure_role_defaults(role_defaults, total_duration_seconds, len(block_durations))
     raw_budget_override = mode_contract.get("dialogue_budget_actual_render_seconds")
     budget_duration_override = int(raw_budget_override) if raw_budget_override is not None else None
     blocks = build_blocks(

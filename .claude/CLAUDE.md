@@ -586,12 +586,24 @@ Aktif untuk semua video requests (Route B, Route C, Route D → video).
 
 **SB_02 — BLOCK MATH (selepas engine confirmed):**
 ```
-→ Refer ENGINE CONSTRAINT TABLE
-→ Kira: block_count = CEIL(duration / max_per_block)
-→ GROK: jika hanya SATU distribusi BOSMAX yang sah, auto-lock dan announce terus
-→ GROK: jika ada lebih dari satu distribusi BOSMAX yang sah, gunakan default BOSMAX dahulu
-  dan hanya offer alternate jika operator memang mahu ubah
-→ Announce block distribution sebelum proceed ke storyboard
+→ BLOCK-CHAIN MATH ADALAH AUTO-COMPUTED — operator hanya bagi engine + duration.
+  Authority deterministic: scripts/video_block_plan.py +
+  registries/video_engine_duration_contracts.yaml. JANGAN minta user bagi split,
+  JANGAN hand-type block array. Preview: `python scripts/video_block_plan.py
+  --engine-id GOOGLE_FLOW --duration 38`.
+→ Setiap engine/lane declare block_math (primary block + optional single tail);
+  solver greedy kira chain dan auto-resolve lane:
+   · GROK            → {primary 10, tail 6}: 6,10 single; 12=[6,6], 16=[10,6],
+                       18=[6,6,6], 20=[10,10], 30=[10,10,10]
+   · GOOGLE_FLOW 8s  → FLOW_EXTEND_UI {primary 8}: 8 single; 16,24,32,40,48,56
+   · GOOGLE_FLOW 10s → FLOW_EXTEND_10S {primary 10, tail 8 ×1}: 10 single; 18=[10,8],
+                       20,30,40,50,60, dan 38=[10,10,10,8] (computed, bukan table)
+→ GROK tak guna 8s block; Flow 10s lane tak guna GROK [10,6]; dua Flow lane tak campur.
+→ Duration yang tak boleh diwakili (GROK 7s, Flow 13s/14s) → REJECT (fail-closed),
+  bukan split salah secara senyap.
+→ Untuk buka duration baru: tambah nombor ke valid_total_durations_seconds lane itu;
+  split auto-compute. Rujuk BOSMAX_VIDEO_PROMPT_QUALITY_GATE_HANDOFF_v1.md (matrix penuh).
+→ Announce block distribution sebelum proceed ke storyboard.
 ```
 
 **SB_02B — DIALOG BUDGET + PACE CHECK:**

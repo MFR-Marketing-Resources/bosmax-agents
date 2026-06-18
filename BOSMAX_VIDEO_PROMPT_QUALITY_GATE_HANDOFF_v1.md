@@ -70,6 +70,59 @@ A speaking video needs a face with synced speech. "Voiceover only" is correct
 
 ---
 
+## Block-chain math is AUTO-COMPUTED (both engines) — the operator never specifies the split
+
+The operator supplies only **engine + total duration**. The system resolves the
+lane and **computes** the block chain deterministically (`scripts/video_block_plan.py`,
+registry `registries/video_engine_duration_contracts.yaml`). Do not ask the user
+for a split, and do not hand-write one.
+
+Preview any plan:
+```bash
+python scripts/video_block_plan.py --engine-id GOOGLE_FLOW --duration 38
+```
+
+**Supported single-block (one prompt set):**
+
+| Engine | Durations |
+|---|---|
+| GROK | 6s, 10s |
+| GOOGLE_FLOW | 8s (8s lane), 10s (10s lane) |
+
+**Supported multi-block chains (auto-resolved lane + computed split):**
+
+| Engine | Total | Computed chain | Lane |
+|---|---|---|---|
+| GROK | 12s | [6,6] | extension |
+| GROK | 16s | [10,6] | extension |
+| GROK | 18s | [6,6,6] | extension |
+| GROK | 20s | [10,10] | extension |
+| GROK | 30s | [10,10,10] | extension |
+| GOOGLE_FLOW | 16s | [8,8] | 8s (FLOW_EXTEND_UI) |
+| GOOGLE_FLOW | 20s | [10,10] | 10s (FLOW_EXTEND_10S) |
+| GOOGLE_FLOW | 30s | [10,10,10] | 10s |
+| GOOGLE_FLOW | 32s | [8,8,8,8] | 8s |
+| GOOGLE_FLOW | 38s | [10,10,10,8] | 10s (single 8s tail) |
+| GOOGLE_FLOW | 40s | [10,10,10,10] | 10s |
+| GOOGLE_FLOW | 48s | [8,8,8,8,8,8] | 8s |
+| GOOGLE_FLOW | 50s | [10,10,10,10,10] | 10s |
+| GOOGLE_FLOW | 56s | [8,8,8,8,8,8,8] | 8s |
+| GOOGLE_FLOW | 60s | [10,10,10,10,10,10] | 10s |
+
+**How the math works (deterministic, fail-closed):**
+- Each engine/lane declares `block_math` (primary block size + optional single
+  tail). The greedy solver uses as many primary blocks as possible, then one
+  allowed tail. GROK = {primary 10, tail 6}; Flow 8s lane = {primary 8}; Flow
+  10s lane = {primary 10, tail 8 ×1}.
+- GROK never uses an 8s block; the Flow 10s lane never uses the GROK [10,6]
+  split and never down-mixes to 8s; the two Flow lanes never mix in one render.
+- A duration the engine **cannot** represent (e.g. GROK 7s, Flow 13s/14s) is
+  **rejected** — fail closed, never a silent wrong split.
+- To enable a new total, add the number to that lane's
+  `valid_total_durations_seconds`; the split is computed automatically (no
+  hand-typed block array needed). 38s is the live proof: it is computed, not
+  table-listed.
+
 ## The deterministic gate (run this on every prompt before Notion)
 
 ```bash

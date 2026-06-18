@@ -135,6 +135,16 @@ corridors:
     overfill_risk: Overstuffed dialogue starts crushing seam continuity and proof-handling beats.
   - language: BM
     pace_class: BRISK_UGC
+    duration_seconds: 38
+    minimum_words: 90
+    target_min_words: 95
+    target_max_words: 100
+    safe_max_words: 105
+    hard_ceiling_words: 114
+    underfill_risk: The Google Flow 10s lane 38s plan ([10,10,10,8]) exposes filler drift in the final 8s tail when the spoken arc thins out.
+    overfill_risk: Overpacking the 38s arc compresses the 8s tail seam and crowds out the CTA close.
+  - language: BM
+    pace_class: BRISK_UGC
     duration_seconds: 40
     minimum_words: 95
     target_min_words: 100
