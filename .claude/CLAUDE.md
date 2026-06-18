@@ -1,6 +1,6 @@
-# BOSMAX v11.7 — CLAUDE.md
+# BOSMAX v11.11 — CLAUDE.md
 # Sistem: BOSMAX Command Centre
-# Versi: v11.7 | Schema: GRAND_MASTER_SKELETON
+# Versi: v11.11 | Schema: GRAND_MASTER_SKELETON
 # Authority: SUPREME_SYSTEMS_ARCHITECT
 # Format: Claude Cowork Skill Orchestrator
 # Changelog v11.2: Added PRE-FLIGHT PROTOCOL, ENGINE CONSTRAINT TABLE (full),

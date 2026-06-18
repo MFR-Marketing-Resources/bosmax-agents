@@ -48,7 +48,8 @@ They ARE:
 │  Does: Analyse intent, route to specialist skill, expand and         │
 │        enforce SOP/guardrails, audit output, return final prompt     │
 │  Authority level: SYSTEM TRUTH — orchestrator is canonical           │
-│  Orchestrator file: `.claude/CLAUDE.md` (BOSMAX v11.6)              │
+│  Orchestrator file: `.claude/CLAUDE.md`                              │
+│  Active snapshot: `.claude/BOSMAX_CURRENT_STATE.md` (current first) │
 └──────────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -171,7 +172,9 @@ OUT OF SCOPE FOR BOSMAX COWORK AGENTS:
 
 ## 7. VERSIONING AND CHANGE AUTHORITY
 
-This contract reflects BOSMAX v11.6 architecture. Any change to:
+This contract reflects the BOSMAX orchestrator architecture carried by
+`.claude/CLAUDE.md`, with the active session-start snapshot declared in
+`.claude/BOSMAX_CURRENT_STATE.md` (current snapshot v11.11). Any change to:
 - The orchestrator role (CLAUDE.md)
 - The skill file inventory (`.claude/skills/`)
 - The route definitions (A/B/C/D/REG/BULK)
@@ -194,6 +197,7 @@ This contract reflects BOSMAX v11.6 architecture. Any change to:
 | `docs/agents/BOSMAX_RAW_SEED_TEAM_CONTRACT_v1.md` | Future Raw Prompt Seed Team contract |
 | `docs/agents/BOSMAX_MARKET_ANGLE_INTELLIGENCE_CONTRACT_v1.md` | Unit 16 — opt-in PRE-FLIGHT STEP 0.5 angle intelligence layer |
 | `registries/angle_intelligence_pack.schema.yaml` | angle_intelligence_pack output schema (Unit 16) |
-| `.claude/CLAUDE.md` | Canonical orchestrator — BOSMAX v11.6 |
+| `.claude/CLAUDE.md` | Canonical orchestrator authority |
+| `.claude/BOSMAX_CURRENT_STATE.md` | First-read current operating snapshot |
 | `.claude/rules/cowork-operating-map.md` | Pipeline sequences and skill file registry |
 | `.claude/rules/video-output-enforcement.md` | Pre-output enforcement checklist for video |
