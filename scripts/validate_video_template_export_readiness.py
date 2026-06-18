@@ -42,7 +42,9 @@ def main() -> None:
     fixture_dir = ROOT / "samples" / "video_template_compiler"
     compiled_templates = [
         load_compiled_fixture(fixture_dir / "bosmax_grok_frames_single_6s.yaml"),
+        load_compiled_fixture(fixture_dir / "bosmax_flow_hybrid_multi_8x8.yaml"),
         load_compiled_fixture(fixture_dir / "bosmax_flow_frames_multi_8x8.yaml"),
+        load_compiled_fixture(fixture_dir / "bosmax_flow_ingredients_multi_8x8.yaml"),
         load_compiled_fixture(fixture_dir / "bosmax_hybrid_multi_8x8.yaml"),
         load_compiled_fixture(fixture_dir / "mwtcb_product_demo_single_6s.yaml"),
     ]
@@ -74,6 +76,8 @@ def main() -> None:
         expect(prompt_set_count == block_count, f"parent row prompt_set_count mismatch for {row['template_id']}")
         if block_count > 1:
             expect("MULTI-PROMPT SET" in row["final_prompt_text"], f"multi-block parent row missing MULTI-PROMPT SET label for {row['template_id']}")
+            if row["engine"] == "GOOGLE_FLOW":
+                expect("[10,6]" not in row["final_prompt_text"], f"Google Flow export must not leak GROK [10,6] split for {row['template_id']}")
 
     child_ids = [row["child_row_id"] for row in child_rows]
     expect(len(child_ids) == len(set(child_ids)), "duplicate child_row_id detected")
@@ -83,6 +87,9 @@ def main() -> None:
         expect(bool(row["final_prompt_block_text"]), f"child row missing final prompt text: {row}")
         expect(row["dialogue_budget_status"] in {"PASS", "WARN", "FAIL"}, f"child row missing dialogue_budget_status: {row}")
         expect(bool(row["set_role"]), f"child row missing set_role: {row}")
+        parent = parent_map[row["parent_template_id"]]
+        if parent["engine"] == "GOOGLE_FLOW" and row["block_id"].endswith("02"):
+            expect("Previous clip final second state:" in row["final_prompt_block_text"], f"Google Flow continuation export missing previous clip final state: {row['block_id']}")
 
     expected_child_count = sum(template["duration"]["block_count"] for template in compiled_templates)
     expect(len(child_rows) == expected_child_count, "child row count does not match compiled block count")

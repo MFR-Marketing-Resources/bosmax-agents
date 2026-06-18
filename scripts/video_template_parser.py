@@ -349,6 +349,20 @@ def build_canonical_template(
             "copy_seed": str(_get(payload, "copy_seed", default=raw_prompt_seed)).strip(),
             "overlay_seed": str(_get(payload, "overlay_seed", default="")).strip(),
             "product_truth_ref": str(_get(payload, "product_truth_ref", default="")).strip(),
+            "product_truth_lock": str(_get(payload, "product_truth_lock", default="")).strip(),
+            "scale_lock": str(_get(payload, "scale_lock", default="")).strip(),
+            "product_input": str(_get(payload, "product_input", default="")).strip(),
+            "avatar_source": str(_get(payload, "avatar_source", default="")).strip(),
+            "avatar_brief": str(_get(payload, "avatar_brief", default="")).strip(),
+            "ready_frame_input": str(_get(payload, "ready_frame_input", default="")).strip(),
+            "frame_truth_lock": str(_get(payload, "frame_truth_lock", default="")).strip(),
+            "visual_authority": str(_get(payload, "visual_authority", default="")).strip(),
+            "asset_role_map": dict(_get(payload, "asset_role_map", default={}))
+            if isinstance(_get(payload, "asset_role_map", default={}), dict)
+            else {},
+            "asset_hierarchy": str(_get(payload, "asset_hierarchy", default="")).strip(),
+            "avatar_reference_lock": str(_get(payload, "avatar_reference_lock", default="")).strip(),
+            "style_scene_limit": str(_get(payload, "style_scene_limit", default="")).strip(),
             "compliance_notes": str(_get(payload, "compliance_notes", default="")).strip(),
         },
         "parsed": {

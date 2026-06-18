@@ -1,0 +1,38 @@
+# BOSMAX RAW PROMPT TEMPLATE — FRAMES / READY_FRAME — GOOGLE_FLOW 16s
+# Layer: user-facing raw prompt template (operator copy-paste).
+# Authority: docs/video_raw_prompt_template_contract_v1.md
+# Demonstrates the Google Flow 8s chain: runtime derives 16s = [8,8] (FLOW_EXTEND_UI).
+
+template_id: BOSMAX_RAW_READY_FRAME_GOOGLE_FLOW_16S
+template_name: BOSMAX Ready-Frame (Google Flow 16s)
+
+engine: GOOGLE_FLOW
+duration: 16s
+intake_mode: READY_FRAME
+platform: TikTok
+language: Malay
+product_lane: BOSMAX
+
+ready_frame_input: "One uploaded finished frame already containing avatar + product + scene."
+visual_authority: USER_UPLOAD
+frame_truth_lock: >
+  The uploaded finished frame is the single visual truth source. Set 1 starts
+  from that frame. Set 2 continues from Set 1 final state. Do not rebuild the
+  avatar, product, scene, wardrobe, lighting, grip, label direction, or scale.
+product_truth_ref: products/BOSMAX_SERUM.yaml
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
+  lip balm / chapstick size.
+continuation_action_seed: "Motion-delta only from the uploaded frame; Set 2 continues from the prior final frame into the next spoken action."
+dialogue_seed: "Hook -> relief -> spoken CTA, budgeted separately for each 8s Flow set."
+hook: "Tengah hari rasa lesu, badan tak selesa sepanjang kerja?"
+body: "Sapu cepat, terus rasa segar, dan senang sambung rutin sebab produk ni kecil sangat."
+cta: "Tap tengok harga sekarang, boss."
+visual_seed: "Continue from the uploaded frame with the same identity, grip, product position, and label readability."
+overlay_allowed: false
+safety_guardrails: "No medical cure / guaranteed-result / sexual-performance claims; no risky direct-body-use instructions."
+forbidden_claims:
+  - menyembuhkan penyakit
+

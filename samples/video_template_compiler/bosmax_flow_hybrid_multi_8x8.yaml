@@ -1,0 +1,25 @@
+template_id: BOSMAX_FLOW_HYBRID_MULTI_8X8
+template_name: BOSMAX Flow Hybrid Multi 8x8
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+mode: HYBRID
+duration: 16s
+intake_mode: PRODUCT_ONLY
+product_input: "Uploaded product image only: BOSMAX Serum 5ML roll-on (no avatar uploaded)."
+product_truth_ref: products/BOSMAX_SERUM.yaml
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Never enlarge,
+  relabel, recolor, redesign, or convert it into a perfume, spray, supplement,
+  skincare-serum, or tall cosmetic bottle.
+scale_lock: "EXACTLY lip balm size / EXACTLY chapstick size; fits into fingers naturally."
+avatar_source: AVATAR_POOL
+avatar_brief: "Malaysian adult presenter, natural UGC look, one-hand product hold."
+hook: "Mula dengan produk di tapak tangan dan pain point disebut terus."
+body: "Beat pertama tunjuk produk kecil yang senang bawa; beat kedua sambung proof handling yang sama tanpa reset skala atau identiti avatar."
+cta: "Akhiri dengan CTA spoken sambil hero hold kekal stabil."
+visual_seed: "Bright indoor UGC framing, product in palm, label readable, continuation-ready motion."
+overlay_allowed: false
+

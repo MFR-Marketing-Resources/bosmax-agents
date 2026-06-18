@@ -1,0 +1,26 @@
+template_id: BOSMAX_FLOW_INGREDIENTS_MULTI_8X8
+template_name: BOSMAX Flow Ingredients Multi 8x8
+product_lane: BOSMAX
+platform: TikTok
+engine: GOOGLE_FLOW
+mode: INGREDIENTS
+duration: 16s
+intake_mode: ASSET_SET
+asset_role_map:
+  image_1: PRODUCT_REFERENCE
+  image_2: AVATAR_REFERENCE
+  image_3: STYLE_SCENE_REFERENCE
+asset_hierarchy: "PRODUCT_TRUTH > AVATAR_IDENTITY > STYLE_SCENE"
+product_truth_ref: products/BOSMAX_SERUM.yaml
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
+  lip balm / chapstick size and never reinterpret it as another package type.
+avatar_reference_lock: "Use image_2 for avatar identity / wardrobe / pose; uploaded avatar overrides any registry persona."
+style_scene_limit: "image_3 controls mood / environment / lighting only and must never override product or avatar identity."
+hook: "Mula dengan asset-set shot yang terus tunjuk produk dan avatar jelas."
+body: "Set 1 pegang role map ketat; Set 2 sambung dari final frame tanpa reset identiti, label direction, atau lighting."
+cta: "Tutup dengan spoken CTA dan hero hold yang masih patuh role map."
+visual_seed: "Asset-set UGC cadence, product truth from image_1, avatar interaction from image_2, environment mood from image_3 only."
+overlay_allowed: false

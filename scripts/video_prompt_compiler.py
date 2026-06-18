@@ -72,9 +72,13 @@ ENGINE_ADAPTERS = {
 
 MULTI_BLOCK_COLLAPSE_PATTERNS = [
     r"Create one 16-second GROK video prompt",
+    r"Create one 16-second Google Flow video prompt",
     r"one continuous 16s video",
+    r"one merged 16s prompt",
     r"VISUAL STORY\s*[-:]\s*FIRST 10 SECONDS",
     r"VISUAL STORY\s*[-:]\s*FINAL 6 SECONDS",
+    r"VISUAL STORY\s*[-:]\s*FIRST 8 SECONDS",
+    r"VISUAL STORY\s*[-:]\s*FINAL 8 SECONDS",
 ]
 
 PROMPT_SET_SECTION_HEADINGS = [
@@ -218,6 +222,75 @@ def _compute_dialogue_budget_status(words: int, budget: dict[str, Any]) -> str:
     return "PASS"
 
 
+def _resolve_engine_adapter(template: dict[str, Any]) -> str:
+    engine = str(template["identity"]["engine"])
+    if engine != "GOOGLE_FLOW":
+        return ENGINE_ADAPTERS[engine]
+    execution_mode = str(template["duration"].get("prompt_execution_mode") or "").upper()
+    if execution_mode == "FLOW_EXTEND_10S":
+        return "FLOW_EXTEND_10S_V1"
+    return ENGINE_ADAPTERS[engine]
+
+
+def _format_asset_role_map(role_map: dict[str, Any]) -> str:
+    ordered = []
+    for key in sorted(role_map):
+        ordered.append(f"{key} = {role_map[key]}")
+    return "; ".join(ordered)
+
+
+def _build_mode_truth_lines(template: dict[str, Any], is_first: bool) -> list[str]:
+    identity = template["identity"]
+    source = template.get("input") or {}
+    intake_mode = str(identity.get("intake_mode") or "")
+    if intake_mode == "READY_FRAME":
+        frame_truth_lock = str(source.get("frame_truth_lock") or "").strip()
+        ready_frame_input = str(source.get("ready_frame_input") or "").strip()
+        return [
+            frame_truth_lock
+            or (
+                f"{ready_frame_input or 'Uploaded finished frame'} is the visual truth. "
+                "Do not rebuild the avatar, product, scene, lighting, grip, wardrobe, label direction, or product scale."
+            )
+        ]
+    if intake_mode == "ASSET_SET":
+        role_map = source.get("asset_role_map") or {}
+        asset_lines: list[str] = []
+        if isinstance(role_map, dict) and role_map:
+            asset_lines.append(f"Asset role map: {_format_asset_role_map(role_map)}.")
+        hierarchy = str(source.get("asset_hierarchy") or "").strip()
+        if hierarchy:
+            asset_lines.append(f"Asset hierarchy: {hierarchy}.")
+        avatar_lock = str(source.get("avatar_reference_lock") or "").strip()
+        if avatar_lock:
+            asset_lines.append(avatar_lock)
+        style_limit = str(source.get("style_scene_limit") or "").strip()
+        if style_limit:
+            asset_lines.append(style_limit)
+        return asset_lines
+    product_lines = []
+    product_input = str(source.get("product_input") or "").strip()
+    if product_input and is_first:
+        product_lines.append(f"Product truth source: {product_input}")
+    avatar_source = str(source.get("avatar_source") or "").strip()
+    avatar_brief = str(source.get("avatar_brief") or "").strip()
+    if avatar_source or avatar_brief:
+        product_lines.append(
+            " ".join(
+                part
+                for part in [
+                    f"Avatar source: {avatar_source}." if avatar_source else "",
+                    avatar_brief if avatar_brief else "",
+                ]
+                if part
+            ).strip()
+        )
+    scale_lock = str(source.get("scale_lock") or "").strip()
+    if scale_lock:
+        product_lines.append(f"Scale lock: {scale_lock}")
+    return product_lines
+
+
 def _build_engine_rules(identity: dict[str, Any], block: dict[str, Any], is_first: bool) -> str:
     lines: list[str] = []
     if identity["engine"] == "GROK":
@@ -232,8 +305,15 @@ def _build_engine_rules(identity: dict[str, Any], block: dict[str, Any], is_firs
             lines.append(
                 f"Previous clip final second state: {block.get('previous_clip_final_second_state', '')}"
             )
+            lines.append(
+                f"Continue from that exact state into: {block.get('block_visual_action', '')}"
+            )
+            lines.append(
+                f"Continuity seam instruction: {block.get('block_continuity_anchor', '')}"
+            )
         lines.extend([
-            "Keep chronology literal and continuation-ready for Flow Extend UI.",
+            "Keep chronology literal and continuation-ready for Google Flow.",
+            "Lock product position, label direction, scale, avatar identity, wardrobe, scene, lighting, and camera direction across the seam.",
             "Do not depend on vague 'from last frame' shorthand; spell out continuity explicitly.",
         ])
     else:
@@ -264,6 +344,18 @@ def _build_prompt_set_sections(
         if not is_first
         else "This is the opening prompt set. Establish the scene cleanly without implying any prior unseen clip."
     )
+    mode_truth_lines = _build_mode_truth_lines(template, is_first)
+    continuity_tail = [
+        f"Character continuity: {storyboard['character_continuity_lock']}",
+        f"Setting/camera continuity: {storyboard['setting_camera_lock']}",
+        f"Start state: {block['block_start_state']}",
+        f"Continuity anchor: {block['block_continuity_anchor']}",
+    ]
+    if not is_first and template["identity"]["engine"] == "GOOGLE_FLOW":
+        continuity_tail.insert(
+            0,
+            f"Previous clip final second state: {block.get('previous_clip_final_second_state', '')}",
+        )
     cta_text = (
         f"Deliver the spoken CTA naturally: {cta} End frame: {block['block_end_state']}"
         if is_final
@@ -300,10 +392,10 @@ def _build_prompt_set_sections(
         {
             "section_index": 3,
             "section_heading": PROMPT_SET_SECTION_HEADINGS[2],
-            "section_text": (
-                f"{continuation_text} Character continuity: {storyboard['character_continuity_lock']} "
-                f"Setting/camera continuity: {storyboard['setting_camera_lock']} "
-                f"Start state: {block['block_start_state']} Continuity anchor: {block['block_continuity_anchor']}"
+            "section_text": " ".join(
+                part
+                for part in [continuation_text, *mode_truth_lines, *continuity_tail]
+                if part
             ),
         },
         {
@@ -311,6 +403,7 @@ def _build_prompt_set_sections(
             "section_heading": PROMPT_SET_SECTION_HEADINGS[3],
             "section_text": (
                 f"Visual action: {block['block_visual_action']} "
+                f"{'Continue from that exact state into this next action. ' if (template['identity']['engine'] == 'GOOGLE_FLOW' and not is_first) else ''}"
                 f"Narrative function: {block['block_narrative_function']}."
             ),
         },
@@ -364,6 +457,7 @@ def _render_final_prompt_text(output_mode: str, prompt_sets: list[dict[str, Any]
 def validate_compiled_prompt_structure(template: dict[str, Any]) -> list[str]:
     compiler = template.get("compiler") or {}
     duration = template.get("duration") or {}
+    identity = template.get("identity") or {}
     storyboard = template.get("storyboard") or {}
     block_plan = [int(item) for item in (duration.get("block_plan") or [])]
     block_count = int(duration.get("block_count") or len(block_plan) or 0)
@@ -373,6 +467,9 @@ def validate_compiled_prompt_structure(template: dict[str, Any]) -> list[str]:
     final_prompt_blocks = compiler.get("final_prompt_blocks") or []
     final_prompt_text = str(compiler.get("final_prompt_text") or "")
     overlay_allowed = bool(template.get("parsed", {}).get("overlay_allowed", False))
+    engine = str(identity.get("engine") or "")
+    execution_mode = str(duration.get("prompt_execution_mode") or "").upper()
+    intake_mode = str(identity.get("intake_mode") or "")
     findings: list[str] = []
 
     if block_count <= 1:
@@ -415,6 +512,7 @@ def validate_compiled_prompt_structure(template: dict[str, Any]) -> list[str]:
                 findings.append(f"prompt_set {index} section indexes must run 1..9")
             if not overlay_allowed and "NO_OVERLAY" not in str(sections[8].get("section_text") or ""):
                 findings.append(f"prompt_set {index} section 9 must preserve NO_OVERLAY")
+        section_text_blob = "\n".join(str(section.get("section_text") or "") for section in sections)
 
         block_source = str(prompt_set.get("block_source") or "")
         block_meta = block_map.get(block_source)
@@ -437,12 +535,54 @@ def validate_compiled_prompt_structure(template: dict[str, Any]) -> list[str]:
             findings.append(f"prompt_set {index} safe_max_words mismatch")
         if str(prompt_set.get("dialogue_budget_status") or "") == "FAIL":
             findings.append(f"prompt_set {index} dialogue budget failed safe_max_words")
+        if engine == "GOOGLE_FLOW":
+            if int(prompt_set.get("set_duration") or 0) not in {8, 10}:
+                findings.append(f"prompt_set {index} Google Flow duration must stay on 8s or 10s blocks")
+            if int(prompt_set.get("wps_budget", {}).get("duration_seconds") or 0) != int(prompt_set.get("set_duration") or 0):
+                findings.append(f"prompt_set {index} Google Flow WPS budget must match set_duration")
+            if int(prompt_set.get("set_index") or 0) > 1:
+                previous_state = str(prompt_set.get("previous_clip_final_second_state") or "")
+                if not previous_state:
+                    findings.append(f"prompt_set {index} Google Flow continuation must expose previous_clip_final_second_state")
+                if f"Previous clip final second state: {previous_state}" not in section_text_blob:
+                    findings.append(f"prompt_set {index} Google Flow continuation must spell out previous clip final second state")
+                if "Continue from that exact state into" not in section_text_blob:
+                    findings.append(f"prompt_set {index} Google Flow continuation must declare the exact next action")
+                if "Continuity seam instruction:" not in section_text_blob:
+                    findings.append(f"prompt_set {index} Google Flow continuation must include a seam instruction")
+                if "Do not restart the scene, product intro, avatar identity, lighting, scale, wardrobe, camera style, or commercial arc." not in section_text_blob:
+                    findings.append(f"prompt_set {index} Google Flow continuation must block scene and identity resets")
+            if intake_mode == "READY_FRAME" and "visual truth" not in section_text_blob.lower():
+                findings.append(f"prompt_set {index} READY_FRAME Google Flow prompt must preserve uploaded frame truth")
+            if intake_mode == "ASSET_SET":
+                if "Asset role map:" not in section_text_blob:
+                    findings.append(f"prompt_set {index} ASSET_SET Google Flow prompt must preserve asset_role_map")
+                if "Asset hierarchy:" not in section_text_blob:
+                    findings.append(f"prompt_set {index} ASSET_SET Google Flow prompt must preserve asset hierarchy")
+            if intake_mode == "PRODUCT_ONLY" and "Scale lock:" not in section_text_blob:
+                findings.append(f"prompt_set {index} PRODUCT_ONLY Google Flow prompt must preserve scale lock")
 
-    if template.get("identity", {}).get("engine") == "GROK" and int(duration.get("duration_seconds") or 0) == 16:
+    if engine == "GROK" and int(duration.get("duration_seconds") or 0) == 16:
         if block_plan != [10, 6]:
             findings.append("GROK 16s must derive [10,6]")
         if block_plan == [8, 8]:
             findings.append("GROK 16s must never use [8,8]")
+    if engine == "GOOGLE_FLOW":
+        if 6 in block_plan:
+            findings.append("Google Flow block plans must never use a 6s GROK split")
+        total_duration = int(duration.get("duration_seconds") or 0)
+        if execution_mode == "FLOW_EXTEND_UI":
+            if total_duration == 16 and block_plan != [8, 8]:
+                findings.append("Google Flow FLOW_EXTEND_UI 16s must derive [8,8]")
+            if total_duration == 24 and block_plan != [8, 8, 8]:
+                findings.append("Google Flow FLOW_EXTEND_UI 24s must derive [8,8,8]")
+        if execution_mode == "FLOW_EXTEND_10S":
+            if total_duration == 10 and block_plan != [10]:
+                findings.append("Google Flow FLOW_EXTEND_10S 10s must derive [10]")
+            if total_duration == 18 and block_plan != [10, 8]:
+                findings.append("Google Flow FLOW_EXTEND_10S 18s must derive [10,8]")
+            if total_duration == 20 and block_plan != [10, 10]:
+                findings.append("Google Flow FLOW_EXTEND_10S 20s must derive [10,10]")
 
     surfaces = [final_prompt_text]
     surfaces.extend(str(block.get("final_prompt_block_text") or "") for block in final_prompt_blocks)
@@ -487,6 +627,7 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
             "set_role": block["block_narrative_function"],
             "block_source": block["block_id"],
             "continuation_from_previous_set": int(block["block_index"]) > 1,
+            "previous_clip_final_second_state": block.get("previous_clip_final_second_state", ""),
             "wps_budget": dict(block.get("block_wps_budget") or {}),
             "dialogue_word_count": block.get("block_dialogue_word_count", 0),
             "safe_max_words": safe_max_words,
@@ -511,7 +652,7 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
             }
         )
 
-    template["compiler"]["engine_adapter"] = ENGINE_ADAPTERS[template["identity"]["engine"]]
+    template["compiler"]["engine_adapter"] = _resolve_engine_adapter(template)
     template["compiler"]["compiler_version"] = "video_template_compiler_runtime@1.0.0"
     template["compiler"]["output_mode"] = "MULTI_PROMPT_SET" if len(blocks) > 1 else "SINGLE_PROMPT"
     template["compiler"]["prompt_set_count"] = len(prompt_sets)

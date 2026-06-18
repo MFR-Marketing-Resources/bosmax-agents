@@ -151,6 +151,8 @@ def build_storyboard(template: dict[str, Any]) -> dict[str, Any]:
     template["storyboard"]["narrative_arc"] = (
         template["storyboard"].get("narrative_arc") or _derive_arc(len(declared_plan))
     )
+    product_lock = str(template["input"].get("product_truth_lock") or "").strip()
+    scale_lock = str(template["input"].get("scale_lock") or "").strip()
     product_ref = template["input"].get("product_truth_ref") or identity["product_lane"]
     template["storyboard"]["character_continuity_lock"] = (
         template["storyboard"].get("character_continuity_lock")
@@ -158,7 +160,15 @@ def build_storyboard(template: dict[str, Any]) -> dict[str, Any]:
     )
     template["storyboard"]["product_continuity_lock"] = (
         template["storyboard"].get("product_continuity_lock")
-        or f"Keep product truth anchored to {product_ref}; label, scale, packaging color, and handling orientation must stay stable."
+        or " ".join(
+            part
+            for part in [
+                product_lock,
+                scale_lock,
+                "" if product_lock else f"Keep product truth anchored to {product_ref}; label, scale, packaging color, and handling orientation must stay stable.",
+            ]
+            if part
+        )
     )
     template["storyboard"]["setting_camera_lock"] = (
         template["storyboard"].get("setting_camera_lock")

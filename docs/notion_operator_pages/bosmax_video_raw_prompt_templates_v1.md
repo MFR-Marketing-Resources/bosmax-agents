@@ -87,8 +87,11 @@ For any engine/duration where the derived `block_plan` has more than one block:
 Required examples:
 
 - GROK 16s -> `SET 1 = 10s`, `SET 2 = 6s`
+- GOOGLE_FLOW 16s (`FLOW_EXTEND_UI`) -> `SET 1 = 8s`, `SET 2 = 8s`
 - GROK 20s -> `SET 1 = 10s`, `SET 2 = 10s`
 - GROK 30s -> `SET 1 = 10s`, `SET 2 = 10s`, `SET 3 = 10s`
+- GOOGLE_FLOW 24s (`FLOW_EXTEND_UI`) -> `SET 1 = 8s`, `SET 2 = 8s`, `SET 3 = 8s`
+- GOOGLE_FLOW 20s (`FLOW_EXTEND_10S`) -> `SET 1 = 10s`, `SET 2 = 10s`
 
 **Notion field guidance**
 
@@ -98,7 +101,8 @@ multi-block runtime it must say **`MULTI-PROMPT SET`** and must explicitly show:
 - `SET 1`, `SET 2`, etc.
 - each set duration
 - 9 sections per set
-- continuation rules
+- continuation from the previous clip final state
+- no merged prompt
 
 It must **not** say `one final 9-section prompt`.
 
@@ -272,6 +276,78 @@ forbidden_claims:
 
 ### 8a. HYBRID / PRODUCT_ONLY — GOOGLE_FLOW 20s (`20s -> [10,10]`)
 
+### 8.0a. HYBRID / PRODUCT_ONLY — GOOGLE_FLOW 16s (`16s -> [8,8]`)
+
+```yaml
+engine: GOOGLE_FLOW
+duration: 16s
+intake_mode: PRODUCT_ONLY
+platform: TikTok
+language: Malay
+product_lane: BOSMAX
+product_input: "Uploaded product image only: BOSMAX Serum 5ML roll-on (no avatar uploaded)."
+product_truth_ref: products/BOSMAX_SERUM.yaml
+product_truth_lock: "BOSMAX Serum 5ML roll-on — preserve exact tiny slim matte-black bottle, glossy black cap, white BOSMAX HERBS wordmark, leaf icon, 'Herbal Oil Roll On' label."
+scale_lock: "EXACTLY lip balm size / EXACTLY chapstick size."
+avatar_source: AVATAR_POOL
+avatar_brief: "Malaysian adult presenter, natural UGC look; BOSMAX selects persona."
+action_seed: "Two continuous 8s Flow beats; Set 2 continues from Set 1 final state."
+dialogue_seed: "Hook -> friction -> relief -> spoken CTA, split across two 8s Flow sets."
+hook: "Tengah hari rasa tak selesa, badan cepat rasa berat?"
+body: "Produk lain besar menyusahkan. BOSMAX roll-on ni kecil macam lip balm, senang bawa."
+cta: "Tap tengok harga sekarang, boss."
+overlay_allowed: false
+# block_plan: NOT supplied — runtime derives GOOGLE_FLOW 16s = [8,8] (FLOW_EXTEND_UI; never [10,6])
+# final_prompt_text: NEVER supplied here
+```
+
+### 8.0b. FRAMES / READY_FRAME — GOOGLE_FLOW 16s (`16s -> [8,8]`)
+
+```yaml
+engine: GOOGLE_FLOW
+duration: 16s
+intake_mode: READY_FRAME
+platform: TikTok
+language: Malay
+product_lane: BOSMAX
+ready_frame_input: "One uploaded finished frame already containing avatar + product + scene."
+frame_truth_lock: "Uploaded finished frame is the visual truth. Set 2 continues from Set 1 final state without rebuilding avatar/product/scene/lighting/grip/wardrobe/label direction/scale."
+product_truth_ref: products/BOSMAX_SERUM.yaml
+dialogue_seed: "Hook -> relief -> spoken CTA, budgeted per 8s Flow set."
+hook: "Tengah hari rasa lesu, badan tak selesa sepanjang kerja?"
+body: "Sapu cepat, terus rasa segar, dan senang sambung rutin."
+cta: "Tap tengok harga sekarang, boss."
+overlay_allowed: false
+# block_plan: NOT supplied — runtime derives GOOGLE_FLOW 16s = [8,8]
+# final_prompt_text: NEVER supplied here
+```
+
+### 8.0c. INGREDIENTS / ASSET_SET — GOOGLE_FLOW 16s (`16s -> [8,8]`)
+
+```yaml
+engine: GOOGLE_FLOW
+duration: 16s
+intake_mode: ASSET_SET
+platform: TikTok
+language: Malay
+product_lane: BOSMAX
+asset_role_map:
+  image_1: PRODUCT_REFERENCE
+  image_2: AVATAR_REFERENCE
+  image_3: STYLE_SCENE_REFERENCE
+asset_hierarchy: "PRODUCT_TRUTH > AVATAR_IDENTITY > STYLE_SCENE"
+product_truth_ref: products/BOSMAX_SERUM.yaml
+avatar_reference_lock: "Use image_2 for identity / wardrobe / pose."
+style_scene_limit: "image_3 controls mood / environment only; never overrides product or avatar identity."
+dialogue_seed: "Hook -> friction -> relief -> spoken CTA, budgeted per 8s Flow set."
+hook: "Produk kecil tapi power, senang sangat nak bawa ke mana-mana."
+body: "Role map kekal ketat dari Set 1 ke Set 2."
+cta: "Tap tengok harga sekarang."
+overlay_allowed: false
+# block_plan: NOT supplied — runtime derives GOOGLE_FLOW 16s = [8,8]
+# final_prompt_text: NEVER supplied here
+```
+
 ```yaml
 engine: GOOGLE_FLOW
 duration: 20s
@@ -333,6 +409,7 @@ safety_guardrails: "No medical cure / guaranteed-result / sexual-performance cla
 - ❌ Do **not** use GROK 8s — GROK blocks are 6s / 10s only.
 - ❌ Do **not** write `[8,8]` for GROK 16s — GROK 16s is `[10,6]`.
 - ❌ Do **not** write `[10,6]` for Google Flow — Flow never uses the GROK split.
+- ❌ Do **not** ask for one merged 16s Google Flow prompt — Flow 16s must export `MULTI-PROMPT SET` with `SET 1 = 8s`, `SET 2 = 8s`.
 - ❌ Do **not** add text overlay unless explicitly needed (`overlay_allowed` stays false).
 - ❌ Do **not** paste a final 9-section prompt into a raw template field.
 - ❌ Do **not** ask the runtime for `one final 9-section prompt` when the derived

@@ -5,9 +5,18 @@ platform: TikTok
 engine: GOOGLE_FLOW
 duration: 10s
 intake_mode: HYBRID
+product_input: "Uploaded product image only: BOSMAX Serum 5ML roll-on (no avatar uploaded)."
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label.
+scale_lock: "EXACTLY lip balm size / EXACTLY chapstick size."
+avatar_source: AVATAR_POOL
+avatar_brief: "Malaysian adult presenter, natural UGC look; BOSMAX selects persona."
 # No block_plan: the runtime derives GOOGLE_FLOW 10s = [10] (FLOW_EXTEND_10S lane).
 hook: "Tengah hari rasa lesu, badan tak bermaya lagi?"
 body: "BOSMAX roll-on kecil ni sapu sekali terus rasa segar, ringan, senang bawa."
 cta: "Tap tengok harga sekarang, boss."
 visual_seed: "Handheld UGC framing, product in palm, quick cap-open and roll-on motion, label readable."
 product_truth_ref: products/BOSMAX_SERUM.yaml
+overlay_allowed: false
