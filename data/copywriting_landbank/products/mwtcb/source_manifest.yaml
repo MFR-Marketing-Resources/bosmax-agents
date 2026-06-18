@@ -11,6 +11,8 @@ canonical_outputs:
   subhook_bank_csv: data/copywriting_landbank/products/mwtcb/subhook_bank.csv
   usp_bank_csv: data/copywriting_landbank/products/mwtcb/usp_bank.csv
   cta_bank_csv: data/copywriting_landbank/products/mwtcb/cta_bank.csv
+  video_copy_matrix_csv: data/copywriting_landbank/products/mwtcb/video_copy_matrix.csv
+  poster_copy_matrix_csv: data/copywriting_landbank/products/mwtcb/poster_copy_matrix.csv
 source_files:
 - source_batch: 2026-06-19_xlsx
   source_file: mwtcb_copywriting_landbank.xlsx
@@ -56,6 +58,8 @@ batch_snapshots:
     normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part2_angle_bank/normalized
   2026-06-19_part3_6_copy_components:
     normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part3_6_copy_components/normalized
+  2026-06-19_part7_poster_video_matrix:
+    normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part7_poster_video_matrix/normalized
 generated_exports:
   xlsx: data/copywriting_landbank/exports/mwtcb_copywriting_landbank.xlsx
   zip: data/copywriting_landbank/exports/mwtcb_copywriting_landbank_csv.zip

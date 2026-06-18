@@ -31,15 +31,16 @@ This folder contains the repository-native copywriting landbank for `Minyak Wari
 4. Merge exact-new rows only; document cross-batch overlaps in `duplicate_report.md`.
 5. Regenerate exports and rerun validation.
 
-## Part 2 & Part 3–6 Implementation
+## Part 2, Part 3–6 & Part 7 Implementation
 
 - **Angle Master Bank** (`angle_bank.csv`): Completed Part 2 implementation with exactly 150 unique copywriting angles generated from the 64 HIGH-priority buyer motivations.
-- **Copy Component Banks** (`hook_bank.csv`, `subhook_bank.csv`, `usp_bank.csv`, `cta_bank.csv`): Completed Part 3-6 implementation with exactly 450 hooks, 450 subhooks, 200 USPs, and 150 CTAs. All elements map back to their source motivation and angle IDs and are formatted native to TikTok Shop Malaysia.
+- **Copy Component Banks** (`hook_bank.csv`, `subhook_bank.csv`, `usp_bank.csv`, `cta_bank.csv`): Completed Part 3-6 implementation with exactly 450 hooks, 450 subhooks, 200 USPs, and 150 CTAs. All elements map back to their source motivation and angle IDs.
+- **Poster and Video Copy Matrices** (`video_copy_matrix.csv`, `poster_copy_matrix.csv`): Completed Part 7 implementation with exactly 500 rows each. All rows combine existing copywriting components mapped back to source IDs, complete with detailed scene/poster directions, formatting, and claim tolerance reviews.
 
 ## Video and Poster Use
 
-- Video: filter `motivation_classification.csv` by `best_content_format`, `best_platform_surface`, `persona_fit`, and `boldness_level`.
-- Poster: prioritize headline-capable rows from `top_poster_ads`, `top_aggressive_hooks`, `top_safe_hooks`, and `VISUAL_RECOGNITION` / `STANDBY_BEFORE_NEED` buckets.
+- Video: filter `video_copy_matrix.csv` by `video_format`, `primary_bucket`, and `raw_claim_tolerance`.
+- Poster: filter `poster_copy_matrix.csv` by `poster_format`, `primary_bucket`, and `raw_claim_tolerance`.
 
 ## Dedupe
 

@@ -1,20 +1,48 @@
 schema_id: video_copy_matrix
 version: 1
 format: csv
-primary_key: video_matrix_row_id
+primary_key: video_matrix_id
 required_columns:
-- video_matrix_row_id
+- video_matrix_id
 - product_id
-- angle_row_id
-- hook_row_id
-- content_format
-- platform_surface
-optional_columns:
-- subhook_row_id
-- usp_row_id
-- cta_row_id
+- motivation_id
+- angle_id
+- hook_id
+- subhook_id
+- usp_id
+- cta_id
+- angle_name
+- hook_text
+- subhook_text
+- usp_text
+- cta_text
+- primary_bucket
+- secondary_bucket
+- angle_family
+- hook_family
+- buyer_stage
 - persona_fit
-- notes
+- boldness_level
+- usage_context
+- sales_mechanism
+- best_content_format
+- platform_surface_fit
+- video_format
+- video_duration_fit
+- scene_direction
+- opening_visual
+- product_role
+- proof_visual
+- cta_delivery
+- dialogue_language
+- copy_tone
+- raw_claim_tolerance
+- production_review_required
+- notion_row_fit
+- creative_notes
+- source_batch
+- matrix_status
+optional_columns: []
 intended_usage:
 - TikTok Shop video planning
 - UGC and hybrid script routing
