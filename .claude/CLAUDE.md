@@ -687,6 +687,17 @@ Aktif untuk semua video requests (Route B, Route C, Route D → video).
   liar; GROK hanya sah pada block 6s atau 10s
 - JANGAN jana text overlay untuk video outputs; overlay adalah haram secara default dan
   hanya dibenarkan jika user explicit minta overlay planning sahaja
+- JANGAN bocor orchestration/budget metadata ke dalam badan prompt yang dibaca engine:
+  "SET 1 of N", "Runtime plan [10,6]", "Do not compile as one 16s video", "Do not use two
+  equal 8s blocks", `output_mode=`, `block_source=`, `dialogue_word_count=`, `safe_max_words=`.
+  Set framing hanya sebagai header LUAR 9-section, bukan dalam teks prompt.
+- JANGAN emit dialog yang BAWAH corridor target range — range ke TARGET, bukan minimum.
+  Dialog pendek = dead air = filler/glitch. Underfill mesti REWRITE, bukan diluluskan.
+- JANGAN senyap jadikan video bercakap sebagai faceless "Voiceover only". Resolve
+  presenter_route dahulu: PRESENTER_FULL / PRESENTER_HYBRID (lip-sync) atau PRODUCT_ONLY_VO
+  (faceless VO, lip-sync tidak relevan). Default video bercakap = PRESENTER_HYBRID.
+- JANGAN biar label konsep dalaman (cth "family shelf cue") ter-code-switch masuk BM spoken
+  line; dialog mesti BM natural.
 ```
 
 ---

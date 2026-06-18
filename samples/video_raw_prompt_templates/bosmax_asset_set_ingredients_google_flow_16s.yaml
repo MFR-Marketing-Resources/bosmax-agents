@@ -9,6 +9,7 @@ template_name: BOSMAX Asset-Set Ingredients (Google Flow 16s)
 engine: GOOGLE_FLOW
 duration: 16s
 intake_mode: ASSET_SET
+presenter_route: PRESENTER_HYBRID
 platform: TikTok
 language: Malay
 product_lane: BOSMAX
@@ -29,7 +30,7 @@ style_scene_limit: "image_3 controls mood / environment / lighting only; it must
 action_seed: "Set 1 opens with product truth from image_1 and avatar identity from image_2; Set 2 continues from the previous final frame with the same role hierarchy."
 dialogue_seed: "Hook -> friction -> relief -> spoken CTA, budgeted per 8s Flow set."
 hook: "Produk kecil tapi power, senang sangat nak bawa ke mana-mana."
-body: "Jangan bagi style scene ambil alih produk atau avatar. Produk kekal kecil macam lip balm, avatar kekal sama, scene cuma bantu mood."
+body: "Jangan biar style scene ambil alih produk atau identiti avatar asal. Produk kekal kecil macam lip balm, avatar kekal orang sama, scene cuma bantu mood dan pencahayaan."
 cta: "Tap tengok harga sekarang."
 visual_seed: "Asset-set UGC cadence; product truth from image_1; avatar motion from image_2; environment mood from image_3 only."
 overlay_allowed: false

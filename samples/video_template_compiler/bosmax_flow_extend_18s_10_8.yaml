@@ -18,8 +18,9 @@ product_truth_lock: >
 avatar_reference_lock: "Use image_2 for identity / wardrobe / pose; uploaded avatar overrides any registry persona."
 style_scene_limit: "image_3 controls mood / environment / lighting only; never overrides product or avatar identity."
 # No block_plan: the runtime derives GOOGLE_FLOW 18s = [10, 8] (FLOW_EXTEND_10S lane).
+presenter_route: PRESENTER_HYBRID
 hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus kerja?"
-body: "Produk besar menyusahkan, tak muat poket bila keluar rumah. BOSMAX roll-on kecil ni sapu sekali terus rasa segar, ringan, senang bawa ke mana-mana setiap hari."
+body: "Produk lain besar menyusahkan, berat, tak muat poket, dan susah nak bawa ke mana-mana setiap masa kan. BOSMAX roll-on kecil macam lip balm ni, sapu sekali terus rasa segar, ringan, dan senang simpan."
 cta: "Tap tengok harga sekarang, boss."
 visual_seed: "Asset-set UGC cadence, product truth lock from product reference, avatar interacts naturally, label readable."
 product_truth_ref: products/BOSMAX_SERUM.yaml

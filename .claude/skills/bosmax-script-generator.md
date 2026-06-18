@@ -1250,6 +1250,28 @@ NO_OVERLAY — Clean video only. No burned-in text, captions, CTA labels, badges
   (dead air / silent action setup > 1s untuk BM commercial UGC)
 - ABORT jika engine = GROK + multi_block + Block 2 membuka idea baru tanpa bridge dari Block 1
 - ABORT jika final operator-facing output bocor internal metadata/debug scaffolding
+- ABORT jika Section 1 / ENGINE-FORMAT (atau mana-mana section) mengandungi orchestration
+  metadata atau set-sequencing narration dalam badan prompt yang dibaca engine. Ini
+  internal sahaja dan HARAM masuk prompt:
+    · "SET 1 of N", "this is set 1 of a two-prompt sequence", "Runtime plan is [10,6]"
+    · "Do not compile as one 16-second video", "Do not use two equal 8-second blocks"
+    · `output_mode=`, `block_source=`, `dialogue_word_count=`, `safe_max_words=`,
+      `target_min_words=`, `target_max_words=`, `dialogue_budget_status=`
+  Framing "SET 1 / SET 2" hanya dibenarkan sebagai header LUAR 9-section (label operator),
+  bukan dalam teks section. Engine-facing prompt = creative render instruction sahaja.
+- ABORT jika mana-mana dialogue block jatuh BAWAH corridor target range. Range dialog ke
+  TARGET (bukan sekadar lepas minimum) — dialog pendek buka dead air dan invite filler/
+  glitch. Underfill = REWRITE_REQUIRED, bukan warning.
+- ABORT jika BM commercial/UGC video melabel audio "Voiceover only" sedangkan presenter/
+  lip-sync diperlukan. Resolve `presenter_route` sebelum emit Section 6/7:
+    · PRESENTER_FULL    → presenter bercakap depan kamera, lip-sync penuh tepat
+    · PRESENTER_HYBRID  → presenter bercakap (lip-sync) + produk-hero cutaway, voice synced
+    · PRODUCT_ONLY_VO   → faceless, voiceover sahaja, lip-sync TIDAK relevan
+  Default untuk video bercakap = PRESENTER_HYBRID. "Voiceover only" hanya sah bila operator
+  explicit pilih PRODUCT_ONLY_VO. JANGAN senyap jadikan video bercakap faceless VO.
+- ABORT jika satu BM spoken line mengandungi English/internal storyboard label yang
+  ter-code-switch ke dalam dialog (contoh: "family shelf cue", "shelf cue", "product hero",
+  "b-roll"). Spoken line mesti BM natural — label konsep adalah internal, bukan untuk disebut.
 - ABORT jika `visual_authority_source = USER_UPLOAD | SANDBOX_VISUAL` tetapi output cuba
   menggunakan persona/product lain dari visual scan
 - JANGAN generate Block N tanpa Master Narrative Brief sebagai authority

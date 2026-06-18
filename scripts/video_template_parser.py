@@ -47,6 +47,30 @@ INTAKE_MODE_ALIASES = {
     "ASSET_SET": "ASSET_SET",
 }
 
+# `presenter_route` decides whether a speaking video renders an on-camera
+# presenter (lip-sync applies) or a faceless product video with voiceover
+# (no mouth, lip-sync not applicable). It is deliberately distinct from
+# `intake_mode` (how assets were supplied): a PRODUCT_ONLY intake can still be
+# a PRESENTER_HYBRID render because the avatar comes from pool/description.
+# A dialogue video must never silently become a faceless voiceover clip.
+PRESENTER_ROUTE_ALIASES = {
+    "PRESENTER_FULL": "PRESENTER_FULL",
+    "FULL_PRESENTER": "PRESENTER_FULL",
+    "PRESENTER": "PRESENTER_FULL",
+    "ON_CAMERA": "PRESENTER_FULL",
+    "AVATAR_FULL": "PRESENTER_FULL",
+    "PRESENTER_HYBRID": "PRESENTER_HYBRID",
+    "HYBRID_PRESENTER": "PRESENTER_HYBRID",
+    "HYBRID": "PRESENTER_HYBRID",
+    "AVATAR_PRODUCT_UGC": "PRESENTER_HYBRID",
+    "PRODUCT_ONLY_VO": "PRODUCT_ONLY_VO",
+    "VOICEOVER": "PRODUCT_ONLY_VO",
+    "VOICEOVER_ONLY": "PRODUCT_ONLY_VO",
+    "VO": "PRODUCT_ONLY_VO",
+    "FACELESS": "PRODUCT_ONLY_VO",
+    "PRODUCT_ONLY": "PRODUCT_ONLY_VO",
+}
+
 _OVERLAY_TRUTHY = {"true", "yes", "allowed", "allow", "on", "1"}
 
 PRODUCT_ALIASES = {
@@ -164,6 +188,18 @@ def normalize_intake_mode(value: Any) -> str:
     normalized = INTAKE_MODE_ALIASES.get(token)
     if not normalized:
         raise ParserError(f"Unsupported intake_mode: {value!r}")
+    return normalized
+
+
+def normalize_presenter_route(value: Any) -> str:
+    """Normalize presenter_route. Returns "" when not supplied so the caller can
+    apply a dialogue-aware default."""
+    token = str(value or "").strip().upper()
+    if not token:
+        return ""
+    normalized = PRESENTER_ROUTE_ALIASES.get(token)
+    if not normalized:
+        raise ParserError(f"Unsupported presenter_route: {value!r}")
     return normalized
 
 
@@ -315,6 +351,22 @@ def build_canonical_template(
     if not parsed_brief:
         parsed_brief = " | ".join(part for part in [hook, body, cta] if part)
 
+    dialogue_present = bool((f"{hook} {body} {cta}").strip())
+    presenter_route = normalize_presenter_route(
+        _get(payload, "presenter_route", "presenter", "Presenter Route", default="")
+    )
+    if not presenter_route:
+        # A speaking video defaults to an on-camera presenter (lip-sync applies);
+        # a silent/visual clip defaults to faceless. Never silently turn a
+        # dialogue video into a faceless voiceover clip.
+        presenter_route = "PRESENTER_HYBRID" if dialogue_present else "PRODUCT_ONLY_VO"
+        if dialogue_present:
+            warnings.append(
+                "presenter_route not set; defaulted to PRESENTER_HYBRID "
+                "(on-camera presenter, lip-sync applies). Set presenter_route: "
+                "PRODUCT_ONLY_VO explicitly for a faceless voiceover clip."
+            )
+
     template = {
         "schema_version": schema.get("version", 1),
         "template_id": template_id,
@@ -327,6 +379,7 @@ def build_canonical_template(
             "engine": engine,
             "mode": mode,
             "intake_mode": intake_mode,
+            "presenter_route": presenter_route,
             "template_category": str(_get(payload, "template_category", default="VIDEO_TEMPLATE_COMPILER")).strip() or "VIDEO_TEMPLATE_COMPILER",
             "output_type": str(_get(payload, "output_type", default="NOTION_READY_VIDEO_PROMPT")).strip() or "NOTION_READY_VIDEO_PROMPT",
             "commercial_angle_id": str(_get(payload, "commercial_angle_id", "source_angle_id", "angle_id", default="")).strip(),

@@ -88,9 +88,45 @@ PROMPT_SET_SECTION_HEADINGS = [
     "VISUAL STORY",
     "SHOT & CAMERA RULES",
     "SPOKEN DIALOGUE",
-    "WPS & DIALOGUE BUDGET",
+    "VOICE & DELIVERY",
     "CTA & END FRAME",
     "NO_OVERLAY",
+]
+
+# Internal orchestration / budget scaffolding that must never reach the
+# engine-facing prompt body. Catches both the deterministic compiler's own
+# key=value emission and prose set-sequencing narration that a chat-lane LLM
+# may try to bake into Section 1 / Section 7.
+PROMPT_SURFACE_METADATA_PATTERNS = [
+    r"output_mode\s*=",
+    r"block_source\s*=",
+    r"dialogue_word_count\s*=",
+    r"safe_max_words\s*=",
+    r"dialogue_budget_status\s*=",
+    r"target_min_words\s*=",
+    r"target_max_words\s*=",
+    r"minimum_words\s*=",
+    r"hard_ceiling_words\s*=",
+    r"\bpace_class\s*=",
+    r"Runtime plan",
+    r"Do not compile as one",
+    r"Do not use two equal",
+    r"multi-?prompt sequence",
+    r"prompt_set_count\s*=",
+]
+
+# English code-switch / internal concept-label tokens that must not appear
+# inside a Malay (BM) spoken line. "family shelf cue" style labels are internal
+# storyboard handles, not natural speech.
+BM_DIALOGUE_LEAK_PATTERNS = [
+    r"\bfamily shelf\b",
+    r"\bshelf cue\b",
+    r"\bproduct hero\b",
+    r"\bb-?roll\b",
+    r"\bvisual seed\b",
+    r"\bnarrative function\b",
+    r"\bhook beat\b",
+    r"\bcta beat\b",
 ]
 
 
@@ -164,6 +200,42 @@ def _scan_overlay_leakage(texts: list[str], overlay_allowed: bool) -> list[str]:
     return findings
 
 
+def _scan_prompt_surface_metadata(prompt_sets: list[dict[str, Any]]) -> list[str]:
+    """Catch internal orchestration/budget scaffolding that leaked into the
+    engine-facing prompt body (key=value tokens or set-sequencing narration).
+    After the compiler stopped emitting these, this is a net that also catches
+    hand-edited / chat-lane prose leaks."""
+    findings: list[str] = []
+    for prompt_set in prompt_sets:
+        for section in prompt_set.get("final_prompt_9_sections", []):
+            text = str(section.get("section_text") or "")
+            for pattern in PROMPT_SURFACE_METADATA_PATTERNS:
+                if re.search(pattern, text, flags=re.IGNORECASE):
+                    findings.append(
+                        f"prompt-surface metadata leak: {pattern} in set "
+                        f"{prompt_set.get('set_index')} section {section.get('section_index')}"
+                    )
+    return findings
+
+
+def _scan_bm_dialogue_leak(template: dict[str, Any]) -> list[str]:
+    """Block English code-switch / internal storyboard labels inside a BM spoken
+    line (e.g. 'family shelf', 'shelf cue', 'b-roll')."""
+    findings: list[str] = []
+    for block in template["storyboard"].get("block_script_json", []):
+        budget = block.get("block_wps_budget") or {}
+        if str(budget.get("language", "")).upper() != "BM":
+            continue
+        dialogue = str(block.get("block_dialogue_or_copy", ""))
+        for pattern in BM_DIALOGUE_LEAK_PATTERNS:
+            if re.search(pattern, dialogue, flags=re.IGNORECASE):
+                findings.append(
+                    f"{block.get('block_id', 'UNKNOWN_BLOCK')} BM spoken line contains an "
+                    f"internal/English code-switch token: {pattern}"
+                )
+    return findings
+
+
 def _validate_storyboard_presence(template: dict[str, Any]) -> list[str]:
     storyboard = template["storyboard"]
     duration = template["duration"]
@@ -200,7 +272,12 @@ def _validate_word_budgets(template: dict[str, Any]) -> tuple[list[str], list[st
         elif target_max and words > target_max:
             warnings.append(f"{block_id} exceeds target_max_words {target_max} with {words} words")
         if minimum_words and words < minimum_words:
-            warnings.append(f"{block_id} is underfilled: {words} words < minimum_words {minimum_words}")
+            # Underfilled dialogue opens dead air the model fills with drift/glitch.
+            # This blocks readiness (REWRITE_REQUIRED) rather than just warning.
+            errors.append(
+                f"{block_id} is underfilled: {words} words < minimum_words {minimum_words} "
+                f"(REWRITE_REQUIRED — expand the copy to fill the {block.get('block_duration', '?')}s beat)"
+            )
         elif target_min and words < target_min:
             warnings.append(f"{block_id} is below target_min_words {target_min} with {words} words")
     return errors, warnings
@@ -214,7 +291,8 @@ def _compute_dialogue_budget_status(words: int, budget: dict[str, Any]) -> str:
     if safe_max and words > safe_max:
         return "FAIL"
     if minimum_words and words < minimum_words:
-        return "WARN"
+        # Underfill is a hard fail: the spoken line cannot carry the beat.
+        return "FAIL"
     if target_min and words < target_min:
         return "WARN"
     if target_max and words > target_max:
@@ -324,6 +402,100 @@ def _build_engine_rules(identity: dict[str, Any], block: dict[str, Any], is_firs
     return " ".join(line for line in lines if line).strip()
 
 
+_PACE_PHRASE = {
+    "BRISK_UGC": "brisk, conversational UGC",
+    "NATURAL_COMMERCIAL": "natural commercial",
+    "CALM_EXPLAINER": "calm, measured explainer",
+}
+
+_LANGUAGE_NAME = {
+    "BM": "Malay",
+    "EN": "English",
+    "ID": "Indonesian",
+    "ZH": "Chinese",
+    "HI": "Hindi",
+    "BN": "Bengali",
+    "AR": "Arabic",
+}
+
+
+def _role_phrase(role: str) -> str:
+    return str(role or "").replace("_", " ").lower().strip() or "this"
+
+
+def _resolve_presenter_route(template: dict[str, Any]) -> str:
+    route = str(template["identity"].get("presenter_route") or "").strip().upper()
+    if route in {"PRESENTER_FULL", "PRESENTER_HYBRID", "PRODUCT_ONLY_VO"}:
+        return route
+    # Defensive default for pre-built payloads that skipped the parser: a video
+    # carrying spoken copy is treated as an on-camera presenter (lip-sync), never
+    # a silent faceless clip.
+    parsed = template.get("parsed", {})
+    has_dialogue = bool(f"{parsed.get('hook','')} {parsed.get('body','')} {parsed.get('cta','')}".strip())
+    return "PRESENTER_HYBRID" if has_dialogue else "PRODUCT_ONLY_VO"
+
+
+def _section1_role_objective(
+    engine: str, duration: int, role: str, total_blocks: int, is_first: bool
+) -> str:
+    """Clean engine-facing role directive. No output_mode=/block_source= metadata,
+    no block-distribution math — that scaffolding belongs in structured fields."""
+    objective = (
+        f"Build a complete {duration}-second {engine} commercial video for TikTok, "
+        f"covering the {_role_phrase(role)} beat."
+    )
+    if total_blocks <= 1:
+        return objective
+    if is_first:
+        return (
+            f"{objective} This is the opening segment of a continuous {total_blocks}-part "
+            "video; render only this beat cleanly and let it flow into the next segment — "
+            "do not try to tell the whole story inside this clip."
+        )
+    return (
+        f"{objective} This continues seamlessly from the previous segment with the same "
+        "presenter, product, scene, and momentum; render only this beat and do not restart "
+        "or recap."
+    )
+
+
+def _section6_spoken_dialogue(presenter_route: str, dialogue: str) -> str:
+    line = dialogue.strip()
+    if presenter_route == "PRODUCT_ONLY_VO":
+        return (
+            "Voiceover narration over product-only visuals — no on-camera speaker, no face in "
+            f"frame, lip-sync not applicable: {line}"
+        )
+    if presenter_route == "PRESENTER_FULL":
+        return (
+            "On-camera presenter delivers every line straight to camera with natural, "
+            "frame-accurate lip-sync — the mouth must match each spoken word: "
+            f"{line}"
+        )
+    # PRESENTER_HYBRID
+    return (
+        "On-camera presenter speaks the lines to camera with accurate lip-sync; on any "
+        "product-hero cutaway the same line continues as tightly synced voice with no "
+        f"audio gap: {line}"
+    )
+
+
+def _section7_voice_delivery(
+    presenter_route: str, language: str, pace_class: str, duration: int
+) -> str:
+    """Natural delivery directive carrying the WPS intent (fill the beat, no dead
+    air) WITHOUT leaking any numeric budget metadata."""
+    lang = _LANGUAGE_NAME.get(str(language or "").upper(), "Malay")
+    pace = _PACE_PHRASE.get(str(pace_class or "").upper(), "natural commercial")
+    speaker = "voiceover" if presenter_route == "PRODUCT_ONLY_VO" else "presenter"
+    return (
+        f"Spoken delivery in {lang} at a {pace} pace. Keep the {speaker} talking naturally "
+        f"across the full {duration} seconds with real breaths between phrases — fill the beat "
+        "edge to edge so there is no silent dead air for the model to fill with drifting or "
+        "glitching motion. Do not rush the words or clip the final phrase."
+    )
+
+
 def _build_prompt_set_sections(
     template: dict[str, Any],
     block: dict[str, Any],
@@ -338,6 +510,7 @@ def _build_prompt_set_sections(
     wps_budget = dict(block.get("block_wps_budget") or {})
     safe_max_words = int(wps_budget.get("safe_max_words", 0))
     dialogue_budget_status = _compute_dialogue_budget_status(dialogue_words, wps_budget)
+    presenter_route = _resolve_presenter_route(template)
     cta = str(template["parsed"].get("cta", "")).strip()
     continuation_text = (
         "Continue directly from the previous prompt set. Do not restart the scene, product intro, avatar identity, lighting, scale, wardrobe, camera style, or commercial arc."
@@ -366,22 +539,16 @@ def _build_prompt_set_sections(
         if not template["parsed"].get("overlay_allowed", False)
         else "Overlay is operator-enabled. Keep any text minimal and never cover the product label, avatar identity, or visual truth."
     )
-    budget_line = (
-        f"dialogue_word_count={dialogue_words}; safe_max_words={safe_max_words}; "
-        f"dialogue_budget_status={dialogue_budget_status}; "
-        f"language={wps_budget.get('language', '')}; pace_class={wps_budget.get('pace_class', '')}; "
-        f"target_min_words={wps_budget.get('target_min_words', 0)}; "
-        f"target_max_words={wps_budget.get('target_max_words', 0)}."
-    )
     sections = [
         {
             "section_index": 1,
             "section_heading": PROMPT_SET_SECTION_HEADINGS[0],
-            "section_text": (
-                f"Set {block['block_index']} of {total_blocks}. Build a complete {block['block_duration']}-second "
-                f"{identity['engine']} prompt for the {block['block_narrative_function']} beat. "
-                f"output_mode={'MULTI_PROMPT_SET' if total_blocks > 1 else 'SINGLE_PROMPT'}. "
-                f"block_source={block['block_id']}."
+            "section_text": _section1_role_objective(
+                str(identity["engine"]),
+                int(block["block_duration"]),
+                str(block["block_narrative_function"]),
+                total_blocks,
+                is_first,
             ),
         },
         {
@@ -415,12 +582,17 @@ def _build_prompt_set_sections(
         {
             "section_index": 6,
             "section_heading": PROMPT_SET_SECTION_HEADINGS[5],
-            "section_text": f"Spoken dialogue only: {dialogue}",
+            "section_text": _section6_spoken_dialogue(presenter_route, dialogue),
         },
         {
             "section_index": 7,
             "section_heading": PROMPT_SET_SECTION_HEADINGS[6],
-            "section_text": budget_line,
+            "section_text": _section7_voice_delivery(
+                presenter_route,
+                str(wps_budget.get("language", "")),
+                str(wps_budget.get("pace_class", "")),
+                int(block["block_duration"]),
+            ),
         },
         {
             "section_index": 8,
@@ -609,6 +781,7 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
     errors.extend(
         _scan_overlay_leakage(texts, bool(template["parsed"].get("overlay_allowed", False)))
     )
+    errors.extend(_scan_bm_dialogue_leak(template))
     warnings = list(template["qa"].get("qa_warnings", []))
     warnings.extend(budget_warnings)
 
@@ -662,6 +835,7 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
         template["compiler"]["output_mode"],
         prompt_sets,
     )
+    errors.extend(_scan_prompt_surface_metadata(prompt_sets))
     structure_errors = validate_compiled_prompt_structure(template)
     template["compiler"]["compiler_errors"] = errors + budget_errors + structure_errors
     template["compiler"]["compiler_warnings"] = warnings

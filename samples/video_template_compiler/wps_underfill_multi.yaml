@@ -1,0 +1,15 @@
+# Regression fixture for the "Prompt tercemar" report: GROK 16s [10,6] with
+# short, flat copy that leaves dead air (the user's glitch) and an English /
+# internal "family shelf cue" code-switch in the BM spoken line. The compiler
+# must BLOCK this (underfilled + BM code-switch leak), not ship it.
+template_id: WPS_UNDERFILL_MULTI
+template_name: WPS Underfill Multi (regression)
+product_lane: BOSMAX
+platform: TikTok
+engine: GROK
+duration: 16s
+intake_mode: HYBRID
+hook: "Ruang rumah nampak tersusun."
+body: "Family shelf cue."
+cta: "Tap tengok harga."
+product_truth_ref: products/BOSMAX_SERUM.yaml

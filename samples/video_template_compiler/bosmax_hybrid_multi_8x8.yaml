@@ -6,8 +6,9 @@ engine: VEO_3_1_LITE
 mode: HYBRID
 duration: 16s
 block_plan: [8, 8]
-hook: "Creator terus bercakap sambil produk muncul di tangan."
-body: "Cap dibuka, roll-on bergerak kemas, label kekal jelas."
-cta: "Akhir clip tunjuk packaging hero dan ajak semak harga."
+presenter_route: PRESENTER_HYBRID
+hook: "Creator terus bercakap sambil produk BOSMAX muncul di tangan dia."
+body: "Cap dibuka laju, roll-on bergerak kemas, label kekal jelas nampak. Sapuan terus rata, kulit rasa lega dan ringan serta-merta."
+cta: "Akhir clip tunjuk packaging hero, ajak semak harga sekarang."
 visual_seed: "Hybrid UGC plus proof-demo cadence with consistent bathroom shelf and skin-safe lighting."
 product_truth_ref: products/BOSMAX_SERUM.yaml

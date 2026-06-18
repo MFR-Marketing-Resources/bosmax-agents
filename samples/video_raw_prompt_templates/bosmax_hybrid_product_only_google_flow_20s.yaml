@@ -10,6 +10,7 @@ template_name: BOSMAX Serum Hybrid Product-Only (Google Flow 20s)
 engine: GOOGLE_FLOW
 duration: 20s
 intake_mode: PRODUCT_ONLY      # canonical (alias HYBRID)
+presenter_route: PRESENTER_HYBRID
 platform: TikTok
 language: Malay
 product_lane: BOSMAX
@@ -35,8 +36,8 @@ avatar_brief: "Malaysian adult presenter from the approved avatar pool, natural 
 # --- action + dialogue (spoken Malay; CTA spoken) ---
 action_seed: "Presenter speaks to camera across two continuous 10s beats; cap-open and roll-on in beat one, pocket and CTA in beat two."
 dialogue_seed: "Hook (pain) -> friction -> relief (compact roll-on) -> spoken CTA, spread across two 10s extend blocks."
-hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus?"
-body: "Banyak produk besar menyusahkan, tak muat poket bila keluar. BOSMAX roll-on ni kecil, ringan, sapu sekali terus rasa segar. Senang bawa pergi mana-mana, simpan dalam beg pun muat tanpa menyusahkan harian anda."
+hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus kerja?"
+body: "Banyak produk lain besar dan berat menyusahkan, makan ruang, tak muat poket bila keluar rumah setiap masa. BOSMAX roll-on ni kecil macam lip balm, ringan, sapu sekali terus rasa segar, dan paling senang nak simpan dalam beg ke poket."
 cta: "Tap tengok harga sekarang, boss."
 visual_seed: "Two-beat UGC cadence, product in palm, label readable, clean continuity across the extend seam."
 

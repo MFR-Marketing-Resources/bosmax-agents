@@ -154,9 +154,14 @@ Use exact enum only. No variants, no spaces in names.
 - `TARGET_RANGE`
 - `OVER_SAFE`
 
-**Reject and trigger internal rewrite:**
-- `UNDERFILLED`
-- `HARD_FAIL`
+**Reject → set `REWRITE_REQUIRED` and trigger internal rewrite:**
+- `UNDERFILLED` → `REWRITE_REQUIRED` (expand to fill the beat — underfill opens dead
+  air that the video model fills with hallucinated drift/glitch)
+- `HARD_FAIL` → `REWRITE_REQUIRED` (trim into corridor)
+
+`REWRITE_REQUIRED` is an internal transition, never an output state and never a
+final-prompt surface. A block that is still `UNDERFILLED` or `HARD_FAIL` after the
+rewrite limit returns `BLOCKED`. Underfilled dialogue must never pass as a warning.
 
 ---
 

@@ -28,6 +28,16 @@ enums:
     - PRODUCT_ONLY
     - READY_FRAME
     - ASSET_SET
+  presenter_route:
+    # Whether a speaking video renders an on-camera presenter (lip-sync applies)
+    # or a faceless product clip with voiceover (no mouth, lip-sync N/A).
+    # Distinct from intake_mode: a PRODUCT_ONLY intake can still be a presenter
+    # render (avatar from pool/description). Defaults to PRESENTER_HYBRID when a
+    # video has dialogue and the operator left it unset; PRODUCT_ONLY_VO must be
+    # chosen explicitly for a faceless voiceover clip.
+    - PRESENTER_FULL
+    - PRESENTER_HYBRID
+    - PRODUCT_ONLY_VO
   block_mode:
     - SINGLE_BLOCK
     - MULTI_BLOCK
@@ -97,6 +107,7 @@ sections:
     engine: Canonical BOSMAX engine key.
     mode: Template authoring mode.
     intake_mode: Optional operator-facing asset-intake pattern (PRODUCT_ONLY, READY_FRAME, ASSET_SET); empty when unset. Distinct from `mode`.
+    presenter_route: On-camera presenter vs faceless voiceover (PRESENTER_FULL, PRESENTER_HYBRID, PRODUCT_ONLY_VO). Decides whether lip-sync applies. Defaults to PRESENTER_HYBRID for dialogue videos; PRODUCT_ONLY_VO must be set explicitly for a faceless clip.
     template_category: Logical template family.
     output_type: Expected downstream output surface.
     commercial_angle_id: Optional commercial angle id for landbank traceability (falls back to source_angle_id on export).
@@ -191,3 +202,6 @@ governance_rules:
   - The operator supplies engine, duration, and intake_mode only; the runtime derives block_plan deterministically. Operators must not hand-author block_plan, child block rows, or final_prompt_text.
   - Google Flow runs two deterministic lanes that never mix inside one render. FLOW_EXTEND_UI is the 8s chain (8, 16=[8,8], 24=[8,8,8]); FLOW_EXTEND_10S is the 10s extend lane (10, 18=[10,8], 20=[10,10], 30/40/50/60 repeated 10s). Google Flow must never use the GROK [10,6] split, and GROK must never use an 8s block.
   - Any multi-block runtime must export output_mode=MULTI_PROMPT_SET, prompt_set_count=len(block_plan), and one complete 9-section prompt per block. Multi-block prompts must never collapse into one combined 9-section surface.
+  - Internal orchestration and budget metadata must never leak into the engine-facing prompt body. The compiled section text must not contain key=value scaffolding (output_mode=, block_source=, dialogue_word_count=, safe_max_words=, dialogue_budget_status=, target_min_words=, target_max_words=) or set-sequencing narration (for example "Runtime plan", "Do not compile as one", "Do not use two equal", "multi-prompt sequence"). Budget data lives only in structured fields and Notion columns.
+  - Dialogue underfilled below minimum_words blocks production readiness (not a warning); the upstream author must expand the copy (REWRITE_REQUIRED) before the prompt set can compile. Underfilled dialogue opens dead air that the model fills with hallucinated drift.
+  - A dialogue video must declare presenter_route. PRESENTER_FULL and PRESENTER_HYBRID render an on-camera speaker with accurate lip-sync; PRODUCT_ONLY_VO is a faceless voiceover clip where lip-sync is not applicable. The runtime must never silently emit a faceless voiceover for a speaking video.

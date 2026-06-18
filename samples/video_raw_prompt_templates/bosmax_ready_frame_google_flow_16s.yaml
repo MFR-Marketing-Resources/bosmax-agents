@@ -9,6 +9,7 @@ template_name: BOSMAX Ready-Frame (Google Flow 16s)
 engine: GOOGLE_FLOW
 duration: 16s
 intake_mode: READY_FRAME
+presenter_route: PRESENTER_HYBRID
 platform: TikTok
 language: Malay
 product_lane: BOSMAX
@@ -28,7 +29,7 @@ product_truth_lock: >
 continuation_action_seed: "Motion-delta only from the uploaded frame; Set 2 continues from the prior final frame into the next spoken action."
 dialogue_seed: "Hook -> relief -> spoken CTA, budgeted separately for each 8s Flow set."
 hook: "Tengah hari rasa lesu, badan tak selesa sepanjang kerja?"
-body: "Sapu cepat, terus rasa segar, dan senang sambung rutin sebab produk ni kecil sangat."
+body: "Sambung terus dari babak tadi, sapu cepat, kulit rasa segar serta-merta. Senang sambung rutin harian sebab produk ni kecil sangat, ringan, dan muat dalam poket dengan mudah."
 cta: "Tap tengok harga sekarang, boss."
 visual_seed: "Continue from the uploaded frame with the same identity, grip, product position, and label readability."
 overlay_allowed: false
