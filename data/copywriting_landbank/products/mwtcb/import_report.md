@@ -71,4 +71,12 @@ Imported the uploaded MWTCB copywriting landbank inputs into the repository-nati
 - All rows map back to unique component IDs (motivation, angle, hook, subhook, USP, CTA) from the canonical landbank.
 - Categorized each row using `raw_claim_tolerance` (LOW/MEDIUM/HIGH) and `production_review_required` (YES/NO) based on symptom claims.
 
-
+### Batch 5: 2026-06-19_part8_notion_prompt_pack (Part 8 Implementation)
+- Generated exactly 1000 Notion production rows (`notion_production_rows.csv`): 500 video rows + 500 poster rows.
+- Generated exactly 500 video prompt pack briefs (`video_prompt_pack.csv`).
+- Generated exactly 500 poster prompt pack briefs (`poster_prompt_pack.csv`).
+- Outputs written to canonical locations and the corresponding batch snapshot directory.
+- All rows map to unique source matrix IDs from Part 7 and include full prompt briefs, packaging locks, negative rules, `operator_edit_required`, and `priority_score` metadata.
+- Claim tolerance distribution (across 1000 notion rows): HIGH=792, MEDIUM=204, LOW=4.
+- Operator edit required distribution: YES=792, OPTIONAL=204, NO=4.
+- No Notion API was called. No final Grok/Veo/Sora engine prompts were generated.

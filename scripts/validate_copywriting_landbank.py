@@ -117,6 +117,9 @@ def main() -> int:
     cta_schema = load_yaml(SCHEMA_DIR / "cta.schema.yaml")
     video_matrix_schema = load_yaml(SCHEMA_DIR / "video_copy_matrix.schema.yaml")
     poster_matrix_schema = load_yaml(SCHEMA_DIR / "poster_copy_matrix.schema.yaml")
+    notion_rows_schema = load_yaml(SCHEMA_DIR / "notion_production_rows.schema.yaml")
+    video_pack_schema = load_yaml(SCHEMA_DIR / "video_prompt_pack.schema.yaml")
+    poster_pack_schema = load_yaml(SCHEMA_DIR / "poster_prompt_pack.schema.yaml")
 
     buyer_csv = PRODUCT_DIR / "buyer_motivations.csv"
     class_csv = PRODUCT_DIR / "motivation_classification.csv"
@@ -127,6 +130,9 @@ def main() -> int:
     cta_csv = PRODUCT_DIR / "cta_bank.csv"
     video_matrix_csv = PRODUCT_DIR / "video_copy_matrix.csv"
     poster_matrix_csv = PRODUCT_DIR / "poster_copy_matrix.csv"
+    notion_rows_csv = PRODUCT_DIR / "notion_production_rows.csv"
+    video_pack_csv = PRODUCT_DIR / "video_prompt_pack.csv"
+    poster_pack_csv = PRODUCT_DIR / "poster_prompt_pack.csv"
 
     buyer_rows = load_csv(buyer_csv)
     class_rows = load_csv(class_csv)
@@ -158,6 +164,18 @@ def main() -> int:
     poster_matrix_rows = []
     if poster_matrix_csv.exists():
         poster_matrix_rows = load_csv(poster_matrix_csv)
+
+    notion_rows_rows = []
+    if notion_rows_csv.exists():
+        notion_rows_rows = load_csv(notion_rows_csv)
+
+    video_pack_rows = []
+    if video_pack_csv.exists():
+        video_pack_rows = load_csv(video_pack_csv)
+
+    poster_pack_rows = []
+    if poster_pack_csv.exists():
+        poster_pack_rows = load_csv(poster_pack_csv)
 
     errors: list[str] = []
     errors.extend(validate_columns(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
@@ -397,6 +415,142 @@ def main() -> int:
     else:
         errors.append(f"Missing required output file: {poster_matrix_csv.name}")
 
+    # Notion Production Rows validation
+    if notion_rows_csv.exists():
+        errors.extend(validate_columns(notion_rows_rows, notion_rows_schema["required_columns"], notion_rows_csv.name))
+        errors.extend(validate_unique(notion_rows_rows, "notion_row_id", notion_rows_csv.name))
+
+        # Explicit canonical self-contained column check (no joins permitted)
+        nr_headers = set(notion_rows_rows[0].keys()) if notion_rows_rows else set()
+        NOTION_REQUIRED_DIRECT_COLS = [
+            "headline_or_hook", "subheadline_or_subhook", "usp_text", "cta_text",
+            "angle_name", "primary_bucket", "secondary_bucket", "angle_family",
+            "buyer_stage", "persona_fit", "boldness_level", "usage_context",
+            "sales_mechanism", "format_family", "platform_surface_fit",
+            "creative_output_type", "prompt_pack_id", "raw_claim_tolerance",
+            "production_review_required", "operator_edit_required",
+            "recommended_view", "priority_score", "production_notes",
+            "source_batch", "row_status",
+        ]
+        for col in NOTION_REQUIRED_DIRECT_COLS:
+            if col not in nr_headers:
+                errors.append(f"{notion_rows_csv.name}: MISSING required direct canonical column `{col}` — notion_production_rows must be self-contained")
+
+        valid_video_matrix_ids = {r["video_matrix_id"] for r in video_matrix_rows} if video_matrix_csv.exists() else set()
+        valid_poster_matrix_ids = {r["poster_matrix_id"] for r in poster_matrix_rows} if poster_matrix_csv.exists() else set()
+        valid_video_pack_ids = {r["video_prompt_pack_id"] for r in video_pack_rows} if video_pack_csv.exists() else set()
+        valid_poster_pack_ids = {r["poster_prompt_pack_id"] for r in poster_pack_rows} if poster_pack_csv.exists() else set()
+
+        for index, row in enumerate(notion_rows_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{notion_rows_csv.name}:{index}: invalid product_id `{pid}` (must be `MWTCB_25ML`)")
+
+            for col in notion_rows_schema["required_columns"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{notion_rows_csv.name}:{index}: empty required field `{col}`")
+
+            prod_type = (row.get("production_type") or "").strip()
+            if prod_type not in ["video", "poster"]:
+                errors.append(f"{notion_rows_csv.name}:{index}: invalid production_type `{prod_type}` (must be video or poster)")
+
+            tol = (row.get("raw_claim_tolerance") or "").strip()
+            if tol not in ["LOW", "MEDIUM", "HIGH"]:
+                errors.append(f"{notion_rows_csv.name}:{index}: invalid raw_claim_tolerance `{tol}`")
+
+            rev = (row.get("production_review_required") or "").strip()
+            if rev not in ["YES", "NO"]:
+                errors.append(f"{notion_rows_csv.name}:{index}: invalid production_review_required `{rev}`")
+
+            oper = (row.get("operator_edit_required") or "").strip()
+            if oper not in ["YES", "OPTIONAL", "NO"]:
+                errors.append(f"{notion_rows_csv.name}:{index}: invalid operator_edit_required `{oper}`")
+
+            # Cross-ref: source_matrix_id against appropriate matrix
+            src_id = (row.get("source_matrix_id") or "").strip()
+            if prod_type == "video" and src_id and src_id not in valid_video_matrix_ids:
+                errors.append(f"{notion_rows_csv.name}:{index}: unknown video source_matrix_id `{src_id}`")
+            if prod_type == "poster" and src_id and src_id not in valid_poster_matrix_ids:
+                errors.append(f"{notion_rows_csv.name}:{index}: unknown poster source_matrix_id `{src_id}`")
+
+            # Cross-ref: prompt_pack_id against appropriate prompt pack
+            pack_id = (row.get("prompt_pack_id") or "").strip()
+            if prod_type == "video" and pack_id and pack_id not in valid_video_pack_ids:
+                errors.append(f"{notion_rows_csv.name}:{index}: unknown video prompt_pack_id `{pack_id}`")
+            if prod_type == "poster" and pack_id and pack_id not in valid_poster_pack_ids:
+                errors.append(f"{notion_rows_csv.name}:{index}: unknown poster prompt_pack_id `{pack_id}`")
+    else:
+        errors.append(f"Missing required output file: {notion_rows_csv.name}")
+
+    # Video Prompt Pack validation
+    if video_pack_csv.exists():
+        errors.extend(validate_columns(video_pack_rows, video_pack_schema["required_columns"], video_pack_csv.name))
+        errors.extend(validate_unique(video_pack_rows, "video_prompt_pack_id", video_pack_csv.name))
+
+        # Explicit canonical self-contained column check
+        vpp_headers = set(video_pack_rows[0].keys()) if video_pack_rows else set()
+        VPP_REQUIRED_DIRECT_COLS = [
+            "hook_text", "video_format", "raw_claim_tolerance",
+            "production_review_required", "operator_edit_required", "next_adapter_stage",
+            "subhook_text", "usp_text", "cta_text", "scene_direction", "opening_visual",
+            "product_role", "proof_visual", "cta_delivery",
+            "product_truth_lock", "visual_guardrails", "dialogue_guardrails",
+            "overlay_guidance", "engine_neutral_prompt_brief", "negative_prompt_rules",
+            "recommended_engine_family", "prompt_pack_status",
+        ]
+        for col in VPP_REQUIRED_DIRECT_COLS:
+            if col not in vpp_headers:
+                errors.append(f"{video_pack_csv.name}: MISSING required direct canonical column `{col}` — video_prompt_pack must be self-contained")
+
+        valid_video_matrix_ids_pack = {r["video_matrix_id"] for r in video_matrix_rows} if video_matrix_csv.exists() else set()
+        for index, row in enumerate(video_pack_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{video_pack_csv.name}:{index}: invalid product_id `{pid}`")
+            for col in video_pack_schema["required_columns"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{video_pack_csv.name}:{index}: empty required field `{col}`")
+            vid_mat_id = (row.get("video_matrix_id") or "").strip()
+            if vid_mat_id and vid_mat_id not in valid_video_matrix_ids_pack:
+                errors.append(f"{video_pack_csv.name}:{index}: unknown video_matrix_id `{vid_mat_id}`")
+    else:
+        errors.append(f"Missing required output file: {video_pack_csv.name}")
+
+    # Poster Prompt Pack validation
+    if poster_pack_csv.exists():
+        errors.extend(validate_columns(poster_pack_rows, poster_pack_schema["required_columns"], poster_pack_csv.name))
+        errors.extend(validate_unique(poster_pack_rows, "poster_prompt_pack_id", poster_pack_csv.name))
+
+        # Explicit canonical self-contained column check
+        ppp_headers = set(poster_pack_rows[0].keys()) if poster_pack_rows else set()
+        PPP_REQUIRED_DIRECT_COLS = [
+            "headline_text", "poster_format", "raw_claim_tolerance",
+            "production_review_required", "operator_edit_required", "next_adapter_stage",
+            "subheadline_text", "usp_chip_1", "usp_chip_2", "usp_chip_3", "cta_text",
+            "poster_visual_direction", "product_position", "background_direction",
+            "prop_cues", "overlay_hierarchy",
+            "product_truth_lock", "visual_guardrails", "overlay_guardrails",
+            "engine_neutral_prompt_brief", "negative_prompt_rules",
+            "recommended_design_family", "prompt_pack_status",
+        ]
+        for col in PPP_REQUIRED_DIRECT_COLS:
+            if col not in ppp_headers:
+                errors.append(f"{poster_pack_csv.name}: MISSING required direct canonical column `{col}` — poster_prompt_pack must be self-contained")
+
+        valid_poster_matrix_ids_pack = {r["poster_matrix_id"] for r in poster_matrix_rows} if poster_matrix_csv.exists() else set()
+        for index, row in enumerate(poster_pack_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{poster_pack_csv.name}:{index}: invalid product_id `{pid}`")
+            for col in poster_pack_schema["required_columns"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{poster_pack_csv.name}:{index}: empty required field `{col}`")
+            post_mat_id = (row.get("poster_matrix_id") or "").strip()
+            if post_mat_id and post_mat_id not in valid_poster_matrix_ids_pack:
+                errors.append(f"{poster_pack_csv.name}:{index}: unknown poster_matrix_id `{post_mat_id}`")
+    else:
+        errors.append(f"Missing required output file: {poster_pack_csv.name}")
+
     errors.extend(validate_unique(buyer_rows, "buyer_motivation_row_id", buyer_csv.name))
     errors.extend(validate_unique(class_rows, "motivation_classification_row_id", class_csv.name))
     errors.extend(validate_non_empty(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
@@ -404,7 +558,8 @@ def main() -> int:
     errors.extend(validate_cross_refs(buyer_rows, class_rows))
 
     csvs_to_test = [buyer_csv, class_csv]
-    for csv_file in [angle_csv, hook_csv, subhook_csv, usp_csv, cta_csv, video_matrix_csv, poster_matrix_csv]:
+    for csv_file in [angle_csv, hook_csv, subhook_csv, usp_csv, cta_csv, video_matrix_csv, poster_matrix_csv,
+                     notion_rows_csv, video_pack_csv, poster_pack_csv]:
         if csv_file.exists():
             csvs_to_test.append(csv_file)
         
@@ -421,6 +576,9 @@ def main() -> int:
     print(f"- cta_bank.csv rows: {len(cta_rows) if cta_csv.exists() else 0}")
     print(f"- video_copy_matrix.csv rows: {len(video_matrix_rows) if video_matrix_csv.exists() else 0}")
     print(f"- poster_copy_matrix.csv rows: {len(poster_matrix_rows) if poster_matrix_csv.exists() else 0}")
+    print(f"- notion_production_rows.csv rows: {len(notion_rows_rows) if notion_rows_csv.exists() else 0}")
+    print(f"- video_prompt_pack.csv rows: {len(video_pack_rows) if video_pack_csv.exists() else 0}")
+    print(f"- poster_prompt_pack.csv rows: {len(poster_pack_rows) if poster_pack_csv.exists() else 0}")
     print(f"- pandas_read: {pandas_status}")
     print(f"- product_dir: {PRODUCT_DIR}")
 

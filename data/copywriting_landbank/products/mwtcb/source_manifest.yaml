@@ -13,6 +13,9 @@ canonical_outputs:
   cta_bank_csv: data/copywriting_landbank/products/mwtcb/cta_bank.csv
   video_copy_matrix_csv: data/copywriting_landbank/products/mwtcb/video_copy_matrix.csv
   poster_copy_matrix_csv: data/copywriting_landbank/products/mwtcb/poster_copy_matrix.csv
+  notion_production_rows_csv: data/copywriting_landbank/products/mwtcb/notion_production_rows.csv
+  video_prompt_pack_csv: data/copywriting_landbank/products/mwtcb/video_prompt_pack.csv
+  poster_prompt_pack_csv: data/copywriting_landbank/products/mwtcb/poster_prompt_pack.csv
 source_files:
 - source_batch: 2026-06-19_xlsx
   source_file: mwtcb_copywriting_landbank.xlsx
@@ -60,6 +63,8 @@ batch_snapshots:
     normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part3_6_copy_components/normalized
   2026-06-19_part7_poster_video_matrix:
     normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part7_poster_video_matrix/normalized
+  2026-06-19_part8_notion_prompt_pack:
+    normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part8_notion_prompt_pack/normalized
 generated_exports:
   xlsx: data/copywriting_landbank/exports/mwtcb_copywriting_landbank.xlsx
   zip: data/copywriting_landbank/exports/mwtcb_copywriting_landbank_csv.zip

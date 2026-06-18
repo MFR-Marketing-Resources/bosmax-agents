@@ -56,4 +56,8 @@
 - No exact duplicate matrix rows were generated.
 - Component combinations and creative details (formats, visual scene directions, overlays) vary systematically across rows to ensure uniqueness and distinct testing routes.
 
-
+## Batch 5 (2026-06-19_part8_notion_prompt_pack) Near-Duplicate Review
+- Generated exactly 1000 Notion production rows and 1000 prompt pack entries (500 video + 500 poster).
+- No exact duplicate rows were generated.
+- All `notion_row_id`, `video_prompt_pack_id`, and `poster_prompt_pack_id` primary keys are unique.
+- Prompt briefs differ systematically because they inherit distinct scene directions, visual contexts, copy angles, and USP chips from the unique Part 7 source matrix rows.
