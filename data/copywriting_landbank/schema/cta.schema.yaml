@@ -1,16 +1,24 @@
 schema_id: cta
 version: 1
 format: csv
-primary_key: cta_row_id
+primary_key: cta_id
 required_columns:
-- cta_row_id
+- cta_id
 - product_id
+- angle_id
+- motivation_id
 - cta_text
+- cta_family
+- buyer_stage
 - boldness_level
-optional_columns:
-- source_motivation_row_id
-- best_platform_surface
-- notes
+- platform_surface_fit
+- best_content_format
+- urgency_level
+- action_type
+- usage_context
+- source_batch
+- cta_status
+optional_columns: []
 intended_usage:
 - CTA bank
 - Format-specific closing copy

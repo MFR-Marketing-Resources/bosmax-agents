@@ -60,3 +60,9 @@ Imported the uploaded MWTCB copywriting landbank inputs into the repository-nati
 - All angles mapped to a unique motivation ID, and verified against the 29 canonical columns.
 - Retained raw Malaysian-vernacular phrasing, high-priority motivations first, with complete commercial trigger, visual scene, and explanation of why it can sell.
 
+### Batch 3: 2026-06-19_part3_6_copy_components (Part 3-6 Implementation)
+- Generated exactly 450 hooks, 450 subhooks, 200 USPs, and 150 CTAs.
+- Outputs written to `hook_bank.csv`, `subhook_bank.csv`, `usp_bank.csv`, `cta_bank.csv`, and the corresponding imports snapshot folder.
+- All components verified against the updated schemas and mapped to a unique angle ID and motivation ID.
+
+
