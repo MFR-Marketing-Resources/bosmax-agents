@@ -1,24 +1,38 @@
 schema_id: angle
 version: 1
 format: csv
-primary_key: angle_row_id
+primary_key: angle_id
 required_columns:
-- angle_row_id
+- angle_id
 - product_id
-- source_motivation_row_id
+- motivation_id
 - angle_name
-- angle_statement
-- best_formula
+- angle_family
 - primary_bucket
+- secondary_bucket
+- buyer_stage
+- persona_fit
 - boldness_level
-optional_columns:
-- hook_seed
-- subhook_seed
-- usp_seed
-- cta_seed
-- notes
+- usage_context
+- sales_mechanism
+- commercial_trigger
+- visual_scene
+- copy_formula_fit
+- hook_style
+- hook_direction
+- subhook_direction
+- usp_direction
+- cta_direction
+- content_format_fit
+- platform_surface_fit
+- bundle_potential
+- repeat_purchase_potential
+- why_it_can_sell
+- creative_notes
+- source_motivation_hook
 - source_batch
-- import_version
+- angle_status
+optional_columns: []
 intended_usage:
 - Part 2 Angle Master Bank
 - Video and poster matrix seeding

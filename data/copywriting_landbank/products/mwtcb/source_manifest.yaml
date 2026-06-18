@@ -6,6 +6,7 @@ canonical_outputs:
   motivation_classification_csv: data/copywriting_landbank/products/mwtcb/motivation_classification.csv
   rankings_yaml: data/copywriting_landbank/products/mwtcb/rankings.yaml
   product_profile_yaml: data/copywriting_landbank/products/mwtcb/product.copy.yaml
+  angle_bank_csv: data/copywriting_landbank/products/mwtcb/angle_bank.csv
 source_files:
 - source_batch: 2026-06-19_xlsx
   source_file: mwtcb_copywriting_landbank.xlsx
@@ -44,8 +45,11 @@ source_files:
   - Raw_Gemini_Notes
   - Categories
 batch_snapshots:
-  raw_input_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/raw_input
-  normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/normalized
+  2026-06-19_initial_landbank:
+    raw_input_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/raw_input
+    normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/normalized
+  2026-06-19_part2_angle_bank:
+    normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part2_angle_bank/normalized
 generated_exports:
   xlsx: data/copywriting_landbank/exports/mwtcb_copywriting_landbank.xlsx
   zip: data/copywriting_landbank/exports/mwtcb_copywriting_landbank_csv.zip

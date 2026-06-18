@@ -7,6 +7,7 @@ This folder contains the repository-native copywriting landbank for `Minyak Wari
 - `product.copy.yaml`: product-level copy profile from uploaded landbank facts only.
 - `buyer_motivations.csv`: merged buyer motivation rows from both uploaded sources.
 - `motivation_classification.csv`: merged classification rows aligned to the buyer rows.
+- `angle_bank.csv`: Angle Master Bank containing exactly 150 unique, high-quality copywriting angles.
 - `rankings.yaml`: source-preserved ranking groups and park-later lists.
 - `source_manifest.yaml`: import batches, hashes, and export pointers.
 - `import_report.md`: batch summary and normalization trace.
@@ -26,9 +27,9 @@ This folder contains the repository-native copywriting landbank for `Minyak Wari
 4. Merge exact-new rows only; document cross-batch overlaps in `duplicate_report.md`.
 5. Regenerate exports and rerun validation.
 
-## Future Part 2 Angle Master Bank
+## Part 2 Angle Master Bank
 
-Use `rankings.yaml` plus the canonical near-duplicate anchors from `duplicate_report.md`. Start with `top_expand_first`, then branch into angle rows only after the scenario-level motivation is locked.
+Completed Part 2 implementation. The Angle Master Bank is located at `angle_bank.csv`, containing exactly 150 unique copywriting angles generated from the 64 HIGH-priority buyer motivations. All angles map back to the respective motivation IDs and specify detailed hook style, visual scenes, and commercial reasoning.
 
 ## Video and Poster Use
 
