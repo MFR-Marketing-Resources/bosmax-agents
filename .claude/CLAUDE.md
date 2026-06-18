@@ -711,6 +711,9 @@ Ringkasan fail-closed:
 - visual scan mesti lengkap
 - sandbox / registry truth mesti resolved sebelum route
 - storyboard + block math + WPS + pace_class mesti lengkap untuk video
+- final video prompt TEXT mesti lulus DETERMINISTIC FINAL-PROMPT GATE
+  (`scripts/validate_final_video_prompt_text.py`) — net bypass chat-lane untuk
+  metadata leak / underfill / code-switch / VO-lip conflict; non-empty = block
 - jika satu enforcement item gagal: jangan emit output
 
 ---
