@@ -174,3 +174,17 @@ modules:
       Maxoil and Jungle Girl only. Does not rename MWCB taxonomy, does not migrate
       MWCB-MCA IDs, does not touch resolver registries, validators, handoff docs,
       compliance gate, Notion governance, or product packaging truth.
+  product_registration_state_storage_sync:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - .claude/skills/bosmax-product-registration.md
+    notes: >
+      Surgical authority-sync lane for the product-registration skill only.
+      Replaces stale instructions that store live product records directly in
+      BOSMAX-LOG.md with the current-state-first model: write the live
+      product_record to BOSMAX_CURRENT_STATE.md and use BOSMAX-LOG.md only as
+      append-only historical audit trail when needed. Does not change product
+      fields, registration workflow, validators, Notion governance, or any
+      runtime schema.
