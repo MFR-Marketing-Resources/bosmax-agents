@@ -1,19 +1,46 @@
 schema_id: poster_copy_matrix
 version: 1
 format: csv
-primary_key: poster_matrix_row_id
+primary_key: poster_matrix_id
 required_columns:
-- poster_matrix_row_id
+- poster_matrix_id
 - product_id
-- angle_row_id
-- hook_row_id
-- platform_surface
-optional_columns:
-- subhook_row_id
-- usp_row_id
-- cta_row_id
-- visual_priority_notes
-- notes
+- motivation_id
+- angle_id
+- hook_id
+- subhook_id
+- usp_id
+- cta_id
+- angle_name
+- headline_text
+- subheadline_text
+- usp_chip_1
+- usp_chip_2
+- usp_chip_3
+- cta_text
+- primary_bucket
+- secondary_bucket
+- angle_family
+- buyer_stage
+- persona_fit
+- boldness_level
+- usage_context
+- sales_mechanism
+- poster_format
+- poster_visual_direction
+- product_position
+- background_direction
+- prop_cues
+- overlay_hierarchy
+- platform_surface_fit
+- copy_tone
+- raw_claim_tolerance
+- production_review_required
+- notion_row_fit
+- creative_notes
+- source_batch
+- matrix_status
+optional_columns: []
 intended_usage:
 - Poster copy planning
 - Static-card buildout

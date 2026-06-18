@@ -115,6 +115,8 @@ def main() -> int:
     subhook_schema = load_yaml(SCHEMA_DIR / "subhook.schema.yaml")
     usp_schema = load_yaml(SCHEMA_DIR / "usp.schema.yaml")
     cta_schema = load_yaml(SCHEMA_DIR / "cta.schema.yaml")
+    video_matrix_schema = load_yaml(SCHEMA_DIR / "video_copy_matrix.schema.yaml")
+    poster_matrix_schema = load_yaml(SCHEMA_DIR / "poster_copy_matrix.schema.yaml")
 
     buyer_csv = PRODUCT_DIR / "buyer_motivations.csv"
     class_csv = PRODUCT_DIR / "motivation_classification.csv"
@@ -123,6 +125,8 @@ def main() -> int:
     subhook_csv = PRODUCT_DIR / "subhook_bank.csv"
     usp_csv = PRODUCT_DIR / "usp_bank.csv"
     cta_csv = PRODUCT_DIR / "cta_bank.csv"
+    video_matrix_csv = PRODUCT_DIR / "video_copy_matrix.csv"
+    poster_matrix_csv = PRODUCT_DIR / "poster_copy_matrix.csv"
 
     buyer_rows = load_csv(buyer_csv)
     class_rows = load_csv(class_csv)
@@ -146,6 +150,14 @@ def main() -> int:
     cta_rows = []
     if cta_csv.exists():
         cta_rows = load_csv(cta_csv)
+
+    video_matrix_rows = []
+    if video_matrix_csv.exists():
+        video_matrix_rows = load_csv(video_matrix_csv)
+
+    poster_matrix_rows = []
+    if poster_matrix_csv.exists():
+        poster_matrix_rows = load_csv(poster_matrix_csv)
 
     errors: list[str] = []
     errors.extend(validate_columns(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
@@ -279,6 +291,112 @@ def main() -> int:
     else:
         errors.append(f"Missing CTA file: {cta_csv.name}")
 
+    # Video Matrix validation
+    if video_matrix_csv.exists():
+        errors.extend(validate_columns(video_matrix_rows, video_matrix_schema["required_columns"], video_matrix_csv.name))
+        errors.extend(validate_unique(video_matrix_rows, "video_matrix_id", video_matrix_csv.name))
+        
+        valid_mot_ids = {r["buyer_motivation_row_id"] for r in buyer_rows}
+        valid_ang_ids = {r["angle_id"] for r in angle_rows} if angle_csv.exists() else set()
+        valid_hk_ids = {r["hook_id"] for r in hook_rows} if hook_csv.exists() else set()
+        valid_shk_ids = {r["subhook_id"] for r in subhook_rows} if subhook_csv.exists() else set()
+        valid_u_ids = {r["usp_id"] for r in usp_rows} if usp_csv.exists() else set()
+        valid_c_ids = {r["cta_id"] for r in cta_rows} if cta_csv.exists() else set()
+
+        for index, row in enumerate(video_matrix_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{video_matrix_csv.name}:{index}: invalid product_id `{pid}`")
+            
+            # Non-empty checks
+            for col in video_matrix_schema["required_columns"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{video_matrix_csv.name}:{index}: empty required field `{col}`")
+            
+            # Cross-ref checks
+            mot = (row.get("motivation_id") or "").strip()
+            ang = (row.get("angle_id") or "").strip()
+            hk = (row.get("hook_id") or "").strip()
+            shk = (row.get("subhook_id") or "").strip()
+            u = (row.get("usp_id") or "").strip()
+            c = (row.get("cta_id") or "").strip()
+            
+            if mot and mot not in valid_mot_ids:
+                errors.append(f"{video_matrix_csv.name}:{index}: unknown motivation_id `{mot}`")
+            if ang and ang not in valid_ang_ids:
+                errors.append(f"{video_matrix_csv.name}:{index}: unknown angle_id `{ang}`")
+            if hk and hk not in valid_hk_ids:
+                errors.append(f"{video_matrix_csv.name}:{index}: unknown hook_id `{hk}`")
+            if shk and shk not in valid_shk_ids:
+                errors.append(f"{video_matrix_csv.name}:{index}: unknown subhook_id `{shk}`")
+            if u and u not in valid_u_ids:
+                errors.append(f"{video_matrix_csv.name}:{index}: unknown usp_id `{u}`")
+            if c and c not in valid_c_ids:
+                errors.append(f"{video_matrix_csv.name}:{index}: unknown cta_id `{c}`")
+                
+            # Tolerance and review
+            tol = (row.get("raw_claim_tolerance") or "").strip()
+            rev = (row.get("production_review_required") or "").strip()
+            if tol not in ["LOW", "MEDIUM", "HIGH"]:
+                errors.append(f"{video_matrix_csv.name}:{index}: invalid raw_claim_tolerance `{tol}`")
+            if rev not in ["YES", "NO"]:
+                errors.append(f"{video_matrix_csv.name}:{index}: invalid production_review_required `{rev}`")
+    else:
+        errors.append(f"Missing required output file: {video_matrix_csv.name}")
+
+    # Poster Matrix validation
+    if poster_matrix_csv.exists():
+        errors.extend(validate_columns(poster_matrix_rows, poster_matrix_schema["required_columns"], poster_matrix_csv.name))
+        errors.extend(validate_unique(poster_matrix_rows, "poster_matrix_id", poster_matrix_csv.name))
+        
+        valid_mot_ids = {r["buyer_motivation_row_id"] for r in buyer_rows}
+        valid_ang_ids = {r["angle_id"] for r in angle_rows} if angle_csv.exists() else set()
+        valid_hk_ids = {r["hook_id"] for r in hook_rows} if hook_csv.exists() else set()
+        valid_shk_ids = {r["subhook_id"] for r in subhook_rows} if subhook_csv.exists() else set()
+        valid_u_ids = {r["usp_id"] for r in usp_rows} if usp_csv.exists() else set()
+        valid_c_ids = {r["cta_id"] for r in cta_rows} if cta_csv.exists() else set()
+
+        for index, row in enumerate(poster_matrix_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{poster_matrix_csv.name}:{index}: invalid product_id `{pid}`")
+            
+            # Non-empty checks
+            for col in poster_matrix_schema["required_columns"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{poster_matrix_csv.name}:{index}: empty required field `{col}`")
+            
+            # Cross-ref checks
+            mot = (row.get("motivation_id") or "").strip()
+            ang = (row.get("angle_id") or "").strip()
+            hk = (row.get("hook_id") or "").strip()
+            shk = (row.get("subhook_id") or "").strip()
+            u = (row.get("usp_id") or "").strip()
+            c = (row.get("cta_id") or "").strip()
+            
+            if mot and mot not in valid_mot_ids:
+                errors.append(f"{poster_matrix_csv.name}:{index}: unknown motivation_id `{mot}`")
+            if ang and ang not in valid_ang_ids:
+                errors.append(f"{poster_matrix_csv.name}:{index}: unknown angle_id `{ang}`")
+            if hk and hk not in valid_hk_ids:
+                errors.append(f"{poster_matrix_csv.name}:{index}: unknown hook_id `{hk}`")
+            if shk and shk not in valid_shk_ids:
+                errors.append(f"{poster_matrix_csv.name}:{index}: unknown subhook_id `{shk}`")
+            if u and u not in valid_u_ids:
+                errors.append(f"{poster_matrix_csv.name}:{index}: unknown usp_id `{u}`")
+            if c and c not in valid_c_ids:
+                errors.append(f"{poster_matrix_csv.name}:{index}: unknown cta_id `{c}`")
+                
+            # Tolerance and review
+            tol = (row.get("raw_claim_tolerance") or "").strip()
+            rev = (row.get("production_review_required") or "").strip()
+            if tol not in ["LOW", "MEDIUM", "HIGH"]:
+                errors.append(f"{poster_matrix_csv.name}:{index}: invalid raw_claim_tolerance `{tol}`")
+            if rev not in ["YES", "NO"]:
+                errors.append(f"{poster_matrix_csv.name}:{index}: invalid production_review_required `{rev}`")
+    else:
+        errors.append(f"Missing required output file: {poster_matrix_csv.name}")
+
     errors.extend(validate_unique(buyer_rows, "buyer_motivation_row_id", buyer_csv.name))
     errors.extend(validate_unique(class_rows, "motivation_classification_row_id", class_csv.name))
     errors.extend(validate_non_empty(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
@@ -286,7 +404,7 @@ def main() -> int:
     errors.extend(validate_cross_refs(buyer_rows, class_rows))
 
     csvs_to_test = [buyer_csv, class_csv]
-    for csv_file in [angle_csv, hook_csv, subhook_csv, usp_csv, cta_csv]:
+    for csv_file in [angle_csv, hook_csv, subhook_csv, usp_csv, cta_csv, video_matrix_csv, poster_matrix_csv]:
         if csv_file.exists():
             csvs_to_test.append(csv_file)
         
@@ -301,6 +419,8 @@ def main() -> int:
     print(f"- subhook_bank.csv rows: {len(subhook_rows) if subhook_csv.exists() else 0}")
     print(f"- usp_bank.csv rows: {len(usp_rows) if usp_csv.exists() else 0}")
     print(f"- cta_bank.csv rows: {len(cta_rows) if cta_csv.exists() else 0}")
+    print(f"- video_copy_matrix.csv rows: {len(video_matrix_rows) if video_matrix_csv.exists() else 0}")
+    print(f"- poster_copy_matrix.csv rows: {len(poster_matrix_rows) if poster_matrix_csv.exists() else 0}")
     print(f"- pandas_read: {pandas_status}")
     print(f"- product_dir: {PRODUCT_DIR}")
 
