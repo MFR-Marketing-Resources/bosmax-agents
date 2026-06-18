@@ -110,28 +110,62 @@ def main() -> int:
 
     buyer_schema = load_yaml(SCHEMA_DIR / "buyer_motivation.schema.yaml")
     class_schema = load_yaml(SCHEMA_DIR / "motivation_classification.schema.yaml")
+    angle_schema = load_yaml(SCHEMA_DIR / "angle.schema.yaml")
 
     buyer_csv = PRODUCT_DIR / "buyer_motivations.csv"
     class_csv = PRODUCT_DIR / "motivation_classification.csv"
+    angle_csv = PRODUCT_DIR / "angle_bank.csv"
 
     buyer_rows = load_csv(buyer_csv)
     class_rows = load_csv(class_csv)
+    
+    angle_rows = []
+    if angle_csv.exists():
+        angle_rows = load_csv(angle_csv)
 
     errors: list[str] = []
     errors.extend(validate_columns(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
     errors.extend(validate_columns(class_rows, class_schema["required_columns"], class_csv.name))
+    
+    if angle_csv.exists():
+        errors.extend(validate_columns(angle_rows, angle_schema["required_columns"], angle_csv.name))
+        errors.extend(validate_unique(angle_rows, "angle_id", angle_csv.name))
+        
+        # Specific fields validation
+        for index, row in enumerate(angle_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{angle_csv.name}:{index}: invalid product_id `{pid}` (must be `MWTCB_25ML`)")
+                
+            for col in ["motivation_id", "angle_name", "commercial_trigger", "visual_scene", "why_it_can_sell"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{angle_csv.name}:{index}: empty required field `{col}`")
+                    
+            # Check cross-ref for motivation_id
+            m_id = (row.get("motivation_id") or "").strip()
+            valid_motivation_ids = {r["buyer_motivation_row_id"] for r in buyer_rows}
+            if m_id and m_id not in valid_motivation_ids:
+                errors.append(f"{angle_csv.name}:{index}: unknown motivation_id `{m_id}`")
+    else:
+        errors.append(f"Missing required output file: {angle_csv.name}")
+
     errors.extend(validate_unique(buyer_rows, "buyer_motivation_row_id", buyer_csv.name))
     errors.extend(validate_unique(class_rows, "motivation_classification_row_id", class_csv.name))
     errors.extend(validate_non_empty(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
     errors.extend(validate_non_empty(class_rows, class_schema["required_columns"], class_csv.name))
     errors.extend(validate_cross_refs(buyer_rows, class_rows))
 
-    pandas_errors, pandas_status = validate_pandas_read([buyer_csv, class_csv], args.require_pandas)
+    csvs_to_test = [buyer_csv, class_csv]
+    if angle_csv.exists():
+        csvs_to_test.append(angle_csv)
+        
+    pandas_errors, pandas_status = validate_pandas_read(csvs_to_test, args.require_pandas)
     errors.extend(pandas_errors)
 
     print("Copywriting Landbank Validation Summary")
     print(f"- buyer_motivations.csv rows: {len(buyer_rows)}")
     print(f"- motivation_classification.csv rows: {len(class_rows)}")
+    print(f"- angle_bank.csv rows: {len(angle_rows) if angle_csv.exists() else 0}")
     print(f"- pandas_read: {pandas_status}")
     print(f"- product_dir: {PRODUCT_DIR}")
 

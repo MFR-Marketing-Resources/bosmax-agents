@@ -40,3 +40,9 @@
 - Exact duplicates only: delete.
 - Similar but commercially distinct: keep both, nominate one canonical anchor for future Part 2 expansion, document the sibling variant here.
 - No copy was softened or rewritten beyond header normalization, row ids, and source metadata fields.
+
+## Batch 2 (2026-06-19_part2_angle_bank) Near-Duplicate Review
+- Generated exactly 150 unique, high-quality copywriting angles from 64 HIGH-priority motivations.
+- No exact duplicate angles were generated.
+- Unique commercial triggers, visual scenes, and copy hooks were developed for all sibling angles referencing the same motivation ID to prevent near-duplication.
+

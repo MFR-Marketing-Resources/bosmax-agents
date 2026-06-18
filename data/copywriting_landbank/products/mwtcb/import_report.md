@@ -48,14 +48,15 @@ Imported the uploaded MWTCB copywriting landbank inputs into the repository-nati
 - Rows parked due to duplicate review: 0
 - `park_later` source ranking lists were preserved as prioritization guidance, not treated as deletions.
 
-## Recommended Part 2 Next Step
+## Batch History
 
-Build the Angle Master Bank by starting with the union of both `top_expand_first` lists, then expand around the shared high-pressure lanes:
+### Batch 1: 2026-06-19_initial_landbank
+- Imported 120 buyer motivations and 120 classifications.
+- Seeded rankings and product profile.
 
-1. `STANDBY_BEFORE_NEED`
-2. `FAMILY_HOME`
-3. `NOSTALGIA_TRUST`
-4. `MULTI_BUY`
-5. `PRACTICAL_STORAGE` / `TRAVEL_CAR_BAG`
+### Batch 2: 2026-06-19_part2_angle_bank (Part 2 Implementation)
+- Generated exactly 150 unique, high-quality copywriting angles from the 64 HIGH-priority motivations.
+- Outputs written to `angle_bank.csv` and the corresponding import snapshot directory.
+- All angles mapped to a unique motivation ID, and verified against the 29 canonical columns.
+- Retained raw Malaysian-vernacular phrasing, high-priority motivations first, with complete commercial trigger, visual scene, and explanation of why it can sell.
 
-Keep cross-source duplicates as sibling variants until angle-level testing proves one should be demoted.
