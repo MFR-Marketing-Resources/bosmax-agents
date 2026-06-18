@@ -838,7 +838,7 @@ Selepas emit output:
 > "Scene Engine complete, boss! English Master Prompt dan source_image_handoff JSON
 > dah siap. Pass kepada **bosmax-compliance-gate** untuk audit. Take over!"
 
-**SIMPAN source_image_handoff dalam BOSMAX-LOG.md untuk Mode C nanti.**
+**SIMPAN source_image_handoff dalam BOSMAX_CURRENT_STATE.md untuk Mode C nanti, dan append history ke BOSMAX-LOG.md bila audit trail diperlukan.**
 
 ---
 
