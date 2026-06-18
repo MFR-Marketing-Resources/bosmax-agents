@@ -204,6 +204,28 @@ def validate_valid_compiles() -> None:
             expected_mode=output_mode,
             expected_durations=durations,
         )
+        # Defect A regression: no internal orchestration / WPS budget metadata may
+        # leak into the engine-facing prompt body.
+        final_text = str(compiled["compiler"]["final_prompt_text"])
+        for leak in (
+            "output_mode=",
+            "block_source=",
+            "dialogue_word_count=",
+            "safe_max_words=",
+            "dialogue_budget_status=",
+            "target_min_words=",
+            "target_max_words=",
+            "Runtime plan",
+            "Do not use two equal",
+            "Do not compile as one",
+        ):
+            expect(leak not in final_text, f"{name}: engine-facing prompt leaked internal metadata {leak!r}")
+        # Defect D regression: a speaking video must declare a presenter lip-sync
+        # route or an explicit voiceover route — never a silent faceless default.
+        expect(
+            ("lip-sync" in final_text) or ("Voiceover narration" in final_text),
+            f"{name}: prompt must declare presenter lip-sync or explicit voiceover route",
+        )
         print(f"PASS: compiled {name}")
 
 
@@ -215,6 +237,8 @@ def validate_fail_fixtures() -> None:
         "missing_storyboard_multi.yaml": "multi-block runtime missing master_storyboard",
         "wps_overflow_multi.yaml": "exceeds safe_max_words",
         "overlay_leak_seed.yaml": "overlay leakage blocked",
+        # Regression: the "Prompt tercemar" case must block on underfill, not ship.
+        "wps_underfill_multi.yaml": "is underfilled",
     }
     for name, needle in expected_failures.items():
         compiled = compile_fixture(fixture_dir / name)

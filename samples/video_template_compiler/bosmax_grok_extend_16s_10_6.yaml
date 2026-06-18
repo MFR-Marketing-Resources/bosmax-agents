@@ -5,6 +5,7 @@ platform: TikTok
 engine: GROK
 duration: 16s
 intake_mode: HYBRID
+presenter_route: PRESENTER_HYBRID
 # No block_plan: the runtime derives GROK 16s = [10, 6]. GROK never uses an 8s block.
 hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
 body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."

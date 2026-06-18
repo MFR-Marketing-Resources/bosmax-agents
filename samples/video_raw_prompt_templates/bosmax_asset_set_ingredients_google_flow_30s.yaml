@@ -10,6 +10,7 @@ template_name: BOSMAX Asset-Set Ingredients (Google Flow 30s)
 engine: GOOGLE_FLOW
 duration: 30s
 intake_mode: ASSET_SET         # canonical (alias INGREDIENTS)
+presenter_route: PRESENTER_HYBRID
 platform: TikTok
 language: Malay
 product_lane: BOSMAX
@@ -37,7 +38,7 @@ style_scene_limit: "image_3 influences mood / environment / lighting only; it mu
 action_seed: "Avatar interacts naturally with the product across three continuous 10s beats; proof handling in the middle beat, spoken CTA in the final beat."
 dialogue_seed: "Hook (pain) -> friction -> relief (product) -> proof -> spoken CTA, spread across three 10s extend blocks."
 hook: "Tengah hari rasa lesu, badan tak bermaya betul kan?"
-body: "Banyak produk lain besar menyusahkan, berat, dan tak muat poket bila kita keluar rumah setiap hari. BOSMAX roll-on ni pula kecil macam lip balm, ringan, senang genggam, dan boleh sapu sekali sahaja terus rasa lega dengan cepat. Simpan dalam beg, kereta, atau poket pun muat, jadi anda boleh guna bila-bila masa diperlukan."
+body: "Banyak produk lain besar menyusahkan, makan ruang, tak muat poket bila kita keluar rumah setiap hari kan. BOSMAX roll-on ni pula kecil macam lip balm, ringan, senang digenggam, dan cukup sapu sekali sahaja terus rasa lega dan segar dengan cepat tanpa rasa leceh langsung. Simpan dalam beg, kereta, atau poket pun muat dengan mudah, jadi anda boleh guna bila-bila masa yang diperlukan pada setiap hari."
 cta: "Tap tengok harga sekarang."
 visual_seed: "Three-beat UGC cadence; product truth from product reference; avatar interacts naturally; label readable across each extend seam."
 

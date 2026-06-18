@@ -16,8 +16,9 @@ product_truth_lock: >
   HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
   lip balm / chapstick size.
 # No block_plan: the runtime derives GOOGLE_FLOW 20s = [10, 10] (FLOW_EXTEND_10S lane).
-hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus?"
-body: "Banyak produk besar menyusahkan, tak muat poket bila keluar. BOSMAX roll-on ni kecil, ringan, sapu sekali terus rasa segar. Senang bawa pergi mana-mana, simpan dalam beg pun muat tanpa menyusahkan harian anda."
+presenter_route: PRESENTER_HYBRID
+hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus kerja?"
+body: "Produk lain besar menyusahkan, berat, tak muat poket, dan susah nak bawa ke mana-mana setiap masa kan. BOSMAX roll-on kecil macam lip balm ni sapu sekali terus rasa segar, ringan, dan paling senang nak simpan dalam beg ke poket."
 cta: "Tap tengok harga sekarang, boss."
 visual_seed: "Ready-frame continuation cadence, motion-delta only, identity and product position locked from frame, label readable."
 product_truth_ref: products/BOSMAX_SERUM.yaml

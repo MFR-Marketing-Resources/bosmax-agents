@@ -135,13 +135,44 @@ Compilation fails when any of the following appear:
 - sexual-performance claims
 - risky direct-body-use instructions
 - internal markers such as `CTX_`, `DNA_`, `BLOCK_`, `SCENE_`, `IMG_`, `VID_`
+- internal orchestration / budget scaffolding inside the engine-facing prompt body —
+  `key=value` tokens (`output_mode=`, `block_source=`, `dialogue_word_count=`,
+  `safe_max_words=`, `dialogue_budget_status=`, `target_min_words=`, `target_max_words=`)
+  or set-sequencing narration (`Runtime plan`, `Do not compile as one`,
+  `Do not use two equal`, `multi-prompt sequence`)
+- an English / internal storyboard label code-switched into a BM spoken line
+  (for example `family shelf`, `shelf cue`, `b-roll`)
 - missing multi-block `master_storyboard`
-- dialogue word count above block `safe_max_words`
+- dialogue word count above block `safe_max_words` (overfill)
+- dialogue word count below block `minimum_words` (underfill) — this BLOCKS readiness
+  (`REWRITE_REQUIRED`); underfilled dialogue opens dead air the model fills with
+  hallucinated drift/glitch, so it is no longer a non-blocking warning
 - multi-block output presented as a single prompt instead of `MULTI_PROMPT_SET`
 - overlay / subtitle / on-screen-text instructions in seed or storyboard surfaces
   when `parsed.overlay_allowed` is not explicitly set (Section 9 defaults to NO_OVERLAY)
 
-Warnings are emitted for underfilled or target-range-miss dialogue, but they do not promote a blocked template to ready.
+Warnings (non-blocking) are emitted for target-range-miss dialogue (within
+`[minimum_words, safe_max_words]` but outside `[target_min_words, target_max_words]`)
+and when `presenter_route` was defaulted rather than set explicitly.
+
+## Presenter Route (lip-sync vs voiceover)
+
+`presenter_route` decides whether a speaking video renders an on-camera presenter
+(lip-sync applies) or a faceless product clip with voiceover (no mouth, lip-sync
+N/A). It is distinct from `intake_mode`: a `PRODUCT_ONLY` intake can still render a
+presenter because the avatar comes from pool / description.
+
+- `PRESENTER_FULL` — on-camera presenter speaks every line straight to camera with
+  frame-accurate lip-sync.
+- `PRESENTER_HYBRID` — presenter speaks to camera with lip-sync; product-hero
+  cutaways keep the same line as tightly synced voice.
+- `PRODUCT_ONLY_VO` — faceless product-only visuals with voiceover narration;
+  lip-sync is not applicable.
+
+A dialogue video with no `presenter_route` set defaults to `PRESENTER_HYBRID`
+(lip-sync) and emits a warning. A faceless voiceover clip must opt in with
+`PRODUCT_ONLY_VO` explicitly — the runtime never silently turns a speaking video
+into a faceless voiceover.
 
 ## Notion Export Contract
 

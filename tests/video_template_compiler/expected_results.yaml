@@ -1,6 +1,10 @@
 expected_results:
+  # WARN on a valid compile is non-blocking: it usually means presenter_route was
+  # defaulted (set it explicitly to clear) or dialogue sits just outside the target
+  # band but inside [minimum_words, safe_max_words]. prompt_surface_status stays
+  # COMPILED in all valid cases below.
   bosmax_grok_frames_single_6s:
-    qa_status: PASS
+    qa_status: WARN
     engine_adapter: GROK_EXTENSION_V1
     output_mode: SINGLE_PROMPT
     prompt_set_count: 1
@@ -10,27 +14,27 @@ expected_results:
     output_mode: MULTI_PROMPT_SET
     prompt_set_count: 2
   bosmax_flow_hybrid_multi_8x8:
-    qa_status: PASS
+    qa_status: WARN
     engine_adapter: FLOW_EXTEND_UI_V1
     output_mode: MULTI_PROMPT_SET
     prompt_set_count: 2
   bosmax_flow_ingredients_multi_8x8:
-    qa_status: PASS
+    qa_status: WARN
     engine_adapter: FLOW_EXTEND_UI_V1
     output_mode: MULTI_PROMPT_SET
     prompt_set_count: 2
   bosmax_hybrid_multi_8x8:
-    qa_status: PASS
+    qa_status: WARN
     engine_adapter: VEO_CLIP_CHAIN_V1
     output_mode: MULTI_PROMPT_SET
     prompt_set_count: 2
   mwtcb_product_demo_single_6s:
-    qa_status: PASS
+    qa_status: WARN
     engine_adapter: GROK_EXTENSION_V1
     output_mode: SINGLE_PROMPT
     prompt_set_count: 1
   bosmax_flow_extend_10s_single_10s:
-    qa_status: PASS
+    qa_status: WARN
     engine_adapter: FLOW_EXTEND_10S_V1
     output_mode: SINGLE_PROMPT
     prompt_set_count: 1
@@ -42,6 +46,11 @@ expected_results:
   bosmax_flow_extend_20s_10_10:
     qa_status: PASS
     engine_adapter: FLOW_EXTEND_10S_V1
+    output_mode: MULTI_PROMPT_SET
+    prompt_set_count: 2
+  bosmax_grok_extend_16s_10_6:
+    qa_status: PASS
+    engine_adapter: GROK_EXTENSION_V1
     output_mode: MULTI_PROMPT_SET
     prompt_set_count: 2
   unsafe_claim_seed:
@@ -56,3 +65,6 @@ expected_results:
   wps_overflow_multi:
     qa_status: FAIL
     error_contains: exceeds safe_max_words
+  wps_underfill_multi:
+    qa_status: FAIL
+    error_contains: is underfilled

@@ -68,6 +68,21 @@ def _join_parts(*parts: str) -> str:
     return " ".join(part.strip() for part in parts if part and part.strip()).strip()
 
 
+def _join_spoken(*parts: str) -> str:
+    """Join spoken segments with proper sentence boundaries so a body chunk and
+    the CTA do not run together (e.g. '...lega Tap tengok' -> '...lega. Tap tengok')."""
+    cleaned = [part.strip() for part in parts if part and part.strip()]
+    out = ""
+    for part in cleaned:
+        if not out:
+            out = part
+            continue
+        if out[-1] not in ".?!,":
+            out += "."
+        out += f" {part}"
+    return out.strip()
+
+
 def _derive_storyline(template: dict[str, Any]) -> str:
     parsed = template["parsed"]
     storyline = _join_parts(parsed.get("hook", ""), parsed.get("body", ""), parsed.get("cta", ""))
@@ -106,17 +121,17 @@ def _build_dialogue_segments(template: dict[str, Any], block_count: int) -> list
     body = parsed.get("body", "")
     cta = parsed.get("cta", "")
     if block_count == 1:
-        return [_join_parts(hook, body, cta)]
+        return [_join_spoken(hook, body, cta)]
 
     body_chunks = _chunk_body(body, block_count)
     segments: list[str] = []
     for index in range(block_count):
         if index == 0:
-            segments.append(_join_parts(hook, body_chunks[0]))
+            segments.append(_join_spoken(hook, body_chunks[0]))
             continue
         if index == block_count - 1:
             tail_source = body_chunks[index] if index < len(body_chunks) else ""
-            segments.append(_join_parts(tail_source, cta))
+            segments.append(_join_spoken(tail_source, cta))
             continue
         middle_source = body_chunks[index] if index < len(body_chunks) else ""
         segments.append(middle_source.strip())

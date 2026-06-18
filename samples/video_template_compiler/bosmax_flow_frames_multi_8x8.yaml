@@ -17,9 +17,10 @@ product_truth_lock: >
   slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
   HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
   lip balm / chapstick size at all times.
-hook: "Mula dengan wajah yakin, produk sudah di tangan dari beat pertama."
-body: "Tunjuk sapuan ringkas, close-up label jelas, kemudian terus ke reaksi lega tanpa potong identiti atau lokasi."
-cta: "Akhiri dengan hero hold stabil dan ajak tengok harga sekarang."
+presenter_route: PRESENTER_HYBRID
+hook: "Mula terus dengan wajah yakin, produk sudah berada di tangan."
+body: "Tunjuk sapuan ringkas pada kulit, papar label dekat supaya nampak asli. Lepas tu terus ke reaksi lega, ringan, tanpa potong identiti atau lokasi asal."
+cta: "Akhiri dengan hero hold stabil, ajak tengok harga."
 visual_seed: "Warm bathroom mirror setup, handheld UGC energy, label readability preserved."
 product_truth_ref: products/BOSMAX_SERUM.yaml
 overlay_allowed: false
