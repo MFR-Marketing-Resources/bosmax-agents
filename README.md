@@ -1,8 +1,26 @@
-# BOSMAX v11.2 — Commercial Content Command Centre
+# BOSMAX — Commercial Content Command Centre Repo Map
 
 **BOSMAX** adalah sistem penjanaan konten komersial untuk pasaran SEA (TikTok Shop MY, Shopee, Lazada, Meta).
 
 Sistem ini mengorkestrasi pipeline imej, video, dan pendaftaran produk menggunakan arkitektur multi-agent fail-closed.
+
+---
+
+## Live Read Order
+
+`README.md` ialah repo map / bootstrap surface sahaja. Ia **bukan** sumber
+kebenaran untuk schema aktif, session-start read order, atau live orchestrator
+version.
+
+Untuk elak context drift, guna urutan ini:
+
+1. `.claude/BOSMAX_CURRENT_STATE.md` → current operating snapshot, first read surface
+2. `.claude/CLAUDE.md` → canonical orchestrator authority
+3. `products/*.yaml` → product truth apabila produk disebut
+4. `.claude/BOSMAX-LOG.md` → historical audit trail sahaja bila snapshot semasa tak cukup
+
+Jika ada percanggahan antara `README.md` dan mana-mana surface di atas, `README.md`
+dianggap stale / secondary.
 
 ---
 
@@ -19,8 +37,9 @@ Setiap video template, Notion sample, Codex patch, Claude Code generation, dan C
 `
 BOSMAX/
 ├── .claude/
-│   ├── CLAUDE.md                    ← Orchestrator brain (routing logic)
-│   ├── BOSMAX-LOG.md                ← Session memory & product registry
+│   ├── BOSMAX_CURRENT_STATE.md      ← First read surface / live operating snapshot
+│   ├── CLAUDE.md                    ← Canonical orchestrator authority
+│   ├── BOSMAX-LOG.md                ← Historical audit trail
 │   └── skills/
 │       ├── bosmax-compliance-gate.md     ← Final quality auditor
 │       ├── bosmax-subject-dna.md         ← Character visual identity (Mode A)
@@ -447,4 +466,4 @@ Fail ini menerangkan status product-intelligence layer semasa:
 
 ---
 
-*BOSMAX v11.2 | Schema: GRAND_MASTER_SKELETON | Private — All Rights Reserved*
+*BOSMAX repo map | See `.claude/BOSMAX_CURRENT_STATE.md` for live snapshot and `.claude/CLAUDE.md` for canonical orchestrator authority.*
