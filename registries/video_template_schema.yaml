@@ -117,6 +117,18 @@ sections:
     copy_seed: Optional copy seed text.
     overlay_seed: Optional overlay seed text.
     product_truth_ref: Product truth reference path or record.
+    product_truth_lock: Optional explicit product truth lock copied into continuity surfaces when supplied.
+    scale_lock: Optional exact scale lock copied into prompt continuity surfaces when supplied.
+    product_input: Optional operator statement describing the uploaded product asset.
+    avatar_source: Optional avatar origin (pool, reference image, etc.).
+    avatar_brief: Optional avatar description for product-only builds.
+    ready_frame_input: Optional operator statement describing the uploaded ready frame.
+    frame_truth_lock: Optional explicit ready-frame truth lock.
+    visual_authority: Optional visual-authority tag (for example USER_UPLOAD).
+    asset_role_map: Optional explicit INGREDIENTS role map copied into prompt continuity surfaces.
+    asset_hierarchy: Optional explicit INGREDIENTS authority order copied into prompt continuity surfaces.
+    avatar_reference_lock: Optional explicit avatar-reference rule for INGREDIENTS builds.
+    style_scene_limit: Optional explicit style-scene limit for INGREDIENTS builds.
     compliance_notes: Free-form compliance notes.
   parsed:
     parsed_brief: Normalized brief summary.

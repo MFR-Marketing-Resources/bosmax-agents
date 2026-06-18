@@ -52,6 +52,9 @@ REQUIRED_SAMPLES = [
     "bosmax_hybrid_product_only_grok_16s.yaml",
     "bosmax_ready_frame_grok_16s.yaml",
     "bosmax_asset_set_ingredients_grok_16s.yaml",
+    "bosmax_hybrid_product_only_google_flow_16s.yaml",
+    "bosmax_ready_frame_google_flow_16s.yaml",
+    "bosmax_asset_set_ingredients_google_flow_16s.yaml",
 ]
 
 VALID_ENGINES = {"GROK", "GOOGLE_FLOW", "VEO_3_1", "VEO_3_1_LITE"}
@@ -186,6 +189,7 @@ def validate_sample(path: Path) -> None:
     )
     prompt_sets = compiled["compiler"]["prompt_sets"]
     block_plan = [int(x) for x in compiled["duration"]["block_plan"]]
+    derived = [int(x) for x in compiled["duration"]["block_plan"]]
     expected_output_mode = "SINGLE_PROMPT" if len(block_plan) == 1 else "MULTI_PROMPT_SET"
     check(
         compiled["compiler"]["output_mode"] == expected_output_mode,
@@ -251,9 +255,71 @@ def validate_sample(path: Path) -> None:
             "[8,8]",
         ):
             check(needle not in forbidden_surface, f"{name}: forbidden collapsed-output phrase absent ({needle})")
+    if engine == "GOOGLE_FLOW":
+        execution_mode = str(compiled["duration"]["prompt_execution_mode"])
+        if dur == 16:
+            check(derived == [8, 8], f"{name}: Google Flow 16s derives [8,8]")
+            check(execution_mode == "FLOW_EXTEND_UI", f"{name}: Google Flow 16s stays on FLOW_EXTEND_UI")
+        if dur == 20:
+            check(derived == [10, 10], f"{name}: Google Flow 20s derives [10,10]")
+            check(execution_mode == "FLOW_EXTEND_10S", f"{name}: Google Flow 20s stays on FLOW_EXTEND_10S")
+        if len(prompt_sets) > 1:
+            check(
+                prompt_sets[0]["continuation_from_previous_set"] is False,
+                f"{name}: Google Flow set 1 starts fresh",
+            )
+            for index, prompt_set in enumerate(prompt_sets[1:], start=2):
+                previous_state = str(prompt_set.get("previous_clip_final_second_state") or "")
+                section_blob = "\n".join(
+                    str(section["section_text"]) for section in prompt_set["final_prompt_9_sections"]
+                )
+                check(prompt_set["continuation_from_previous_set"] is True, f"{name}: Google Flow set {index} is explicit continuation")
+                check(bool(previous_state), f"{name}: Google Flow set {index} exposes previous_clip_final_second_state")
+                check(
+                    f"Previous clip final second state: {previous_state}" in section_blob,
+                    f"{name}: Google Flow set {index} spells out previous clip final state",
+                )
+                check(
+                    "Continue from that exact state into" in section_blob,
+                    f"{name}: Google Flow set {index} declares the exact next action",
+                )
+                check(
+                    "Continuity seam instruction:" in section_blob,
+                    f"{name}: Google Flow set {index} includes seam instruction",
+                )
+        forbidden_surface = str(compiled["compiler"]["final_prompt_text"])
+        for needle in (
+            "VISUAL STORY - FIRST 8 SECONDS",
+            "VISUAL STORY - FINAL 8 SECONDS",
+            "Create one 16-second Google Flow video prompt",
+            "one merged 16s prompt",
+            "[10,6]",
+        ):
+            check(needle not in forbidden_surface, f"{name}: forbidden Flow collapsed-output phrase absent ({needle})")
+        if canon == "PRODUCT_ONLY":
+            section_blob = "\n".join(
+                str(section["section_text"])
+                for prompt_set in prompt_sets
+                for section in prompt_set["final_prompt_9_sections"]
+            )
+            check("Scale lock:" in section_blob, f"{name}: PRODUCT_ONLY Flow output preserves scale lock")
+        if canon == "READY_FRAME":
+            section_blob = "\n".join(
+                str(section["section_text"])
+                for prompt_set in prompt_sets
+                for section in prompt_set["final_prompt_9_sections"]
+            )
+            check("visual truth" in section_blob.lower(), f"{name}: READY_FRAME Flow output preserves frame truth")
+        if canon == "ASSET_SET":
+            section_blob = "\n".join(
+                str(section["section_text"])
+                for prompt_set in prompt_sets
+                for section in prompt_set["final_prompt_9_sections"]
+            )
+            check("Asset role map:" in section_blob, f"{name}: ASSET_SET Flow output preserves asset_role_map")
+            check("Asset hierarchy:" in section_blob, f"{name}: ASSET_SET Flow output preserves asset hierarchy")
 
     # 4. runtime derives the correct deterministic plan
-    derived = [int(x) for x in compiled["duration"]["block_plan"]]
     expected = [int(x) for x in build_plan(engine, dur)["block_durations_seconds"]] if dur else []
     check(derived == expected, f"{name}: runtime-derived plan {derived} matches deterministic {expected}")
     if engine == "GROK" and dur == 16:

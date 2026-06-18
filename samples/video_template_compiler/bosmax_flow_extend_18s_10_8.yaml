@@ -5,9 +5,22 @@ platform: TikTok
 engine: GOOGLE_FLOW
 duration: 18s
 intake_mode: INGREDIENTS
+asset_role_map:
+  image_1: PRODUCT_REFERENCE
+  image_2: AVATAR_REFERENCE
+  image_3: STYLE_SCENE_REFERENCE
+asset_hierarchy: "PRODUCT_TRUTH > AVATAR_IDENTITY > STYLE_SCENE"
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
+  lip balm / chapstick size.
+avatar_reference_lock: "Use image_2 for identity / wardrobe / pose; uploaded avatar overrides any registry persona."
+style_scene_limit: "image_3 controls mood / environment / lighting only; never overrides product or avatar identity."
 # No block_plan: the runtime derives GOOGLE_FLOW 18s = [10, 8] (FLOW_EXTEND_10S lane).
 hook: "Tengah hari rasa lesu, badan tak bermaya, susah nak fokus kerja?"
 body: "Produk besar menyusahkan, tak muat poket bila keluar rumah. BOSMAX roll-on kecil ni sapu sekali terus rasa segar, ringan, senang bawa ke mana-mana setiap hari."
 cta: "Tap tengok harga sekarang, boss."
 visual_seed: "Asset-set UGC cadence, product truth lock from product reference, avatar interacts naturally, label readable."
 product_truth_ref: products/BOSMAX_SERUM.yaml
+overlay_allowed: false

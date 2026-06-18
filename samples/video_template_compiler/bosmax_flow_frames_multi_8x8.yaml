@@ -5,9 +5,21 @@ platform: TikTok
 engine: GOOGLE_FLOW
 mode: FRAMES
 duration: 16s
-block_plan: [8, 8]
+intake_mode: READY_FRAME
+ready_frame_input: "One uploaded finished frame already containing avatar + product + scene."
+visual_authority: USER_UPLOAD
+frame_truth_lock: >
+  The uploaded finished frame is the visual truth. Set 1 starts from that frame.
+  Set 2 must continue from Set 1 final state without rebuilding the avatar,
+  product, scene, lighting, grip, wardrobe, label direction, or product scale.
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
+  lip balm / chapstick size at all times.
 hook: "Mula dengan wajah yakin, produk sudah di tangan dari beat pertama."
 body: "Tunjuk sapuan ringkas, close-up label jelas, kemudian terus ke reaksi lega tanpa potong identiti atau lokasi."
 cta: "Akhiri dengan hero hold stabil dan ajak tengok harga sekarang."
 visual_seed: "Warm bathroom mirror setup, handheld UGC energy, label readability preserved."
 product_truth_ref: products/BOSMAX_SERUM.yaml
+overlay_allowed: false

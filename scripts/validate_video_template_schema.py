@@ -95,7 +95,9 @@ def main() -> None:
     fixture_dir = ROOT / "samples" / "video_template_compiler"
     success_fixtures = [
         fixture_dir / "bosmax_grok_frames_single_6s.yaml",
+        fixture_dir / "bosmax_flow_hybrid_multi_8x8.yaml",
         fixture_dir / "bosmax_flow_frames_multi_8x8.yaml",
+        fixture_dir / "bosmax_flow_ingredients_multi_8x8.yaml",
         fixture_dir / "bosmax_hybrid_multi_8x8.yaml",
         fixture_dir / "mwtcb_product_demo_single_6s.yaml",
         fixture_dir / "bosmax_flow_extend_10s_single_10s.yaml",

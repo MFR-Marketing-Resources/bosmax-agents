@@ -62,7 +62,17 @@ Whenever `block_count > 1`, the compiler must emit:
 
 The compiler must fail closed if a multi-block runtime collapses into one
 combined prompt surface, hides split timing inside a single prompt, or drifts
-GROK 16s away from `[10,6]`.
+GROK 16s away from `[10,6]` or GOOGLE_FLOW 16s away from `[8,8]`.
+
+For Google Flow continuation sets, the compiled prompt must spell out:
+
+- `Previous clip final second state: ...`
+- `Continue from that exact state into ...`
+- `Continuity seam instruction: ...`
+
+and it must keep product position / label / scale, avatar identity / wardrobe /
+pose, scene / lighting / camera direction, and commercial chronology locked
+across the seam.
 
 ## Mode Semantics
 

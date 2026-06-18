@@ -1,0 +1,37 @@
+# BOSMAX RAW PROMPT TEMPLATE — HYBRID / PRODUCT_ONLY — GOOGLE_FLOW 16s
+# Layer: user-facing raw prompt template (operator copy-paste).
+# Authority: docs/video_raw_prompt_template_contract_v1.md
+# Demonstrates the Google Flow 8s chain: runtime derives 16s = [8,8] (FLOW_EXTEND_UI).
+
+template_id: BOSMAX_RAW_HYBRID_PRODUCT_ONLY_GOOGLE_FLOW_16S
+template_name: BOSMAX Serum Hybrid Product-Only (Google Flow 16s)
+
+engine: GOOGLE_FLOW
+duration: 16s
+intake_mode: PRODUCT_ONLY
+platform: TikTok
+language: Malay
+product_lane: BOSMAX
+
+product_input: "Uploaded product image only: BOSMAX Serum 5ML roll-on (no avatar uploaded)."
+product_truth_ref: products/BOSMAX_SERUM.yaml
+product_truth_lock: >
+  BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
+  slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
+  HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Do not enlarge,
+  relabel, recolor, redesign, duplicate, or convert it into a perfume, spray,
+  supplement, skincare-serum, or tall cosmetic bottle.
+scale_lock: "EXACTLY lip balm size / EXACTLY chapstick size; fits into fingers naturally."
+avatar_source: AVATAR_POOL
+avatar_brief: "Malaysian adult presenter from the approved avatar pool, natural UGC look, one-hand product hold."
+action_seed: "Two continuous 8s Flow beats: Set 1 opens the proof beat, Set 2 continues from the final frame into CTA without resetting scale or identity."
+dialogue_seed: "Hook (pain) -> friction -> relief -> spoken CTA, split across two 8s Flow sets."
+hook: "Tengah hari rasa tak selesa, badan cepat rasa berat?"
+body: "Produk lain besar menyusahkan. BOSMAX roll-on ni kecil macam lip balm, senang bawa, sapu sekali terus rasa segar."
+cta: "Tap tengok harga sekarang, boss."
+visual_seed: "Bright handheld UGC framing, product in palm, label readable, seam-ready continuation."
+overlay_allowed: false
+safety_guardrails: "No medical cure / guaranteed-result / sexual-performance claims; no risky direct-body-use instructions."
+forbidden_claims:
+  - menyembuhkan penyakit
+

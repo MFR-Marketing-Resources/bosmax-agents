@@ -151,8 +151,20 @@ be `MULTI_PROMPT_SET`.
 Required examples:
 
 - GROK 16s -> `SET 1 = 10s` + `SET 2 = 6s`
+- GOOGLE_FLOW 16s (`FLOW_EXTEND_UI`) -> `SET 1 = 8s` + `SET 2 = 8s`
 - GROK 20s -> `SET 1 = 10s` + `SET 2 = 10s`
 - GROK 30s -> `SET 1 = 10s` + `SET 2 = 10s` + `SET 3 = 10s`
+- GOOGLE_FLOW 24s (`FLOW_EXTEND_UI`) -> `SET 1 = 8s` + `SET 2 = 8s` + `SET 3 = 8s`
+- GOOGLE_FLOW 20s (`FLOW_EXTEND_10S`) -> `SET 1 = 10s` + `SET 2 = 10s`
+
+For Google Flow continuation sets, the compiler must make the seam explicit:
+
+- `previous_clip_final_second_state` must be surfaced in the prompt set payload
+- the prompt text must literally state `Previous clip final second state: ...`
+- the prompt text must literally state `Continue from that exact state into ...`
+- the seam must lock product position / label / scale, avatar identity /
+  wardrobe / pose, scene / lighting / camera direction, and the next action
+- vague shorthand such as `continue naturally` or `from last frame` is not sufficient
 
 ---
 
@@ -287,10 +299,14 @@ for every template under `samples/video_raw_prompt_templates/`:
 15. GROK 16s HYBRID / READY_FRAME / ASSET_SET samples all compile to two prompt
     sets `[10,6]`, with set 2 marked as a continuation and the CTA in the final
     set.
-16. Validator fails closed if a multi-block output collapses into one combined
+16. GOOGLE_FLOW 16s HYBRID / READY_FRAME / ASSET_SET samples all compile to two
+    prompt sets `[8,8]`, with set 2 carrying explicit previous-clip-final-state
+    continuity and per-set WPS budgeting.
+17. Validator fails closed if a multi-block output collapses into one combined
     prompt or leaks forbidden phrases such as `FIRST 10 SECONDS`, `FINAL 6
-    SECONDS`, or `[8,8]` for GROK 16s.
-17. Output remains sample/test only.
+    SECONDS`, `FIRST 8 SECONDS`, `FINAL 8 SECONDS`, `[8,8]` for GROK 16s, or
+    `[10,6]` for GOOGLE_FLOW 16s.
+18. Output remains sample/test only.
 
 Run alongside the existing suite:
 
@@ -318,6 +334,9 @@ creative detail; runtime derives `[10,6]`):
 
 Optional Google Flow 10s-extend lane samples:
 
+- `samples/video_raw_prompt_templates/bosmax_hybrid_product_only_google_flow_16s.yaml` (`16s -> [8,8]`)
+- `samples/video_raw_prompt_templates/bosmax_ready_frame_google_flow_16s.yaml` (`16s -> [8,8]`)
+- `samples/video_raw_prompt_templates/bosmax_asset_set_ingredients_google_flow_16s.yaml` (`16s -> [8,8]`)
 - `samples/video_raw_prompt_templates/bosmax_hybrid_product_only_google_flow_20s.yaml` (`20s -> [10,10]`)
 - `samples/video_raw_prompt_templates/bosmax_asset_set_ingredients_google_flow_30s.yaml` (`30s -> [10,10,10]`)
 
