@@ -32,7 +32,7 @@ and NOT background services. They execute within a human-initiated Claude Code s
 | **Upstream** | User / operator |
 | **Downstream** | All specialist skills (Units 01–12); compliance gate (Unit 10) as final terminal |
 | **Status** | Prompt-level Claude Code persona — NOT autonomous runtime |
-| **Version** | BOSMAX v11.6 |
+| **Version** | Snapshot-driven via `.claude/BOSMAX_CURRENT_STATE.md` (current snapshot v11.11) |
 | **Key responsibilities** | VISUAL INTAKE GATE, PRE-FLIGHT PROTOCOL (Steps 0–5), STORYBOARD GATE (video), route determination (A/B/C/D/REG/BULK), WORK ORDER issuance, terminal state enforcement |
 
 ---
