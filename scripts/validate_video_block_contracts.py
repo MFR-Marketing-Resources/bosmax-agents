@@ -6,7 +6,13 @@ from typing import Any
 
 import yaml
 
-from video_block_plan import CONTRACT_PATH, DIALOGUE_BUDGET_PATH, build_plan, load_registry_bundle
+from video_block_plan import (
+    CONTRACT_PATH,
+    DIALOGUE_BUDGET_PATH,
+    build_plan,
+    compute_block_durations,
+    load_registry_bundle,
+)
 from video_storyboard_builder import StoryboardError, build_storyboard  # type: ignore[import]
 from video_template_parser import build_canonical_template  # type: ignore[import]
 
@@ -298,6 +304,58 @@ def validate_flow_10s_contract(engines: dict[str, Any]) -> list[str]:
         require(default_plan["execution_mode"] == "FLOW_EXTEND_UI", f"GOOGLE_FLOW {duration}s default lane must stay FLOW_EXTEND_UI")
         require([int(item) for item in default_plan["block_durations_seconds"]] == expected_blocks, f"GOOGLE_FLOW {duration}s 8s-chain default mismatch")
         checks.append(f"GOOGLE_FLOW default {duration}s -> FLOW_EXTEND_UI {expected_blocks}")
+
+    # 38s is COMPUTED, not hand-listed: proves the auto-chainer derives a split
+    # for a duration the registry never enumerated.
+    ten_table = ten.get("default_total_to_blocks") or {}
+    require(38 not in ten_table, "FLOW_EXTEND_10S 38s must be COMPUTED, not hand-listed in default_total_to_blocks")
+    plan_38 = build_plan("GOOGLE_FLOW", 38)
+    require(plan_38["execution_mode"] == "FLOW_EXTEND_10S", "GOOGLE_FLOW 38s must auto-resolve to FLOW_EXTEND_10S")
+    require([int(item) for item in plan_38["block_durations_seconds"]] == [10, 10, 10, 8], "GOOGLE_FLOW 38s must compute [10,10,10,8]")
+    require(plan_38["block_durations_seconds"].count(8) == 1, "GOOGLE_FLOW 38s must use exactly one 8s tail")
+    require(sum(plan_38["block_durations_seconds"]) == 38, "GOOGLE_FLOW 38s block sum must equal 38")
+    checks.append("GOOGLE_FLOW computed 38s -> FLOW_EXTEND_10S [10,10,10,8]")
+    return checks
+
+
+def validate_block_math_reproduces_tables(engines: dict[str, Any]) -> list[str]:
+    """Invariant: where both a curated default_total_to_blocks AND block_math
+    exist, the computed chain must equal the curated chain for every tabled
+    total. This guarantees the table and the computer never drift apart."""
+    checks: list[str] = []
+
+    def check_contract(label: str, contract: dict[str, Any]) -> None:
+        math_cfg = contract.get("block_math")
+        table = contract.get("default_total_to_blocks") or {}
+        if not math_cfg or not table:
+            return
+        primary = int(math_cfg["primary_block_seconds"])
+        tail = math_cfg.get("tail_block_seconds")
+        tail_max = math_cfg.get("tail_max_count")
+        single = {int(x) for x in contract.get("single_clip_durations_seconds", [])}
+        for total, curated in table.items():
+            total = int(total)
+            curated = [int(x) for x in curated]
+            if total in single and curated == [total]:
+                continue  # single-clip durations are not chained by block_math
+            computed = compute_block_durations(
+                total,
+                primary,
+                int(tail) if tail is not None else None,
+                int(tail_max) if tail_max is not None else None,
+            )
+            require(
+                computed == curated,
+                f"{label} {total}s: block_math computed {computed} != curated {curated}",
+            )
+        checks.append(f"{label}: block_math reproduces {len(table)} curated split(s)")
+
+    for engine_id, contract in engines.items():
+        if "execution_modes" in contract:
+            for mode_name, mode_contract in (contract.get("execution_modes") or {}).items():
+                check_contract(f"{engine_id}.{mode_name}", mode_contract)
+        else:
+            check_contract(engine_id, contract)
     return checks
 
 
@@ -346,7 +404,7 @@ def validate_duration_lane_negatives() -> list[str]:
 
 def validate_dialogue_budget_coverage() -> list[str]:
     bundle = load_registry_bundle()
-    expected = [6, 7, 8, 10, 12, 16, 18, 20, 24, 30, 32, 40, 48, 50, 56, 60]
+    expected = [6, 7, 8, 10, 12, 16, 18, 20, 24, 30, 32, 38, 40, 48, 50, 56, 60]
     checks: list[str] = []
     for duration in expected:
         budget = bundle.budgets.get(("BM", "BRISK_UGC", duration))
@@ -370,6 +428,7 @@ def main() -> None:
     veo_lite_checks = validate_veo31_lite_contract(engines)
     flow_checks = validate_flow_contract(engines)
     flow_10s_checks = validate_flow_10s_contract(engines)
+    block_math_checks = validate_block_math_reproduces_tables(engines)
     negative_checks = validate_duration_lane_negatives()
     budget_checks = validate_dialogue_budget_coverage()
 
@@ -384,6 +443,7 @@ def main() -> None:
         + veo_lite_checks
         + flow_checks
         + flow_10s_checks
+        + block_math_checks
         + negative_checks
         + budget_checks
     ):

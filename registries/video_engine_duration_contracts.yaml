@@ -37,6 +37,9 @@ engines:
     single_block_durations_seconds: [6, 10]
     valid_block_durations_seconds: [6, 10]
     valid_total_durations_seconds: [6, 10, 12, 16, 18, 20, 30]
+    block_math:
+      primary_block_seconds: 10
+      tail_block_seconds: 6
     default_total_to_blocks:
       6: [6]
       10: [10]
@@ -166,6 +169,8 @@ engines:
         block_duration_seconds: 8
         single_clip_durations_seconds: [4, 6, 8]
         valid_total_durations_seconds: [4, 6, 8, 16, 24, 32, 40, 48, 56]
+        block_math:
+          primary_block_seconds: 8
         default_total_to_blocks:
           4: [4]
           6: [6]
@@ -324,6 +329,8 @@ engines:
         dialogue_budget_actual_render_seconds: 7
         single_clip_durations_seconds: [8]
         valid_total_durations_seconds: [8, 16, 24, 32, 40, 48, 56]
+        block_math:
+          primary_block_seconds: 8
         default_total_to_blocks:
           8: [8]
           16: [8, 8]
@@ -498,6 +505,8 @@ engines:
         dialogue_budget_duration_seconds: 8
         single_clip_durations_seconds: [8]
         valid_total_durations_seconds: [8, 16, 24, 32, 40, 48, 56]
+        block_math:
+          primary_block_seconds: 8
         default_total_to_blocks:
           8: [8]
           16: [8, 8]
@@ -653,7 +662,11 @@ engines:
         extension_step_duration_seconds: 10
         dialogue_budget_duration_seconds: 10
         single_clip_durations_seconds: [10]
-        valid_total_durations_seconds: [10, 18, 20, 30, 40, 50, 60]
+        valid_total_durations_seconds: [10, 18, 20, 30, 38, 40, 50, 60]
+        block_math:
+          primary_block_seconds: 10
+          tail_block_seconds: 8
+          tail_max_count: 1
         default_total_to_blocks:
           10: [10]
           18: [10, 8]
@@ -664,9 +677,11 @@ engines:
           60: [10, 10, 10, 10, 10, 10]
         requires_previous_clip_final_second: true
         lane_note: >
-          New Google Flow 10s extend lane. Block durations are 10s, with a single
-          8s tail allowed only for the 18s plan ([10, 8]). This lane must never
-          emit the GROK [10, 6] split and must never down-mix to the 8s chain.
+          Google Flow 10s extend lane. Block durations are 10s, with a single 8s
+          tail allowed (e.g. 18s=[10,8], 38s=[10,10,10,8]). Splits not listed in
+          default_total_to_blocks are computed deterministically by block_math
+          (primary 10s, at most one 8s tail). This lane must never emit the GROK
+          [10, 6] split and must never down-mix to the 8s chain.
         required_fields:
           - Previous Clip Final Second State
           - Continuity Goal
@@ -794,6 +809,8 @@ engines:
         dialogue_budget_duration_seconds: 7
         single_clip_durations_seconds: [7]
         valid_total_durations_seconds: [7, 14, 21, 28, 35, 42, 49, 56]
+        block_math:
+          primary_block_seconds: 7
         default_total_to_blocks:
           7: [7]
           14: [7, 7]
