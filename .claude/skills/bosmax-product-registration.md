@@ -213,7 +213,8 @@ Lock HANYA selepas user confirm.
 JIKA ada yang missing → request sebelum output.
 
 **STEP 7 — EMIT:** Output complete product_record JSON.
-Simpan dalam BOSMAX-LOG.md.
+Simpan live product_record dalam BOSMAX_CURRENT_STATE.md.
+Append ke BOSMAX-LOG.md hanya bila historical audit trail diperlukan.
 Notify BOSMAX orchestrator: "PRODUCT_RECORD_READY — boleh proceed ke content generation."
 
 ---
@@ -276,7 +277,8 @@ Notify BOSMAX orchestrator: "PRODUCT_RECORD_READY — boleh proceed ke content g
 ## DOWNSTREAM HANDOFF
 
 Selepas product_record diemit dan user confirm:
-> "Product record siap, boss! Data telah disimpan dalam BOSMAX-LOG.md.
+> "Product record siap, boss! Data live telah disimpan dalam BOSMAX_CURRENT_STATE.md.
+> Historical audit trail boleh di-append ke BOSMAX-LOG.md bila diperlukan.
 > Boss nak proceed ke content generation? Saya boleh hantar ke
 > **bosmax-bulk-generator** untuk generate prompts."
 
