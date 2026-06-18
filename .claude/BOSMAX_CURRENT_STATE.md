@@ -3,6 +3,7 @@
 
 Read this file first at session start.
 Open `BOSMAX-LOG.md` only if this snapshot is insufficient or a historical audit is required.
+Treat `README.md` as a repo map only, not as live version truth or orchestrator authority.
 
 ---
 
