@@ -1,0 +1,36 @@
+schema_id: buyer_motivation
+version: 1
+format: csv
+primary_key: buyer_motivation_row_id
+required_columns:
+- buyer_motivation_row_id
+- product_id
+- source_motivation_id
+- source_motivation_id_raw
+- motivation_batch_key
+- source_file
+- source_sheet
+- source_batch
+- import_version
+- source_sequence
+- buyer_situation
+- buyer_problem
+- buyer_desire
+- what_buyer_is_really_thinking
+- emotional_trigger
+- practical_trigger
+- buying_trigger
+- product_role
+- proof_from_product
+- best_formula
+- hook_direction
+- sample_hook
+- sample_subhook
+- sample_cta
+- why_it_can_sell
+optional_columns: []
+intended_usage:
+- Video copywriting
+- Poster copywriting
+- Future angle bank expansion
+- Notion row generation

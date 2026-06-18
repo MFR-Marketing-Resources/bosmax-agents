@@ -1,0 +1,45 @@
+product_id: MWTCB_25ML
+product_name: Minyak Warisan Tok Cap Burung
+category: Traditional topical oil
+market: Malaysia
+language_style:
+- Bahasa Melayu direct-response
+- household vernacular
+- old-school trust cues
+product_truth:
+- Botol kecil 25ml.
+- Minyak hijau.
+- Cap merah.
+- Botol kaca hijau tebal / tradisi.
+- Label warisan dengan logo burung.
+- Trust cue source copy includes “Sejak 1958”, “Formula Asli sejak 1958”, and “Petua Turun Temurun 1958”.
+visual_identity:
+- Siluet botol kecil yang mudah disimpan dalam laci, beg, dan kereta.
+- Cap merah yang senang dicam semasa kecemasan atau carian pantas.
+- Warna minyak hijau dan botol kaca hijau retro / old-school.
+- Label warisan dan logo burung sebagai pemicu visual recognition.
+trust_cues:
+- Sejak 1958.
+- Formula Asli sejak 1958.
+- Petua Turun Temurun 1958.
+- Mak ayah / orang tua kenal dan biasa simpan.
+core_selling_spine:
+  primary_lanes:
+  - 'Standby before need: rumah wajib ada sebelum badan atau anak mula buat hal.'
+  - 'Family-home trust: barang kecil yang mak ayah kenal, guna, dan percaya.'
+  - 'Practical storage and multi-location logic: rumah, kereta, beg, rak, laci.'
+  secondary_lanes:
+  - Travel / balik kampung / gifting utility.
+  - Visual recognition through botol hijau, cap merah, dan label warisan.
+  - Repeat-buy and bundle logic driven by small-bottle spread placement.
+recommended_platforms:
+- TikTok_Shop_video
+- poster_ads
+- product_page_asset
+- TikTok_live_pin
+- Shopee_Lazada_visual
+source_scope:
+  import_version: 2026-06-19_initial_landbank
+  source_batches:
+  - 2026-06-19_xlsx
+  - 2026-06-19_zip_csv

@@ -1,0 +1,33 @@
+schema_id: product_profile
+version: 1
+format: yaml
+intended_usage:
+- Product-level copy authority
+- Downstream creative planning
+- Future angle expansion anchor
+required_fields:
+- name: product_id
+  type: string
+- name: product_name
+  type: string
+- name: category
+  type: string
+- name: market
+  type: string
+- name: language_style
+  type: string or list
+- name: product_truth
+  type: list
+- name: visual_identity
+  type: list
+- name: trust_cues
+  type: list
+- name: core_selling_spine
+  type: mapping
+- name: recommended_platforms
+  type: list
+optional_fields:
+- name: source_scope
+  type: mapping
+- name: notes
+  type: list

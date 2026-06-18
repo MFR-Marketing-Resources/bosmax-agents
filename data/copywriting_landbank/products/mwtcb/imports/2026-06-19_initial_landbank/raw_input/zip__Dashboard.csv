@@ -1,0 +1,33 @@
+﻿Metric,Value
+Source buyer motivations,60
+Classification rows,60
+High priority motivations,26
+Aggressive hooks,25
+Bold hooks,14
+Bundle-high motivations,18
+Repeat-high motivations,16
+,
+Primary Bucket,Count
+NOSTALGIA_TRUST,15
+VISUAL_RECOGNITION,10
+FAMILY_HOME,8
+TRAVEL_CAR_BAG,7
+PRACTICAL_STORAGE,7
+STANDBY_BEFORE_NEED,5
+SEASONAL_CONTEXT,4
+MULTI_BUY,2
+PERSONA_SPECIFIC,2
+,
+Boldness,Count
+AGGRESSIVE,25
+BOLD,14
+MODERATE,14
+SOFT,7
+,
+Best Content Format,Count
+hybrid_video,15
+POV_scene,12
+UGC_talking_head,12
+product_only_video,10
+poster_ad,9
+carousel,2

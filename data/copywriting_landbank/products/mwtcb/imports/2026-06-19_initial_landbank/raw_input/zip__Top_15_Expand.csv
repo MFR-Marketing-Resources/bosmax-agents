@@ -1,0 +1,16 @@
+﻿rank,motivation_id,primary_bucket,buyer_stage,strongest_hook,reason
+1,BM_012,MULTI_BUY,repeat_buyer,"""Harga murah gila, tak payah fikir dua kali. Guna kupon terus sauk 3 botol.""",Conversion laju untuk produk bawah RM20.
+2,BM_024,FAMILY_HOME,repeat_buyer,"""Siksa tengok mak ayah nak naik tangga surau sebab lutut bunyi ketat?""",Membantu pergerakan harian warga emas.
+3,BM_026,SEASONAL_CONTEXT,repeat_buyer,"""Balik kenduri perut rasa senak gas penuh? Nak sendawa tapi tak lepas.""",Sering terjadi selepas musim perayaan/kenduri.
+4,BM_057,PRACTICAL_STORAGE,repeat_buyer,"""Kaki game yang main sampai subuh confirm wrist tangan rasa kejang guna mouse?""",Pasaran moden baharu (gaming/streaming community).
+5,BM_005,NOSTALGIA_TRUST,repeat_buyer,"""Orang tua kalau dah start sebu perut, dia tak cari ubat moden. Dia cari yang ni.""",Trust lama yang melekat pada golongan veteran.
+6,BM_007,PRACTICAL_STORAGE,repeat_buyer,"""Laci rumah kau penuh ubat tapi satu pun tak boleh pakai waktu kecemasan?""","Menyelesaikan isu harian ""kehilangan barang"" di rumah."
+7,BM_015,NOSTALGIA_TRUST,repeat_buyer,"""Orang tua kalau malam selalu terjaga sebab kaki sejuk? Sapu minyak herba ni.""",Menjual kehangatan malam tanpa ubat makan.
+8,BM_045,TRAVEL_CAR_BAG,repeat_buyer,"""Panjat gunung beg nak kena ringan, tapi minyak urut wajib bawa. Guna yang ni.""",Target pasaran outdoor/hiking.
+9,BM_001,STANDBY_BEFORE_NEED,ready_to_buy,"""Anak mula meragam pukul 2 pagi, waktu tu baru kau nak menggelimpang cari minyak?""",Menyentuh 'pain point' mak-mak yang kurang tidur.
+10,BM_002,TRAVEL_CAR_BAG,ready_to_buy,"""Hadap jem dari KL ke Shah Alam, pinggang dah bunyi 'krak'. Kau ada benda ni?""",Realiti harian pekerja korporat / komuter tegar.
+11,BM_004,PRACTICAL_STORAGE,ready_to_buy,"""Bawa minyak besar-besar dalam beg travel buat menyemak jer. Guna yang ni.""",Menjual fungsi praktikaliti saiz produk.
+12,BM_016,PRACTICAL_STORAGE,cold_scroll,"""Duduk menghadap laptop 8 jam, leher rasa macam kena simen. Keras gila.""",Target pasaran kolar putih (desk-bound workers).
+13,BM_017,STANDBY_BEFORE_NEED,warm_interest,"""Tengah sedap tidur tiba-tiba betis kejang simpul biawak? Sakit dia sampai menangis.""",Menyelesaikan masalah khusus ibu mengandung.
+14,BM_018,FAMILY_HOME,gift_buyer,"""Ayah kau kalau dah start berkebun, petang confirm mengadu tangan kebas.""",Hubungan emosi antara anak dan hobi ayah.
+15,BM_028,NOSTALGIA_TRUST,ready_to_buy,"""Dah bosan beli minyak angin viral yang bau jer wangi tapi sakit tak hilang?""",Menyerang jenama moden yang estetik tapi kurang 'bite'.

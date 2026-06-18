@@ -1,0 +1,16 @@
+schema_id: subhook
+version: 1
+format: csv
+primary_key: subhook_row_id
+required_columns:
+- subhook_row_id
+- product_id
+- subhook_text
+- source_asset_type
+optional_columns:
+- source_motivation_row_id
+- hook_row_id
+- notes
+intended_usage:
+- Supporting copy bank
+- Poster and video expansion

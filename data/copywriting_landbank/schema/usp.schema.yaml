@@ -1,0 +1,16 @@
+schema_id: usp
+version: 1
+format: csv
+primary_key: usp_row_id
+required_columns:
+- usp_row_id
+- product_id
+- usp_text
+- proof_type
+optional_columns:
+- source_motivation_row_id
+- trust_cue
+- notes
+intended_usage:
+- Proof-bank management
+- Future angle-to-proof linking

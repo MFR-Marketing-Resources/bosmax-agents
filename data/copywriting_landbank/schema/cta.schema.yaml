@@ -1,0 +1,16 @@
+schema_id: cta
+version: 1
+format: csv
+primary_key: cta_row_id
+required_columns:
+- cta_row_id
+- product_id
+- cta_text
+- boldness_level
+optional_columns:
+- source_motivation_row_id
+- best_platform_surface
+- notes
+intended_usage:
+- CTA bank
+- Format-specific closing copy

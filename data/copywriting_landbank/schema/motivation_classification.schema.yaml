@@ -1,0 +1,35 @@
+schema_id: motivation_classification
+version: 1
+format: csv
+primary_key: motivation_classification_row_id
+required_columns:
+- motivation_classification_row_id
+- product_id
+- source_motivation_id
+- source_motivation_id_raw
+- motivation_batch_key
+- buyer_motivation_row_id
+- source_file
+- source_sheet
+- source_batch
+- import_version
+- source_sequence
+- primary_bucket
+- secondary_bucket
+- buyer_stage
+- persona_fit
+- boldness_level
+- usage_context
+- sales_mechanism
+- best_content_format
+- best_platform_surface
+- bundle_potential
+- repeat_purchase_potential
+- strongest_hook_from_this_motivation
+- expansion_priority
+- notes_for_angle_generation
+optional_columns: []
+intended_usage:
+- Taxonomy filtering
+- Ranking expansion
+- Format routing

@@ -1,0 +1,26 @@
+taxonomy_id: usage_context_taxonomy
+version: 1
+description: Context or placement cues used during angle expansion and creative routing.
+values:
+- id: balik_kampung
+  description: Travel or gifting context tied to returning home to family.
+- id: beg
+  description: Bag or handbag carry logic.
+- id: family_gathering
+  description: Family visit, shared-household, or communal context.
+- id: kereta
+  description: Car or glovebox placement context.
+- id: kerja
+  description: Work, commute, or task-fatigue context.
+- id: laci
+  description: Drawer, cabinet, or fixed household-storage context.
+- id: malam
+  description: Night-time or late-hour urgency context.
+- id: open_house
+  description: Open house or festive hosting context.
+- id: rak
+  description: Shelf or visual household-readiness context.
+- id: rumah
+  description: General in-home use or household readiness context.
+- id: travel
+  description: Trip, packing, or movement-heavy context beyond the car.

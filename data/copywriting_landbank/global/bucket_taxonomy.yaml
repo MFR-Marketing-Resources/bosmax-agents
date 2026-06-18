@@ -1,0 +1,24 @@
+taxonomy_id: bucket_taxonomy
+version: 1
+description: Commercial angle buckets used to classify buyer motivations.
+values:
+- id: FAMILY_HOME
+  description: Family-duty, home-care, and parent-facing purchase situations.
+- id: MULTI_BUY
+  description: Angles that justify buying more than one bottle for spread placement or backup.
+- id: NOSTALGIA_TRUST
+  description: Old-school familiarity, heritage proof, and memory-triggered trust lanes.
+- id: PERSONA_SPECIFIC
+  description: Rows anchored to a tighter persona or occupational use case.
+- id: PRACTICAL_STORAGE
+  description: Small-bottle convenience, storage logic, and physical placement proof.
+- id: SEASONAL_CONTEXT
+  description: Campaigns linked to balik kampung, kenduri, open house, or weather context.
+- id: STANDBY_BEFORE_NEED
+  description: Preparedness lanes that sell before the discomfort hits.
+- id: TIKTOK_CURIOSITY
+  description: Scroll-stop or curiosity hooks designed to earn the next second of attention.
+- id: TRAVEL_CAR_BAG
+  description: Mobility, glovebox, roadtrip, travel bag, or on-the-go carry lanes.
+- id: VISUAL_RECOGNITION
+  description: Angles that sell through the bottle look, cap, color, or heritage silhouette.

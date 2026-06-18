@@ -1,0 +1,24 @@
+taxonomy_id: sales_mechanism_taxonomy
+version: 1
+description: Primary commercial mechanism each motivation uses to move the buyer toward action.
+values:
+- id: before_need_preparation
+  description: Sell preparedness before the pain or discomfort arrives.
+- id: family_responsibility
+  description: Sell through guilt, duty, or care toward family members.
+- id: fear_of_not_having
+  description: Sell through the downside of not keeping a standby bottle.
+- id: gift_utility
+  description: Sell practical gifting rather than decorative gifting.
+- id: household_readiness
+  description: Sell the idea of a complete, well-prepared home.
+- id: impulse_low_friction
+  description: Sell through low price, quick checkout, or immediate cart logic.
+- id: multi_location_logic
+  description: Sell one bottle per location so the product is always nearby.
+- id: nostalgia_trust
+  description: Sell through heritage proof and memory-based familiarity.
+- id: practical_convenience
+  description: Sell size, portability, and storage simplicity.
+- id: visual_recognition
+  description: Sell via instantly recognizable product visuals.

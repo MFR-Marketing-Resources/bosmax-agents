@@ -1,0 +1,21 @@
+module_id: copywriting_landbank
+version: 1
+canonical_storage:
+  row_heavy_data: CSV
+  schemas_taxonomies_manifests: YAML
+  reports_docs: Markdown
+  excel_status: export_only
+products:
+- product_id: MWTCB_25ML
+  path: data/copywriting_landbank/products/mwtcb
+  canonical_files:
+  - product.copy.yaml
+  - buyer_motivations.csv
+  - motivation_classification.csv
+  - rankings.yaml
+  - source_manifest.yaml
+  - import_report.md
+  - duplicate_report.md
+exports:
+- data/copywriting_landbank/exports/mwtcb_copywriting_landbank.xlsx
+- data/copywriting_landbank/exports/mwtcb_copywriting_landbank_csv.zip

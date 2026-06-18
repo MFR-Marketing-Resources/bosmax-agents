@@ -1,0 +1,20 @@
+schema_id: poster_copy_matrix
+version: 1
+format: csv
+primary_key: poster_matrix_row_id
+required_columns:
+- poster_matrix_row_id
+- product_id
+- angle_row_id
+- hook_row_id
+- platform_surface
+optional_columns:
+- subhook_row_id
+- usp_row_id
+- cta_row_id
+- visual_priority_notes
+- notes
+intended_usage:
+- Poster copy planning
+- Static-card buildout
+- Product-page asset generation

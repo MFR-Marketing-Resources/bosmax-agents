@@ -1,0 +1,12 @@
+taxonomy_id: boldness_taxonomy
+version: 1
+description: Copy intensity scale. Preserve source boldness labels; do not auto-soften aggressive rows during import.
+values:
+- id: AGGRESSIVE
+  description: High-pressure, blunt, or guilt-forward direct-response language.
+- id: BOLD
+  description: Clear friction and urgency without going fully hard-slap.
+- id: MODERATE
+  description: Balanced persuasion with emotional or practical proof.
+- id: SOFT
+  description: Lowest-intensity variant that still preserves the core sales lane.

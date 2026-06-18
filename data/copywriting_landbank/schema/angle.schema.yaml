@@ -1,0 +1,24 @@
+schema_id: angle
+version: 1
+format: csv
+primary_key: angle_row_id
+required_columns:
+- angle_row_id
+- product_id
+- source_motivation_row_id
+- angle_name
+- angle_statement
+- best_formula
+- primary_bucket
+- boldness_level
+optional_columns:
+- hook_seed
+- subhook_seed
+- usp_seed
+- cta_seed
+- notes
+- source_batch
+- import_version
+intended_usage:
+- Part 2 Angle Master Bank
+- Video and poster matrix seeding
