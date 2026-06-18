@@ -15,6 +15,7 @@ If this file conflicts with `.claude/CLAUDE.md`, the canonical winner is always:
 Use these surfaces as the live deterministic path for BOSMAX work:
 - Orchestrator and route logic: `.claude/CLAUDE.md`
 - Specialist execution skills: `.claude/skills/`
+- Video prompt quality gate (4 defects, deterministic check before Notion): `BOSMAX_VIDEO_PROMPT_QUALITY_GATE_HANDOFF_v1.md` + `scripts/validate_final_video_prompt_text.py`
 - Product registry and scale anchors: `products/*.yaml`
 - Product schema contract: `products/_SCHEMA.yaml`
 - Dialogue authority for sensitive products: `SCRIPT_REGISTRY_UNIFIED.md` + `SCRIPT_VARIANT_LIBRARY.md`
