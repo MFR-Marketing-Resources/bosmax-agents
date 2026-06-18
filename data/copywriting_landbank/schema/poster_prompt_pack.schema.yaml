@@ -1,0 +1,67 @@
+schema_version: "1.0"
+file: poster_prompt_pack.csv
+description: >
+  Engine-neutral poster creative brief pack for MWTCB_25ML.
+  Each row is a fully self-contained prompt brief — all copy fields, guardrails,
+  and metadata are direct columns. No joins to source matrices required.
+  next_adapter_stage is always OPERATOR_REVIEW. No image-engine final prompts are generated here.
+required_columns:
+  - poster_prompt_pack_id
+  - product_id
+  - poster_matrix_id
+  - motivation_id
+  - angle_id
+  - hook_id
+  - subhook_id
+  - usp_id
+  - cta_id
+  - poster_format
+  - platform_surface_fit
+  - copy_tone
+  - headline_text
+  - subheadline_text
+  - usp_chip_1
+  - usp_chip_2
+  - usp_chip_3
+  - cta_text
+  - poster_visual_direction
+  - product_position
+  - background_direction
+  - prop_cues
+  - overlay_hierarchy
+  - product_truth_lock
+  - visual_guardrails
+  - overlay_guardrails
+  - engine_neutral_prompt_brief
+  - negative_prompt_rules
+  - raw_claim_tolerance
+  - production_review_required
+  - operator_edit_required
+  - recommended_design_family
+  - next_adapter_stage
+  - priority_score
+  - source_batch
+  - prompt_pack_status
+primary_key: poster_prompt_pack_id
+enums:
+  raw_claim_tolerance:
+    - LOW
+    - MEDIUM
+    - HIGH
+  production_review_required:
+    - "YES"
+    - "NO"
+  operator_edit_required:
+    - "YES"
+    - OPTIONAL
+    - "NO"
+  next_adapter_stage:
+    - OPERATOR_REVIEW
+  prompt_pack_status:
+    - READY_FOR_OPERATOR_REVIEW
+policy:
+  raw_copywriting_matrix: true
+  no_engine_specific_prompts: true
+  no_notion_api: true
+  operator_edit_required_is_routing_field_not_deletion_filter: true
+  engine_neutral_prompt_brief_is_brief_not_final_prompt: true
