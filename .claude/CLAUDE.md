@@ -1508,6 +1508,7 @@ MULTI-BLOCK TRIGGER MATRIX:
 ## MEMORY MANAGEMENT
 
 - Baca `BOSMAX_CURRENT_STATE.md` pada awal setiap session untuk context semasa
+- Treat `README.md` sebagai repo map sahaja; jangan guna ia sebagai live version truth atau authority order
 - Update `BOSMAX_CURRENT_STATE.md` selepas setiap product_record baru disimpan
 - Update `BOSMAX_CURRENT_STATE.md` selepas setiap source_image_handoff baru disimpan
 - `BOSMAX-LOG.md` kekal sebagai historical append-only audit trail
