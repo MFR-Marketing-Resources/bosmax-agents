@@ -7,6 +7,10 @@ canonical_outputs:
   rankings_yaml: data/copywriting_landbank/products/mwtcb/rankings.yaml
   product_profile_yaml: data/copywriting_landbank/products/mwtcb/product.copy.yaml
   angle_bank_csv: data/copywriting_landbank/products/mwtcb/angle_bank.csv
+  hook_bank_csv: data/copywriting_landbank/products/mwtcb/hook_bank.csv
+  subhook_bank_csv: data/copywriting_landbank/products/mwtcb/subhook_bank.csv
+  usp_bank_csv: data/copywriting_landbank/products/mwtcb/usp_bank.csv
+  cta_bank_csv: data/copywriting_landbank/products/mwtcb/cta_bank.csv
 source_files:
 - source_batch: 2026-06-19_xlsx
   source_file: mwtcb_copywriting_landbank.xlsx
@@ -50,6 +54,8 @@ batch_snapshots:
     normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/normalized
   2026-06-19_part2_angle_bank:
     normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part2_angle_bank/normalized
+  2026-06-19_part3_6_copy_components:
+    normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_part3_6_copy_components/normalized
 generated_exports:
   xlsx: data/copywriting_landbank/exports/mwtcb_copywriting_landbank.xlsx
   zip: data/copywriting_landbank/exports/mwtcb_copywriting_landbank_csv.zip

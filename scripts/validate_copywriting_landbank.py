@@ -111,10 +111,18 @@ def main() -> int:
     buyer_schema = load_yaml(SCHEMA_DIR / "buyer_motivation.schema.yaml")
     class_schema = load_yaml(SCHEMA_DIR / "motivation_classification.schema.yaml")
     angle_schema = load_yaml(SCHEMA_DIR / "angle.schema.yaml")
+    hook_schema = load_yaml(SCHEMA_DIR / "hook.schema.yaml")
+    subhook_schema = load_yaml(SCHEMA_DIR / "subhook.schema.yaml")
+    usp_schema = load_yaml(SCHEMA_DIR / "usp.schema.yaml")
+    cta_schema = load_yaml(SCHEMA_DIR / "cta.schema.yaml")
 
     buyer_csv = PRODUCT_DIR / "buyer_motivations.csv"
     class_csv = PRODUCT_DIR / "motivation_classification.csv"
     angle_csv = PRODUCT_DIR / "angle_bank.csv"
+    hook_csv = PRODUCT_DIR / "hook_bank.csv"
+    subhook_csv = PRODUCT_DIR / "subhook_bank.csv"
+    usp_csv = PRODUCT_DIR / "usp_bank.csv"
+    cta_csv = PRODUCT_DIR / "cta_bank.csv"
 
     buyer_rows = load_csv(buyer_csv)
     class_rows = load_csv(class_csv)
@@ -123,13 +131,33 @@ def main() -> int:
     if angle_csv.exists():
         angle_rows = load_csv(angle_csv)
 
+    hook_rows = []
+    if hook_csv.exists():
+        hook_rows = load_csv(hook_csv)
+
+    subhook_rows = []
+    if subhook_csv.exists():
+        subhook_rows = load_csv(subhook_csv)
+
+    usp_rows = []
+    if usp_csv.exists():
+        usp_rows = load_csv(usp_csv)
+
+    cta_rows = []
+    if cta_csv.exists():
+        cta_rows = load_csv(cta_csv)
+
     errors: list[str] = []
     errors.extend(validate_columns(buyer_rows, buyer_schema["required_columns"], buyer_csv.name))
     errors.extend(validate_columns(class_rows, class_schema["required_columns"], class_csv.name))
     
+    valid_motivation_ids = {r["buyer_motivation_row_id"] for r in buyer_rows}
+    valid_angle_ids = set()
+
     if angle_csv.exists():
         errors.extend(validate_columns(angle_rows, angle_schema["required_columns"], angle_csv.name))
         errors.extend(validate_unique(angle_rows, "angle_id", angle_csv.name))
+        valid_angle_ids = {r["angle_id"] for r in angle_rows}
         
         # Specific fields validation
         for index, row in enumerate(angle_rows, start=2):
@@ -141,13 +169,115 @@ def main() -> int:
                 if (row.get(col) or "").strip() == "":
                     errors.append(f"{angle_csv.name}:{index}: empty required field `{col}`")
                     
-            # Check cross-ref for motivation_id
             m_id = (row.get("motivation_id") or "").strip()
-            valid_motivation_ids = {r["buyer_motivation_row_id"] for r in buyer_rows}
             if m_id and m_id not in valid_motivation_ids:
                 errors.append(f"{angle_csv.name}:{index}: unknown motivation_id `{m_id}`")
     else:
         errors.append(f"Missing required output file: {angle_csv.name}")
+
+    # Hook validation
+    if hook_csv.exists():
+        errors.extend(validate_columns(hook_rows, hook_schema["required_columns"], hook_csv.name))
+        errors.extend(validate_unique(hook_rows, "hook_id", hook_csv.name))
+        valid_hook_ids = {r["hook_id"] for r in hook_rows}
+        
+        for index, row in enumerate(hook_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{hook_csv.name}:{index}: invalid product_id `{pid}`")
+            
+            # Non-empty checks
+            for col in ["hook_text", "boldness_level", "angle_id", "motivation_id"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{hook_csv.name}:{index}: empty required field `{col}`")
+            
+            # Cross-ref checks
+            a_id = (row.get("angle_id") or "").strip()
+            m_id = (row.get("motivation_id") or "").strip()
+            if a_id and a_id not in valid_angle_ids:
+                errors.append(f"{hook_csv.name}:{index}: unknown angle_id `{a_id}`")
+            if m_id and m_id not in valid_motivation_ids:
+                errors.append(f"{hook_csv.name}:{index}: unknown motivation_id `{m_id}`")
+    else:
+        errors.append(f"Missing hook file: {hook_csv.name}")
+
+    # Subhook validation
+    if subhook_csv.exists():
+        errors.extend(validate_columns(subhook_rows, subhook_schema["required_columns"], subhook_csv.name))
+        errors.extend(validate_unique(subhook_rows, "subhook_id", subhook_csv.name))
+        
+        for index, row in enumerate(subhook_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{subhook_csv.name}:{index}: invalid product_id `{pid}`")
+            
+            # Non-empty checks
+            for col in ["subhook_text", "boldness_level", "hook_id", "angle_id", "motivation_id"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{subhook_csv.name}:{index}: empty required field `{col}`")
+            
+            # Cross-ref checks
+            h_id = (row.get("hook_id") or "").strip()
+            a_id = (row.get("angle_id") or "").strip()
+            m_id = (row.get("motivation_id") or "").strip()
+            if hook_csv.exists() and h_id and h_id not in valid_hook_ids:
+                errors.append(f"{subhook_csv.name}:{index}: unknown hook_id `{h_id}`")
+            if a_id and a_id not in valid_angle_ids:
+                errors.append(f"{subhook_csv.name}:{index}: unknown angle_id `{a_id}`")
+            if m_id and m_id not in valid_motivation_ids:
+                errors.append(f"{subhook_csv.name}:{index}: unknown motivation_id `{m_id}`")
+    else:
+        errors.append(f"Missing subhook file: {subhook_csv.name}")
+
+    # USP validation
+    if usp_csv.exists():
+        errors.extend(validate_columns(usp_rows, usp_schema["required_columns"], usp_csv.name))
+        errors.extend(validate_unique(usp_rows, "usp_id", usp_csv.name))
+        
+        for index, row in enumerate(usp_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{usp_csv.name}:{index}: invalid product_id `{pid}`")
+            
+            # Non-empty checks
+            for col in ["usp_text", "proof_type", "angle_id", "motivation_id"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{usp_csv.name}:{index}: empty required field `{col}`")
+            
+            # Cross-ref checks
+            a_id = (row.get("angle_id") or "").strip()
+            m_id = (row.get("motivation_id") or "").strip()
+            if a_id and a_id not in valid_angle_ids:
+                errors.append(f"{usp_csv.name}:{index}: unknown angle_id `{a_id}`")
+            if m_id and m_id not in valid_motivation_ids:
+                errors.append(f"{usp_csv.name}:{index}: unknown motivation_id `{m_id}`")
+    else:
+        errors.append(f"Missing USP file: {usp_csv.name}")
+
+    # CTA validation
+    if cta_csv.exists():
+        errors.extend(validate_columns(cta_rows, cta_schema["required_columns"], cta_csv.name))
+        errors.extend(validate_unique(cta_rows, "cta_id", cta_csv.name))
+        
+        for index, row in enumerate(cta_rows, start=2):
+            pid = (row.get("product_id") or "").strip()
+            if pid != "MWTCB_25ML":
+                errors.append(f"{cta_csv.name}:{index}: invalid product_id `{pid}`")
+            
+            # Non-empty checks
+            for col in ["cta_text", "boldness_level", "angle_id", "motivation_id"]:
+                if (row.get(col) or "").strip() == "":
+                    errors.append(f"{cta_csv.name}:{index}: empty required field `{col}`")
+            
+            # Cross-ref checks
+            a_id = (row.get("angle_id") or "").strip()
+            m_id = (row.get("motivation_id") or "").strip()
+            if a_id and a_id not in valid_angle_ids:
+                errors.append(f"{cta_csv.name}:{index}: unknown angle_id `{a_id}`")
+            if m_id and m_id not in valid_motivation_ids:
+                errors.append(f"{cta_csv.name}:{index}: unknown motivation_id `{m_id}`")
+    else:
+        errors.append(f"Missing CTA file: {cta_csv.name}")
 
     errors.extend(validate_unique(buyer_rows, "buyer_motivation_row_id", buyer_csv.name))
     errors.extend(validate_unique(class_rows, "motivation_classification_row_id", class_csv.name))
@@ -156,8 +286,9 @@ def main() -> int:
     errors.extend(validate_cross_refs(buyer_rows, class_rows))
 
     csvs_to_test = [buyer_csv, class_csv]
-    if angle_csv.exists():
-        csvs_to_test.append(angle_csv)
+    for csv_file in [angle_csv, hook_csv, subhook_csv, usp_csv, cta_csv]:
+        if csv_file.exists():
+            csvs_to_test.append(csv_file)
         
     pandas_errors, pandas_status = validate_pandas_read(csvs_to_test, args.require_pandas)
     errors.extend(pandas_errors)
@@ -166,6 +297,10 @@ def main() -> int:
     print(f"- buyer_motivations.csv rows: {len(buyer_rows)}")
     print(f"- motivation_classification.csv rows: {len(class_rows)}")
     print(f"- angle_bank.csv rows: {len(angle_rows) if angle_csv.exists() else 0}")
+    print(f"- hook_bank.csv rows: {len(hook_rows) if hook_csv.exists() else 0}")
+    print(f"- subhook_bank.csv rows: {len(subhook_rows) if subhook_csv.exists() else 0}")
+    print(f"- usp_bank.csv rows: {len(usp_rows) if usp_csv.exists() else 0}")
+    print(f"- cta_bank.csv rows: {len(cta_rows) if cta_csv.exists() else 0}")
     print(f"- pandas_read: {pandas_status}")
     print(f"- product_dir: {PRODUCT_DIR}")
 

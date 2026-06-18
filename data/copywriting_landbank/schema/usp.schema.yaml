@@ -1,16 +1,25 @@
 schema_id: usp
 version: 1
 format: csv
-primary_key: usp_row_id
+primary_key: usp_id
 required_columns:
-- usp_row_id
+- usp_id
 - product_id
+- angle_id
+- motivation_id
 - usp_text
+- usp_family
 - proof_type
-optional_columns:
-- source_motivation_row_id
-- trust_cue
-- notes
+- visual_proof
+- buyer_reason
+- primary_bucket
+- usage_context
+- boldness_level
+- best_content_format
+- platform_surface_fit
+- source_batch
+- usp_status
+optional_columns: []
 intended_usage:
 - Proof-bank management
 - Future angle-to-proof linking
