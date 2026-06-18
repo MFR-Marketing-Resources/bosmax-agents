@@ -51,7 +51,37 @@ OUTPUT ENFORCEMENT
   (no "SET 1 of N" / "Runtime plan" / "Do not compile as one" / output_mode= / safe_max_words=)
 ☐ Section 6 declares lip-sync (presenter) or explicit voiceover -- never a silent default
 ☐ No English / internal storyboard label code-switched into a BM spoken line
+☐ DETERMINISTIC FINAL-PROMPT GATE run on the emitted text (see below) returns CLEAN
 ```
+
+## Deterministic Final-Prompt Gate (chat-lane bypass net)
+
+The `video_template_compiler_runtime` lane enforces these gates on structured
+templates, but a prompt authored directly by the chat-lane LLM never passes
+through that compiler. To stop relying on LLM obedience, the final 9-section
+video prompt TEXT must clear a deterministic scanner before delivery:
+
+```
+python scripts/validate_final_video_prompt_text.py <prompt.txt> [--language BM] [--pace BRISK_UGC]
+```
+
+It blocks the four prompt-quality defects on the raw text itself:
+
+- **A — metadata leak**: `output_mode=`, `block_source=`, "Runtime plan",
+  "Do not compile as one", "Do not use two equal", "multi-prompt sequence", ...
+- **B — underfill**: spoken words below the WPS corridor minimum for the parsed
+  clip duration → REWRITE_REQUIRED (the dead-air / filler-glitch root cause).
+- **C — code-switch**: English / internal storyboard labels ("family shelf",
+  "shelf cue", "b-roll") inside a BM spoken line.
+- **D — VO/lip conflict**: "voiceover only" declared next to a presenter /
+  lip-sync cue. (A self-consistent product-only voiceover is allowed; the
+  talking-vs-faceless routing decision is enforced upstream by `presenter_route`.)
+
+Pattern lists and the WPS corridor are imported from the same artefacts the
+compiler uses — one source of truth, no drift. A non-empty result is a hard
+block: do not emit. Run `python scripts/validate_final_video_prompt_text.py`
+with no argument to execute the built-in self-test (the operator's exact failing
+case must BLOCK; a clean prompt must PASS).
 
 ## Kill Switch
 

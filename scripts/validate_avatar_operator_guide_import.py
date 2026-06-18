@@ -12,6 +12,14 @@ import re
 import sys
 from pathlib import Path
 
+# Force UTF-8 stdout so emoji status markers (✅/⚠️/❌/⛔) do not crash on
+# Windows consoles defaulting to cp1252. Guarded for streams lacking reconfigure.
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (ValueError, OSError):
+        pass
+
 # ──────────────────────────────────────────────────────────────────────────────
 # CONSTANTS
 # ──────────────────────────────────────────────────────────────────────────────
