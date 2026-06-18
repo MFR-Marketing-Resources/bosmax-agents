@@ -1,0 +1,52 @@
+taxonomy_id: copywriting_formulas
+version: 1
+description: Reusable formula inventory observed in the seeded MWTCB landbank. New products may reuse or extend this list.
+values:
+- id: 4U
+  description: Urgency-forward direct-response pattern used for practical conversion hooks.
+- id: AIDA
+  description: Attention, Interest, Desire, Action pattern.
+- id: BAB
+  description: Before, After, Bridge transformation pattern.
+- id: FAB
+  description: Features, Advantages, Benefits pattern.
+- id: HSO
+  description: Hook, Story, Offer pattern.
+- id: Hook/Family
+  description: Family-duty hook pattern preserved from source wording.
+- id: Hook/Family/Product/CTA
+  description: Family-duty hook that moves quickly into product and CTA.
+- id: Hook/Fear of Not Having
+  description: Preparedness hook built on the downside of having no standby item.
+- id: Hook/Memory
+  description: Memory trigger hook centered on recognition and nostalgia.
+- id: Hook/Memory/Trust/CTA
+  description: Recognition-led hook that leans into trust proof then CTA.
+- id: Hook/Multi-location
+  description: Location-spread logic that sells multi-buy or placement convenience.
+- id: Hook/Multi-location/CTA
+  description: Location-spread logic with explicit close.
+- id: Hook/Pain
+  description: Direct pain-first hook.
+- id: Hook/Use Moment
+  description: Moment-of-use opening that starts inside the scenario.
+- id: Hook/Use Moment/CTA
+  description: Moment-of-use opening that closes fast.
+- id: Hook/Visual Recognition
+  description: Product-look or packaging-driven recognition hook.
+- id: Hook/Visual/Reason/CTA
+  description: Visual proof then buying reason then CTA.
+- id: PAS
+  description: Problem, Agitate, Solution pattern.
+- id: PASTOR
+  description: Problem, Amplify, Story, Transformation, Offer, Response pattern.
+- id: PPPP
+  description: Picture, Promise, Prove, Push pattern.
+- id: Problem/Moment
+  description: Problem-first moment snapshot.
+- id: Problem/Moment/Standby/CTA
+  description: Problem snapshot followed by standby logic and CTA.
+- id: QUEST
+  description: Qualify, Understand, Educate, Stimulate, Transition pattern.
+- id: SLAP
+  description: Short, direct slap-style hook pattern preserved from source framing.

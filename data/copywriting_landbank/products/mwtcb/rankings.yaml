@@ -1,0 +1,1838 @@
+product_id: MWTCB_25ML
+product_name: Minyak Warisan Tok Cap Burung
+import_version: 2026-06-19_initial_landbank
+ranking_groups:
+  top_expand_first:
+    description: Highest-priority motivation rows to expand first into future angle banks.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: Top 15 Expand
+      entry_count: 15
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM014
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM014
+        rank: '1'
+        reason: 'Multi-buy logic paling jelas: rumah, kereta, beg. Terus naikkan AOV.'
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM015
+        rank: '2'
+        reason: “Jangan tunggu perlu baru cari” ialah direct-response core trigger.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM001
+        rank: '3'
+        reason: Rumah wajib ada barang standby. Broadest household angle.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM030
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM030
+        rank: '4'
+        reason: “Sejak 1958” jadi trust weapon yang tak nampak generic.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM007
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM007
+        rank: '5'
+        reason: Roadtrip/kereta ada pain jelas dan visual scene kuat.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM026
+        rank: '6'
+        reason: Mak-mak buyer kuat, practical, cepat faham, tinggi conversion.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM018
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM018
+        rank: '7'
+        reason: Rumah tok nostalgia kuat untuk stop scroll dan emotional stickiness.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM058
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM058
+        rank: '8'
+        reason: 'TikTok impulse buyer: tak plan beli tapi rasa wajib ada.'
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM012
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM012
+        rank: '9'
+        reason: Cap merah + minyak hijau kuat untuk product-only stop-scroll.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM049
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM049
+        rank: '10'
+        reason: Perut mula buat hal ialah use moment yang sangat familiar.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 11
+        source_motivation_id: BM021
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM021
+        rank: '11'
+        reason: Repeat purchase + stock-up angle.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 12
+        source_motivation_id: BM036
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM036
+        rank: '12'
+        reason: Satu botol cepat lesap, push bundle tanpa nampak memaksa.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 13
+        source_motivation_id: BM009
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM009
+        rank: '13'
+        reason: 'Travel checklist angle: powerbank ingat, minyak lupa.'
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 14
+        source_motivation_id: BM056
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM056
+        rank: '14'
+        reason: Trust cue “Sejak 1958” sebagai product page dan poster headline.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Top 15 Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 15
+        source_motivation_id: BM035
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM035
+        rank: '15'
+        reason: “Bukan untuk show off. Untuk ada bila perlu.” Sangat sharp dan commercial.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: Top_15_Expand
+      entry_count: 15
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM012
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM012
+        rank: '1'
+        primary_bucket: MULTI_BUY
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Harga murah gila, tak payah fikir dua kali. Guna kupon terus sauk 3 botol."'
+        reason: Conversion laju untuk produk bawah RM20.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM024
+        rank: '2'
+        primary_bucket: FAMILY_HOME
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Siksa tengok mak ayah nak naik tangga surau sebab lutut bunyi ketat?"'
+        reason: Membantu pergerakan harian warga emas.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM026
+        rank: '3'
+        primary_bucket: SEASONAL_CONTEXT
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Balik kenduri perut rasa senak gas penuh? Nak sendawa tapi tak lepas."'
+        reason: Sering terjadi selepas musim perayaan/kenduri.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM057
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM057
+        rank: '4'
+        primary_bucket: PRACTICAL_STORAGE
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Kaki game yang main sampai subuh confirm wrist tangan rasa kejang guna mouse?"'
+        reason: Pasaran moden baharu (gaming/streaming community).
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM005
+        rank: '5'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Orang tua kalau dah start sebu perut, dia tak cari ubat moden. Dia cari yang ni."'
+        reason: Trust lama yang melekat pada golongan veteran.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM007
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM007
+        rank: '6'
+        primary_bucket: PRACTICAL_STORAGE
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Laci rumah kau penuh ubat tapi satu pun tak boleh pakai waktu kecemasan?"'
+        reason: Menyelesaikan isu harian "kehilangan barang" di rumah.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM015
+        rank: '7'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Orang tua kalau malam selalu terjaga sebab kaki sejuk? Sapu minyak herba ni."'
+        reason: Menjual kehangatan malam tanpa ubat makan.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM045
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM045
+        rank: '8'
+        primary_bucket: TRAVEL_CAR_BAG
+        buyer_stage: repeat_buyer
+        strongest_hook: '"Panjat gunung beg nak kena ringan, tapi minyak urut wajib bawa. Guna yang ni."'
+        reason: Target pasaran outdoor/hiking.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM001
+        rank: '9'
+        primary_bucket: STANDBY_BEFORE_NEED
+        buyer_stage: ready_to_buy
+        strongest_hook: '"Anak mula meragam pukul 2 pagi, waktu tu baru kau nak menggelimpang cari minyak?"'
+        reason: Menyentuh 'pain point' mak-mak yang kurang tidur.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM002
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM002
+        rank: '10'
+        primary_bucket: TRAVEL_CAR_BAG
+        buyer_stage: ready_to_buy
+        strongest_hook: '"Hadap jem dari KL ke Shah Alam, pinggang dah bunyi ''krak''. Kau ada benda ni?"'
+        reason: Realiti harian pekerja korporat / komuter tegar.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 11
+        source_motivation_id: BM004
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM004
+        rank: '11'
+        primary_bucket: PRACTICAL_STORAGE
+        buyer_stage: ready_to_buy
+        strongest_hook: '"Bawa minyak besar-besar dalam beg travel buat menyemak jer. Guna yang ni."'
+        reason: Menjual fungsi praktikaliti saiz produk.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 12
+        source_motivation_id: BM016
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM016
+        rank: '12'
+        primary_bucket: PRACTICAL_STORAGE
+        buyer_stage: cold_scroll
+        strongest_hook: '"Duduk menghadap laptop 8 jam, leher rasa macam kena simen. Keras gila."'
+        reason: Target pasaran kolar putih (desk-bound workers).
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 13
+        source_motivation_id: BM017
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM017
+        rank: '13'
+        primary_bucket: STANDBY_BEFORE_NEED
+        buyer_stage: warm_interest
+        strongest_hook: '"Tengah sedap tidur tiba-tiba betis kejang simpul biawak? Sakit dia sampai menangis."'
+        reason: Menyelesaikan masalah khusus ibu mengandung.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 14
+        source_motivation_id: BM018
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM018
+        rank: '14'
+        primary_bucket: FAMILY_HOME
+        buyer_stage: gift_buyer
+        strongest_hook: '"Ayah kau kalau dah start berkebun, petang confirm mengadu tangan kebas."'
+        reason: Hubungan emosi antara anak dan hobi ayah.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Top_15_Expand
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 15
+        source_motivation_id: BM028
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM028
+        rank: '15'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: ready_to_buy
+        strongest_hook: '"Dah bosan beli minyak angin viral yang bau jer wangi tapi sakit tak hilang?"'
+        reason: Menyerang jenama moden yang estetik tapi kurang 'bite'.
+  top_bundle_offers:
+    description: Rows with strong multi-buy or offer-stacking potential.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: Bundle Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM014
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM014
+        rank: '1'
+        bundle_logic: Rumah satu, kereta satu, beg satu.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM036
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM036
+        rank: '2'
+        bundle_logic: Satu botol dalam rumah cepat lesap.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM021
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM021
+        rank: '3'
+        bundle_logic: Repeat buyer perlu spare sebelum habis.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM005
+        rank: '4'
+        bundle_logic: Botol kecil senang beli lebih, tak makan ruang.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM007
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM007
+        rank: '5'
+        bundle_logic: Satu khusus untuk kereta.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM009
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM009
+        rank: '6'
+        bundle_logic: Satu untuk travel bag.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM051
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM051
+        rank: '7'
+        bundle_logic: Travel checklist boleh jual set packing.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM053
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM053
+        rank: '8'
+        bundle_logic: Rumah kecil pun boleh simpan beberapa botol.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM026
+        rank: '9'
+        bundle_logic: Mak-mak suka stok barang rumah.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Bundle Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM022
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM022
+        rank: '10'
+        bundle_logic: Beli untuk rumah sendiri + mak ayah.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: Bundle_Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM012
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM012
+        rank: '1'
+        primary_bucket: MULTI_BUY
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Harga murah gila, tak payah fikir dua kali. Guna kupon terus sauk 3 botol."'
+        bundle_logic: '"Satu letak beg, satu kereta, satu ruang tamu. Tak rugi standby barang lama."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM024
+        rank: '2'
+        primary_bucket: FAMILY_HOME
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Siksa tengok mak ayah nak naik tangga surau sebab lutut bunyi ketat?"'
+        bundle_logic: '"Minyak hijau herba pekat. Gosok tiap pagi, urat longgar langkah pun ringan."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM026
+        rank: '3'
+        primary_bucket: SEASONAL_CONTEXT
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Balik kenduri perut rasa senak gas penuh? Nak sendawa tapi tak lepas."'
+        bundle_logic: '"Urut membulat minyak cap burung ni kat perut. Kejap lagi confirm sendawa puas."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM057
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM057
+        rank: '4'
+        primary_bucket: PRACTICAL_STORAGE
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Kaki game yang main sampai subuh confirm wrist tangan rasa kejang guna mouse?"'
+        bundle_logic: '"Jangan biar urat tangan rosak muda. Standby botol kecil ni tepi keyboard kau."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM005
+        rank: '5'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Orang tua kalau dah start sebu perut, dia tak cari ubat moden. Dia cari yang ni."'
+        bundle_logic: '"Minyak Hijau formula asli. Sekali urut, angin lama terus keluar bertubi-tubi."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM007
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM007
+        rank: '6'
+        primary_bucket: PRACTICAL_STORAGE
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Laci rumah kau penuh ubat tapi satu pun tak boleh pakai waktu kecemasan?"'
+        bundle_logic: '"Cap merah ni senang cam. Letak satu dalam laci tv, satu dekat dapur."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM015
+        rank: '7'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Orang tua kalau malam selalu terjaga sebab kaki sejuk? Sapu minyak herba ni."'
+        bundle_logic: '"Formula asli sejak 1958, panaskan tapak kaki sebelum tidur supaya lena."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM045
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM045
+        rank: '8'
+        primary_bucket: TRAVEL_CAR_BAG
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Panjat gunung beg nak kena ringan, tapi minyak urut wajib bawa. Guna yang ni."'
+        bundle_logic: '"Botol kaca hijau tebal 25ml. Tak makan ruang beg, lutut start longgar terus gosok."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM006
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM006
+        rank: '9'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Kerja angkat kotak sehari suntuk, malam ni confirm siksa tak boleh tidur."'
+        bundle_logic: '"Sapu sebelum tidur. Biar herba meresap, esok bangun badan fresh tak ada ketat."'
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Bundle_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM013
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM013
+        rank: '10'
+        primary_bucket: NOSTALGIA_TRUST
+        buyer_stage: repeat_buyer
+        bundle_potential: HIGH
+        hook: '"Otot ketat gila lepas layan leg day? Jangan biar esok jalan kengkang."'
+        bundle_logic: '"Minyak hijau ni herba dia pekat, urut sikit kat muscle terus rasa loose."'
+  top_ugc_scripts:
+    description: Rows most suitable for creator-voiced UGC talking-head or POV scripts.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: UGC Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM026
+        rank: '1'
+        u_g_c_angle: 'Mak-mak cakap direct: “Benda macam ni kena ada sebelum rumah kecoh.”'
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM003
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM003
+        rank: '2'
+        u_g_c_angle: Anak cerita habit mak ayah simpan minyak.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM024
+        rank: '3'
+        u_g_c_angle: Lelaki/pekerja balik kerja badan rasa berat.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM022
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM022
+        rank: '4'
+        u_g_c_angle: Anak beli untuk mak ayah, practical gift.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM045
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM045
+        rank: '5'
+        u_g_c_angle: Handbag penuh barang beauty tapi minyak standby tak ada.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM031
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM031
+        rank: '6'
+        u_g_c_angle: Petua orang lama jangan cepat dibuang.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM011
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM011
+        rank: '7'
+        u_g_c_angle: Bukan semua benda viral boleh dipercayai.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM017
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM017
+        rank: '8'
+        u_g_c_angle: Satu rumah cari barang yang sama bila tak selesa.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM035
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM035
+        rank: '9'
+        u_g_c_angle: Produk bukan untuk show off, untuk ada bila perlu.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: UGC Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM046
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM046
+        rank: '10'
+        u_g_c_angle: Lelaki pun kena standby barang basic.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: UGC_Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM024
+        rank: '1'
+        persona_fit: anak_beli_untuk_parent
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Nostalgia trigger — "Siksa tengok mak ayah nak naik tangga surau sebab lutut bunyi ketat?"
+        sample_subhook: '"Minyak hijau herba pekat. Gosok tiap pagi, urat longgar langkah pun ringan."'
+        sample_cta: Beli Set Lutut
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM026
+        rank: '2'
+        persona_fit: anak_beli_untuk_parent
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Use moment — "Balik kenduri perut rasa senak gas penuh? Nak sendawa tapi tak lepas."
+        sample_subhook: '"Urut membulat minyak cap burung ni kat perut. Kejap lagi confirm sendawa puas."'
+        sample_cta: Beli Set Sendawa
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM057
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM057
+        rank: '3'
+        persona_fit: lelaki_bekerja
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Use moment — "Kaki game yang main sampai subuh confirm wrist tangan rasa kejang guna mouse?"
+        sample_subhook: '"Jangan biar urat tangan rosak muda. Standby botol kecil ni tepi keyboard kau."'
+        sample_cta: Klik Beli Kaki Game
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM001
+        rank: '4'
+        persona_fit: mak_mak
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Problem callout — "Anak mula meragam pukul 2 pagi, waktu tu baru kau nak menggelimpang cari minyak?"
+        sample_subhook: '"Jangan tunggu anak melalak baru nak geledah almari. Sapu siap-siap."'
+        sample_cta: Tap Beg Kuning Standby
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM004
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM004
+        rank: '5'
+        persona_fit: anak_beli_untuk_parent
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Small bottle practicality — "Bawa minyak besar-besar dalam beg travel buat menyemak jer. Guna yang ni."
+        sample_subhook: '"Saiz 25ml, kaca hijau tebal. Sumbat celah zip pun tak risau pecah atau tumpah."'
+        sample_cta: Beli Saiz Travel
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM005
+        rank: '6'
+        persona_fit: anak_beli_untuk_parent
+        boldness_level: MODERATE
+        u_g_c_angle: Nostalgia trigger — "Orang tua kalau dah start sebu perut, dia tak cari ubat moden. Dia cari yang ni."
+        sample_subhook: '"Minyak Hijau formula asli. Sekali urut, angin lama terus keluar bertubi-tubi."'
+        sample_cta: Borong Untuk Tok
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM015
+        rank: '7'
+        persona_fit: anak_beli_untuk_parent
+        boldness_level: SOFT
+        u_g_c_angle: Nostalgia trigger — "Orang tua kalau malam selalu terjaga sebab kaki sejuk? Sapu minyak herba ni."
+        sample_subhook: '"Formula asli sejak 1958, panaskan tapak kaki sebelum tidur supaya lena."'
+        sample_cta: Beli Set Warga Emas
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM016
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM016
+        rank: '8'
+        persona_fit: lelaki_bekerja
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Use moment — "Duduk menghadap laptop 8 jam, leher rasa macam kena simen. Keras gila."
+        sample_subhook: '"Sapu minyak cap burung ni dekat tengkuk. Bau herba segar, urat pun longgar."'
+        sample_cta: Simpan Di Ofis
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM018
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM018
+        rank: '9'
+        persona_fit: mak_mak
+        boldness_level: AGGRESSIVE
+        u_g_c_angle: Family situation — "Ayah kau kalau dah start berkebun, petang confirm mengadu tangan kebas."
+        sample_subhook: '"Bagi dia minyak hijau cap burung. Sekali tonyoh, urat tegang terus lembut."'
+        sample_cta: Beli Untuk Ayah
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: UGC_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM045
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM045
+        rank: '10'
+        persona_fit: driver_travel
+        boldness_level: MODERATE
+        u_g_c_angle: Travel/kereta/beg — "Panjat gunung beg nak kena ringan, tapi minyak urut wajib bawa. Guna yang ni."
+        sample_subhook: '"Botol kaca hijau tebal 25ml. Tak makan ruang beg, lutut start longgar terus gosok."'
+        sample_cta: Beli Set Hiking
+  top_product_only:
+    description: Rows that can carry product-only or product-dominant ads without a talent anchor.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: ProductOnly Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM012
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM012
+        rank: '1'
+        product_only_reason: Cap merah + minyak hijau = instant visual hook.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM057
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM057
+        rank: '2'
+        product_only_reason: Produk sendiri boleh stop scroll tanpa talent.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM019
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM019
+        rank: '3'
+        product_only_reason: Vibe almari tok buat orang curious.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM034
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM034
+        rank: '4'
+        product_only_reason: Botol kaca hijau nampak klasik dan closeup-friendly.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM052
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM052
+        rank: '5'
+        product_only_reason: Cap merah sebagai quick-find proof dalam laci.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM020
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM020
+        rank: '6'
+        product_only_reason: Botol kecil senang masuk cart.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM033
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM033
+        rank: '7'
+        product_only_reason: Logo Cap Burung mudah ingat.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM005
+        rank: '8'
+        product_only_reason: Demo masuk laci, beg, kereta.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM030
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM030
+        rank: '9'
+        product_only_reason: Overlay “Sejak 1958” kuat untuk trust.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: ProductOnly Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM056
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM056
+        rank: '10'
+        product_only_reason: Trust signal pada label boleh jadi hero frame.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: ProductOnly_Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM030
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM030
+        rank: '1'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Minyak hijau pekat / "Kerja shift malam kilang atau security? Angin malam sejuk mencerah urat."
+        sample_cta: Dapatkan Benteng Anda
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM020
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM020
+        rank: '2'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Cap merah, herba asli / "Tengah sedap lepak luar kena gigit nyamuk? Gatal sampai luka digarut."
+        sample_cta: Standby Dalam Beg
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM025
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM025
+        rank: '3'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Formula urut asli / "Tengah masak tersalah rentap kuali sampai pergelangan tangan terseliuh?"
+        sample_cta: Simpan Di Datar Dapur
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM034
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM034
+        rank: '4'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Botol kaca kuat / "Kaki pancing laut malam tahu betapa kejamnya angin laut kalau masuk botol urat."
+        sample_cta: Beli Stok Memancing
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM038
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM038
+        rank: '5'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Formula tegar 1958 / "Abang uniform bertugas banting tulang, badan malam-malam rasa lenguh menyucuk?"
+        sample_cta: Standby Dalam Poket
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM022
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM022
+        rank: '6'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Bau herba menyegarkan / "Anak study sampai malam suntuk tapi asyik mengantuk sebab badan lenguh?"
+        sample_cta: Beli Untuk Anak
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM053
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM053
+        rank: '7'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Formula urut asli / "Bila stress kerja menimbun, automatik urat tengkuk rasa tebal dan berat sangat?"
+        sample_cta: Klik Pelega Tengkuk
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM059
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM059
+        rank: '8'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Formula herba asli / "Lengan rasa lenguh kejang sbb angkat barang ofis naik turun tangga?"
+        sample_cta: Beli Saiz Poket
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM019
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM019
+        rank: '9'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Bau herba semula jadi / "Kepala rasa macam kena ketuk dengan tukul? Jangan telan ubat jer."
+        sample_cta: Dapatkan Relief
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: ProductOnly_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM048
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM048
+        rank: '10'
+        primary_bucket: VISUAL_RECOGNITION
+        product_only_reason: Bau segar asli / "Kerja bawah tengah panas sampai kepala rasa berpusing pening lalat?"
+        sample_cta: Standby Satu Botol
+  top_poster_ads:
+    description: Rows strongest for static poster, product card, or poster-first layouts.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: Poster Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM015
+        rank: '1'
+        poster_angle: Jangan tunggu perlu baru cari.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM001
+        rank: '2'
+        poster_angle: Satu rumah wajib ada minyak standby.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM013
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM013
+        rank: '3'
+        poster_angle: Rumah cantik tak guna kalau benda basic tak ada.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM030
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM030
+        rank: '4'
+        poster_angle: Yang bertahan sejak 1958 lain cerita.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM036
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM036
+        rank: '5'
+        poster_angle: Satu botol cepat lesap. Ambil lebih.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM021
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM021
+        rank: '6'
+        poster_angle: Bila satu rumah pakai, stok kena ada.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM056
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM056
+        rank: '7'
+        poster_angle: “Sejak 1958” sebagai trust headline.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM028
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM028
+        rank: '8'
+        poster_angle: Rak rumah nampak penuh, tapi minyak standby tak ada?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM038
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM038
+        rank: '9'
+        poster_angle: Takkan minyak standby pun nak pinjam jiran?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Poster Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM059
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM059
+        rank: '10'
+        poster_angle: Bila rumah ramai orang, benda kecil cepat jadi kecoh.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: Poster_Top10
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM024
+        rank: '1'
+        primary_bucket: FAMILY_HOME
+        poster_angle: '"Siksa tengok mak ayah nak naik tangga surau sebab lutut bunyi ketat?"'
+        sample_subhook: '"Minyak hijau herba pekat. Gosok tiap pagi, urat longgar langkah pun ringan."'
+        sample_cta: Beli Set Lutut
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM026
+        rank: '2'
+        primary_bucket: SEASONAL_CONTEXT
+        poster_angle: '"Balik kenduri perut rasa senak gas penuh? Nak sendawa tapi tak lepas."'
+        sample_subhook: '"Urut membulat minyak cap burung ni kat perut. Kejap lagi confirm sendawa puas."'
+        sample_cta: Beli Set Sendawa
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM001
+        rank: '3'
+        primary_bucket: STANDBY_BEFORE_NEED
+        poster_angle: '"Anak mula meragam pukul 2 pagi, waktu tu baru kau nak menggelimpang cari minyak?"'
+        sample_subhook: '"Jangan tunggu anak melalak baru nak geledah almari. Sapu siap-siap."'
+        sample_cta: Tap Beg Kuning Standby
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM018
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM018
+        rank: '4'
+        primary_bucket: FAMILY_HOME
+        poster_angle: '"Ayah kau kalau dah start berkebun, petang confirm mengadu tangan kebas."'
+        sample_subhook: '"Bagi dia minyak hijau cap burung. Sekali tonyoh, urat tegang terus lembut."'
+        sample_cta: Beli Untuk Ayah
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM037
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM037
+        rank: '5'
+        primary_bucket: STANDBY_BEFORE_NEED
+        poster_angle: '"Pagi-pagi bangun tidur, pijak jer lantai terus tumit rasa menyucuk bisa?"'
+        sample_subhook: '"Urut minyak cap burung ni kat tumit malam sebelum tidur. Esok bangun rasa ringan."'
+        sample_cta: Beli Pelega Tumit
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM056
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM056
+        rank: '6'
+        primary_bucket: STANDBY_BEFORE_NEED
+        poster_angle: '"Tengah malam perut memulas tajam sebab salah makan petang tadi? Siksa ooo."'
+        sample_subhook: '"Selesai urusan, terus sapu minyak cap burung sekeliling pusat. Redakan memulas."'
+        sample_cta: Standby Botol Perut
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM017
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM017
+        rank: '7'
+        primary_bucket: STANDBY_BEFORE_NEED
+        poster_angle: '"Tengah sedap tidur tiba-tiba betis kejang simpul biawak? Sakit dia sampai menangis."'
+        sample_subhook: '"Sebab tu kena letak botol cap merah ni tepi bantal. Capai terus urut."'
+        sample_cta: Standby Tepi Katil
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM003
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM003
+        rank: '8'
+        primary_bucket: FAMILY_HOME
+        poster_angle: '"Mak kat kampung tu kalau solat makin lama makin payah nak bangun. Jangan biarkan."'
+        sample_subhook: '"Bagi dia minyak yang dia memang kenal sejak kecil. Botol kaca hijau tradisi."'
+        sample_cta: Hantar Kat Mak Sekarang
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM014
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM014
+        rank: '9'
+        primary_bucket: FAMILY_HOME
+        poster_angle: '"Balik kampung minggu depan jangan balik tangan kosong. Mak ayah tak nak benda mahal."'
+        sample_subhook: '"Bawak balik sepeket minyak cap burung ni, senyum orang tua tu sebab barang rare."'
+        sample_cta: Beli Buah Tangan
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Poster_Top10
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM011
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM011
+        rank: '10'
+        primary_bucket: FAMILY_HOME
+        poster_angle: '"Suri rumah kalau dah start mengemas, malam confirm mengaduh sakit pinggang."'
+        sample_subhook: '"Jangan biar malam kau tersiksa. Sapu minyak cap burung ni, herba asli serap dalam."'
+        sample_cta: Beli Untuk Isteri
+  top_aggressive_hooks:
+    description: High-pressure hook shortlist preserved at source intensity.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: Aggressive Hooks
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM007
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM007
+        rank: '1'
+        hook: Roadtrip boleh jadi neraka bila badan mula tak sedap.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM037
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM037
+        rank: '2'
+        hook: Bila perlu waktu malam, minyak pula tak ada.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM013
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM013
+        rank: '3'
+        hook: Rumah cantik tak guna kalau benda basic pun tak ada.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM038
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM038
+        rank: '4'
+        hook: Takkan minyak standby pun nak pinjam jiran?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM024
+        rank: '5'
+        hook: Balik kerja badan rasa macam kena hempap hari Isnin?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM006
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM006
+        rank: '6'
+        hook: Laci rumah penuh benda random, tapi minyak standby tak ada?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM045
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM045
+        rank: '7'
+        hook: Handbag penuh lip tint, tapi minyak standby tak ada?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM015
+        rank: '8'
+        hook: Jangan tunggu perlu baru cari.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM026
+        rank: '9'
+        hook: Mak-mak tahu — benda kecil boleh jadi drama kalau tak standby.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Aggressive Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM035
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM035
+        rank: '10'
+        hook: Produk macam ni bukan untuk show off. Dia untuk ada bila perlu.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: Aggressive_Hooks
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM012
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM012
+        rank: '1'
+        boldness_level: AGGRESSIVE
+        hook: '"Harga murah gila, tak payah fikir dua kali. Guna kupon terus sauk 3 botol."'
+        sample_subhook: '"Satu letak beg, satu kereta, satu ruang tamu. Tak rugi standby barang lama."'
+        sample_cta: Tap Beg Kuning
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM024
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM024
+        rank: '2'
+        boldness_level: AGGRESSIVE
+        hook: '"Siksa tengok mak ayah nak naik tangga surau sebab lutut bunyi ketat?"'
+        sample_subhook: '"Minyak hijau herba pekat. Gosok tiap pagi, urat longgar langkah pun ringan."'
+        sample_cta: Beli Set Lutut
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM026
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM026
+        rank: '3'
+        boldness_level: AGGRESSIVE
+        hook: '"Balik kenduri perut rasa senak gas penuh? Nak sendawa tapi tak lepas."'
+        sample_subhook: '"Urut membulat minyak cap burung ni kat perut. Kejap lagi confirm sendawa puas."'
+        sample_cta: Beli Set Sendawa
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM057
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM057
+        rank: '4'
+        boldness_level: AGGRESSIVE
+        hook: '"Kaki game yang main sampai subuh confirm wrist tangan rasa kejang guna mouse?"'
+        sample_subhook: '"Jangan biar urat tangan rosak muda. Standby botol kecil ni tepi keyboard kau."'
+        sample_cta: Klik Beli Kaki Game
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM001
+        rank: '5'
+        boldness_level: AGGRESSIVE
+        hook: '"Anak mula meragam pukul 2 pagi, waktu tu baru kau nak menggelimpang cari minyak?"'
+        sample_subhook: '"Jangan tunggu anak melalak baru nak geledah almari. Sapu siap-siap."'
+        sample_cta: Tap Beg Kuning Standby
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM004
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM004
+        rank: '6'
+        boldness_level: AGGRESSIVE
+        hook: '"Bawa minyak besar-besar dalam beg travel buat menyemak jer. Guna yang ni."'
+        sample_subhook: '"Saiz 25ml, kaca hijau tebal. Sumbat celah zip pun tak risau pecah atau tumpah."'
+        sample_cta: Beli Saiz Travel
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM016
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM016
+        rank: '7'
+        boldness_level: AGGRESSIVE
+        hook: '"Duduk menghadap laptop 8 jam, leher rasa macam kena simen. Keras gila."'
+        sample_subhook: '"Sapu minyak cap burung ni dekat tengkuk. Bau herba segar, urat pun longgar."'
+        sample_cta: Simpan Di Ofis
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM018
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM018
+        rank: '8'
+        boldness_level: AGGRESSIVE
+        hook: '"Ayah kau kalau dah start berkebun, petang confirm mengadu tangan kebas."'
+        sample_subhook: '"Bagi dia minyak hijau cap burung. Sekali tonyoh, urat tegang terus lembut."'
+        sample_cta: Beli Untuk Ayah
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM031
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM031
+        rank: '9'
+        boldness_level: AGGRESSIVE
+        hook: '"Bangun pagi leher terus kaku tak boleh toleh? Siksa ooo kena salah bantal."'
+        sample_subhook: '"Jangan biar satu hari rosak. Gosok minyak cap burung ni, biar herba lembutkan urat."'
+        sample_cta: Klik Sini Lega Laju
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Aggressive_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM037
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM037
+        rank: '10'
+        boldness_level: AGGRESSIVE
+        hook: '"Pagi-pagi bangun tidur, pijak jer lantai terus tumit rasa menyucuk bisa?"'
+        sample_subhook: '"Urut minyak cap burung ni kat tumit malam sebelum tidur. Esok bangun rasa ringan."'
+        sample_cta: Beli Pelega Tumit
+  top_safe_hooks:
+    description: Safer or softer hook shortlist that still keeps the core sales angle.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: Safe Hooks
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM001
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM001
+        rank: '1'
+        hook: Satu rumah patut ada minyak standby macam ni.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM003
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM003
+        rank: '2'
+        hook: Mak ayah kita bukan saja-saja simpan minyak macam ni.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM014
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM014
+        rank: '3'
+        hook: Satu untuk rumah, satu untuk kereta, satu untuk beg.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM030
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM030
+        rank: '4'
+        hook: Yang bertahan sejak 1958 lain cerita.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM018
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM018
+        rank: '5'
+        hook: Kalau kau pernah buka almari rumah tok, kau tahu vibe ni.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM005
+        rank: '6'
+        hook: Botol kecil ni senang masuk mana-mana.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM022
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM022
+        rank: '7'
+        hook: Nak belikan mak ayah sesuatu yang betul-betul berguna?
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM056
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM056
+        rank: '8'
+        hook: ‘Sejak 1958’ tu bukan hiasan, itu signal.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM012
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM012
+        rank: '9'
+        hook: Cap merah, minyak hijau — sekali pandang dah cam.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Safe Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM051
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM051
+        rank: '10'
+        hook: Charger, skincare, baju semua ingat. Minyak standby jangan lupa.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: Safe_Hooks
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM005
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM005
+        rank: '1'
+        boldness_level: MODERATE
+        hook: '"Orang tua kalau dah start sebu perut, dia tak cari ubat moden. Dia cari yang ni."'
+        sample_subhook: '"Minyak Hijau formula asli. Sekali urut, angin lama terus keluar bertubi-tubi."'
+        sample_cta: Borong Untuk Tok
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM007
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM007
+        rank: '2'
+        boldness_level: MODERATE
+        hook: '"Laci rumah kau penuh ubat tapi satu pun tak boleh pakai waktu kecemasan?"'
+        sample_subhook: '"Cap merah ni senang cam. Letak satu dalam laci tv, satu dekat dapur."'
+        sample_cta: Dapatkan Set Rumah
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM015
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM015
+        rank: '3'
+        boldness_level: SOFT
+        hook: '"Orang tua kalau malam selalu terjaga sebab kaki sejuk? Sapu minyak herba ni."'
+        sample_subhook: '"Formula asli sejak 1958, panaskan tapak kaki sebelum tidur supaya lena."'
+        sample_cta: Beli Set Warga Emas
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM045
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM045
+        rank: '4'
+        boldness_level: MODERATE
+        hook: '"Panjat gunung beg nak kena ringan, tapi minyak urut wajib bawa. Guna yang ni."'
+        sample_subhook: '"Botol kaca hijau tebal 25ml. Tak makan ruang beg, lutut start longgar terus gosok."'
+        sample_cta: Beli Set Hiking
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM003
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM003
+        rank: '5'
+        boldness_level: MODERATE
+        hook: '"Mak kat kampung tu kalau solat makin lama makin payah nak bangun. Jangan biarkan."'
+        sample_subhook: '"Bagi dia minyak yang dia memang kenal sejak kecil. Botol kaca hijau tradisi."'
+        sample_cta: Hantar Kat Mak Sekarang
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM009
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM009
+        rank: '6'
+        boldness_level: MODERATE
+        hook: '"Berhenti scroll! Kau ingat lagi tak minyak cap burung kat rumah tok dulu?"'
+        sample_subhook: '"Bukan barang baru nak up. Formula asli sejak 1958 yang korang cari."'
+        sample_cta: Tengok Harga Gila
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM014
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM014
+        rank: '7'
+        boldness_level: MODERATE
+        hook: '"Balik kampung minggu depan jangan balik tangan kosong. Mak ayah tak nak benda mahal."'
+        sample_subhook: '"Bawak balik sepeket minyak cap burung ni, senyum orang tua tu sebab barang rare."'
+        sample_cta: Beli Buah Tangan
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM030
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM030
+        rank: '8'
+        boldness_level: SOFT
+        hook: '"Kerja shift malam kilang atau security? Angin malam sejuk mencerah urat."'
+        sample_subhook: '"Sapu minyak herba cap burung ni kat dada dan belakang sebelum start shift."'
+        sample_cta: Dapatkan Benteng Anda
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM050
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM050
+        rank: '9'
+        boldness_level: MODERATE
+        hook: '"Rumah melayu tak lengkap kalau laci ruang tamu tak bau minyak angin herba asli."'
+        sample_subhook: '"Minyak cap burung beri vibe rumah tok yang selamat, tenang, dan bersedia."'
+        sample_cta: Lengkapkan Rumah
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Safe_Hooks
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM060
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM060
+        rank: '10'
+        boldness_level: MODERATE
+        hook: '"Jangan gadaikan urat badan kau dekat produk OEM semalam suntuk baru nak up."'
+        sample_subhook: '"Pakai minyak cap burung. Formula asli bertahan sejak 1958 sebab kualiti herba dia."'
+        sample_cta: Dapatkan Jaminan 1958
+  park_later:
+    description: Rows intentionally deprioritized for later expansion rather than deleted.
+    source_lists:
+    - source_batch: 2026-06-19_xlsx
+      source_file: mwtcb_copywriting_landbank.xlsx
+      source_sheet: Park Later
+      entry_count: 10
+      entries:
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM041
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM041
+        status: PARK
+        reason: After-activity angle boleh jadi terlalu generic kalau tak ada scene spesifik.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM032
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM032
+        status: PARK
+        reason: Formula asli bagus sebagai proof chip, tapi kurang kuat sebagai main motivation.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM033
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM033
+        status: PARK
+        reason: Logo burung bagus untuk recall, bukan sales driver utama.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM034
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM034
+        status: PARK
+        reason: Botol kaca hijau cantik untuk product-only, tapi bukan enough untuk full angle.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM039
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM039
+        status: PARK
+        reason: Open house angle seasonal. Guna bila campaign raya/kenduri/family event.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 6
+        source_motivation_id: BM040
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM040
+        status: PARK
+        reason: Cuaca hujan/lemau seasonal. Bagus untuk timing tertentu, bukan evergreen utama.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 7
+        source_motivation_id: BM043
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM043
+        status: PARK
+        reason: Copycat differentiation boleh guna, tapi jangan jadikan main story terlalu awal.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 8
+        source_motivation_id: BM054
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM054
+        status: PARK
+        reason: Corner barang perlu bagus untuk carousel/product page, kurang punchy untuk cold ads.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 9
+        source_motivation_id: BM055
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM055
+        status: PARK
+        reason: Rumah bandar/rasa kampung emotional, tapi kurang direct conversion berbanding rumah tok atau Sejak 1958.
+      - source_batch: 2026-06-19_xlsx
+        source_file: mwtcb_copywriting_landbank.xlsx
+        source_sheet: Park Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 10
+        source_motivation_id: BM060
+        buyer_motivation_row_id: MWTCB_25ML__xlsx__BM060
+        status: PARK
+        reason: Local identity bagus sebagai brand layer, bukan direct-response hook utama.
+    - source_batch: 2026-06-19_zip_csv
+      source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+      source_sheet: Park_Later
+      entry_count: 5
+      entries:
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Park_Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 1
+        source_motivation_id: BM039
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM039
+        status: PARK
+        primary_bucket: NOSTALGIA_TRUST
+        hook: '"Fikir business sampai urat kepala rasa nak meletup? Stress sangat ni."'
+        park_reason: Park for later or use as secondary support angle; less central than standby/multi-buy/trust lanes.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Park_Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 2
+        source_motivation_id: BM054
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM054
+        status: PARK
+        primary_bucket: TRAVEL_CAR_BAG
+        hook: '"Poket jubah surau kalau kosong tak best. Selit sebotol minyak cap burung ni."'
+        park_reason: Park for later or use as secondary support angle; less central than standby/multi-buy/trust lanes.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Park_Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 3
+        source_motivation_id: BM034
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM034
+        status: PARK
+        primary_bucket: VISUAL_RECOGNITION
+        hook: '"Kaki pancing laut malam tahu betapa kejamnya angin laut kalau masuk botol urat."'
+        park_reason: Park for later or use as secondary support angle; less central than standby/multi-buy/trust lanes.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Park_Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 4
+        source_motivation_id: BM036
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM036
+        status: PARK
+        primary_bucket: NOSTALGIA_TRUST
+        hook: '"Bukan minyak angin cap komersial boring. Tengok botol kaca hijau retro ni."'
+        park_reason: Park for later or use as secondary support angle; less central than standby/multi-buy/trust lanes.
+      - source_batch: 2026-06-19_zip_csv
+        source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+        source_sheet: Park_Later
+        import_version: 2026-06-19_initial_landbank
+        source_sequence: 5
+        source_motivation_id: BM041
+        buyer_motivation_row_id: MWTCB_25ML__zip_csv__BM041
+        status: PARK
+        primary_bucket: SEASONAL_CONTEXT
+        hook: '"Bila musim hujan, rumah rasa lembap dan urat kaki mula rasa ngilu mencucuk tulang?"'
+        park_reason: Park for later or use as secondary support angle; less central than standby/multi-buy/trust lanes.

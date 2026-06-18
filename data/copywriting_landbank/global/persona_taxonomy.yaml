@@ -1,0 +1,20 @@
+taxonomy_id: persona_taxonomy
+version: 1
+description: Persona-fit values observed in classification rows and reusable for future products.
+values:
+- id: anak_beli_untuk_parent
+  description: Child-to-parent gifting or practical-care buyer.
+- id: driver_travel
+  description: Driver, commuter, or travel-heavy buyer who needs an in-car standby item.
+- id: family_home_buyer
+  description: Home-oriented family purchaser buying for household completeness.
+- id: impulse_tiktok_buyer
+  description: Low-friction social-commerce buyer responding to offer pressure or quick proof.
+- id: lelaki_bekerja
+  description: Working male or labor-oriented buyer with strain, fatigue, or carry-pocket context.
+- id: mak_mak
+  description: Mother-led household buyer with urgency around children or home readiness.
+- id: nostalgia_buyer
+  description: Buyer pulled primarily by heritage look, memory, or old-household trust.
+- id: universal_household
+  description: Broad household persona that can fit product-only, poster, or video entry points.

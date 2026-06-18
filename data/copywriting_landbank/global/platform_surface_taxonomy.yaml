@@ -1,0 +1,16 @@
+taxonomy_id: platform_surface_taxonomy
+version: 1
+description: Output surfaces observed in the seed landbank and reusable for future products.
+values:
+- id: Shopee_Lazada_visual
+  description: Marketplace visual surface such as PDP images or listing cards.
+- id: TikTok_Shop_video
+  description: TikTok Shop short-form video surface.
+- id: TikTok_live_pin
+  description: Live-stream pin or live-support surface.
+- id: WhatsApp_blast
+  description: WhatsApp resale or broadcast collateral lane.
+- id: poster_ads
+  description: Poster, static ad, or boosted-image surface.
+- id: product_page_asset
+  description: Static or embedded product page asset slot.

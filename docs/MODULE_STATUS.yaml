@@ -188,3 +188,17 @@ modules:
       append-only historical audit trail when needed. Does not change product
       fields, registration workflow, validators, Notion governance, or any
       runtime schema.
+  copywriting_landbank:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - data/copywriting_landbank/**
+      - scripts/build_copywriting_landbank.py
+      - scripts/validate_copywriting_landbank.py
+    notes: >
+      Repository-native copywriting landbank lane for structured CSV/YAML/Markdown
+      storage, import normalization, ranking manifests, duplicate audits, and
+      validation scripts. MWTCB is the first seeded product under this module.
+      Excel remains export-only. This lane does not authorize Notion writes,
+      prompt runtime edits, or unrelated BOSMAX module changes.

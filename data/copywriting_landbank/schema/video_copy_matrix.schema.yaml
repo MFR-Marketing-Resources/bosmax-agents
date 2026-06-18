@@ -1,0 +1,20 @@
+schema_id: video_copy_matrix
+version: 1
+format: csv
+primary_key: video_matrix_row_id
+required_columns:
+- video_matrix_row_id
+- product_id
+- angle_row_id
+- hook_row_id
+- content_format
+- platform_surface
+optional_columns:
+- subhook_row_id
+- usp_row_id
+- cta_row_id
+- persona_fit
+- notes
+intended_usage:
+- TikTok Shop video planning
+- UGC and hybrid script routing

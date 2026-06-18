@@ -1,0 +1,51 @@
+product_id: MWTCB_25ML
+product_name: Minyak Warisan Tok Cap Burung
+import_version: 2026-06-19_initial_landbank
+canonical_outputs:
+  buyer_motivations_csv: data/copywriting_landbank/products/mwtcb/buyer_motivations.csv
+  motivation_classification_csv: data/copywriting_landbank/products/mwtcb/motivation_classification.csv
+  rankings_yaml: data/copywriting_landbank/products/mwtcb/rankings.yaml
+  product_profile_yaml: data/copywriting_landbank/products/mwtcb/product.copy.yaml
+source_files:
+- source_batch: 2026-06-19_xlsx
+  source_file: mwtcb_copywriting_landbank.xlsx
+  sha256: 5e16ebf2d587a6191e5cf9ff89f1c66cd4f2449ff46149d3ff52cb65b301326c
+  size_bytes: 45674
+  usable_tables:
+  - README
+  - Buyer Motivation Map
+  - Classification Layer
+  - Top 15 Expand
+  - Bundle Top10
+  - UGC Top10
+  - ProductOnly Top10
+  - Poster Top10
+  - Aggressive Hooks
+  - Safe Hooks
+  - Park Later
+  - Dashboard
+- source_batch: 2026-06-19_zip_csv
+  source_file: mwtcb_gemini_copywriting_landbank_csv.zip
+  sha256: fd325be062b5e988f8a543adcd231eed267886d2e8e2c1196b9e65a32ead5fda
+  size_bytes: 29893
+  usable_tables:
+  - README
+  - Dashboard
+  - Buyer_Motivation_Map
+  - Classification_Layer
+  - Top_15_Expand
+  - Bundle_Top10
+  - UGC_Top10
+  - ProductOnly_Top10
+  - Poster_Top10
+  - Aggressive_Hooks
+  - Safe_Hooks
+  - Park_Later
+  - Raw_Gemini_Notes
+  - Categories
+batch_snapshots:
+  raw_input_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/raw_input
+  normalized_dir: data/copywriting_landbank/products/mwtcb/imports/2026-06-19_initial_landbank/normalized
+generated_exports:
+  xlsx: data/copywriting_landbank/exports/mwtcb_copywriting_landbank.xlsx
+  zip: data/copywriting_landbank/exports/mwtcb_copywriting_landbank_csv.zip

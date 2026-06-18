@@ -1,0 +1,18 @@
+schema_id: hook
+version: 1
+format: csv
+primary_key: hook_row_id
+required_columns:
+- hook_row_id
+- product_id
+- hook_text
+- boldness_level
+- source_asset_type
+optional_columns:
+- source_motivation_row_id
+- primary_bucket
+- sales_mechanism
+- notes
+intended_usage:
+- Standalone hook bank
+- Creative testing lanes

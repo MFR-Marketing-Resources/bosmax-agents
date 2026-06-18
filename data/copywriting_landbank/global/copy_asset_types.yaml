@@ -1,0 +1,30 @@
+taxonomy_id: copy_asset_types
+version: 1
+description: Repository-native asset families supported by the copywriting landbank module.
+values:
+- id: product_profile
+  description: Product-level copy authority and truth spine.
+- id: buyer_motivation
+  description: Scenario-level buyer motivation rows.
+- id: motivation_classification
+  description: Classification rows layered on buyer motivations.
+- id: ranking_manifest
+  description: Top-list or park-later ranking groups.
+- id: angle
+  description: Future Part 2 angle bank rows.
+- id: hook
+  description: Future hook-bank rows.
+- id: subhook
+  description: Future subhook-bank rows.
+- id: usp
+  description: Future USP-bank rows.
+- id: cta
+  description: Future CTA-bank rows.
+- id: video_copy_matrix
+  description: Future video matrix rows linking angles, hooks, and formats.
+- id: poster_copy_matrix
+  description: Future poster matrix rows linking angles, hooks, and layouts.
+- id: import_report
+  description: Human-readable import trace for a product or batch.
+- id: duplicate_report
+  description: Human-readable duplicate and near-duplicate audit.

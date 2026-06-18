@@ -1,0 +1,16 @@
+taxonomy_id: content_format_taxonomy
+version: 1
+description: Creative-format preferences inferred from classification rows.
+values:
+- id: POV_scene
+  description: Scenario-first POV or acted moment designed for short-form motion.
+- id: UGC_talking_head
+  description: Creator-led direct talk-to-camera delivery.
+- id: carousel
+  description: Slide-based static sequence or still-led product breakdown.
+- id: hybrid_video
+  description: Mixed product proof and talent scene video lane.
+- id: poster_ad
+  description: Static poster or sales-card layout lane.
+- id: product_only_video
+  description: Product-dominant motion without a strong human anchor.
