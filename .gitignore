@@ -15,3 +15,16 @@ __pycache__/
 
 # Node tooling surface
 node_modules/
+.env
+.env.*
+logs/
+tmp/
+temp/
+*.pyc
+.venv/
+venv/
+.idea/
+.vscode/
+~$*.xlsx
+~$*.docx
+~$*.pptx

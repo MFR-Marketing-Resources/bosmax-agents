@@ -1,3 +1,7 @@
 # Enforce LF for JS/TS/JSON tooling files so Biome stays consistent across OS
 *.json text eol=lf
 *.ts text eol=lf
+*.xlsx binary
+*.xlsm binary
+*.docx binary
+*.pptx binary
