@@ -1,35 +1,62 @@
 {
 	"run": {
 		"page_id": "3854775a-f48a-8193-acb8-cd4f16f439a8",
+		"data_source_id": "e87788b4-1c0e-45df-91b4-4a8869a56c73",
+		"data_source_name": "BOSMAX FRAMES Operator Intake",
 		"run_name": "BOSMAX Sample Frames Ready Row",
 		"mode": "FRAMES",
 		"platform": "TikTok Shop Malaysia",
 		"target_language": "Malay",
 		"overlay_allowed": false,
-		"product_reference_provided": false,
-		"frame_provided": true,
-		"avatar_reference_provided": false,
-		"style_reference_provided": false,
-		"asset_roles_verified": false,
-		"uploaded_asset_notes": "Completed anchor frame provided. Continue the exact parked-car scene with the same presenter hand position, same bottle placement, same daylight, and subtle wrist motion only.",
-		"scene_context_override": "",
-		"safety_override": "",
-		"asset_role_map_text": "",
-		"compiler_method": "EXTERNAL_COMPILER",
-		"compiler_output_status": "READY_TO_COMPILE",
-		"prompt_status": "Ready",
-		"operator_use": "OPERATOR_USE",
-		"output_reactivity": "SYSTEM_WRITTEN_OUTPUT",
-		"manual_product_route": "",
-		"manual_engine_rule": "",
-		"manual_angle_id": "",
-		"available_fields": ["Compiler Output Notes", "Prompt Status", "RAW_PROMPT_COMPILED", "FINAL_OUTPUT_9_SECTION"],
+		"avatar_source": "",
+		"copy_source": "BOSMAX",
+		"copy_source_raw": "BOSMAX",
+		"scene_context": "",
+		"style_scene_source": "",
+		"motion_delta": "Sambung dari frame siap dengan pergerakan pergelangan tangan yang kecil sahaja.",
+		"frame_context": "Completed anchor frame provided. Continue the exact parked-car scene with the same presenter hand position, same bottle placement, and same daylight.",
+		"request_status": "Not started",
+		"product_photo_uploads": [],
+		"completed_frame_uploads": ["https://files.bosmax.test/completed-frame-001.png"],
+		"product_reference_photos": [],
+		"avatar_reference_photos": [],
+		"style_scene_reference_photos": [],
+		"available_fields": [
+			"BOSMAX Copy Set",
+			"Compiler Payload / RAW Prompt",
+			"Completed Frame Upload",
+			"Copy Source",
+			"Engine + Duration",
+			"Frame Context",
+			"Motion Delta",
+			"MWTCB Copy Set",
+			"Output From Compiler",
+			"Overlay Allowed",
+			"Platform",
+			"Product",
+			"QA Notes",
+			"Request Name",
+			"Request Status",
+			"Target Language"
+		],
+		"property_types": {
+			"Compiler Payload / RAW Prompt": "rich_text",
+			"Output From Compiler": "rich_text",
+			"QA Notes": "rich_text",
+			"Request Status": "status"
+		},
 		"writeback_field_map": {
-			"raw_prompt_field": "RAW_PROMPT_COMPILED",
-			"final_output_field": "FINAL_OUTPUT_9_SECTION",
-			"qa_notes_field": "Compiler Output Notes",
-			"request_status_field": "Prompt Status"
-		}
+			"raw_prompt_field": "Compiler Payload / RAW Prompt",
+			"final_output_field": "Output From Compiler",
+			"qa_notes_field": "QA Notes",
+			"request_status_field": "Request Status"
+		},
+		"product_relation_ids": ["a83cd3ff-77aa-4488-9ad6-8f9b4a856d22"],
+		"engine_rule_relation_ids": ["64b52490-203f-430e-9cbb-61e40d549fd9"],
+		"avatar_relation_ids": [],
+		"bosmax_copy_relation_ids": ["8054775a-f48a-823f-8b5a-071b0dc3a4e0"],
+		"mwtcb_copy_relation_ids": [],
+		"asset_role_map_relation_ids": []
 	},
 	"product": {
 		"page_id": "a83cd3ff-77aa-4488-9ad6-8f9b4a856d22",
@@ -58,8 +85,8 @@
 		"status": "approved"
 	},
 	"angle": {
-		"page_id": "2e5bd3a8-e01a-4ea9-9fe8-101578253287",
-		"title": "Bosmax Car Pocket Demo",
+		"page_id": "",
+		"title": "BOSMAX CP CAR 001",
 		"angle_id": "BOSMAX_ANG_008",
 		"product_id": "BOSMAX_SERUM_5ML",
 		"scene_context_seed": "Dalam kereta di parkir, lelaki mengambil Bosmax dari konsol dan menyapu pada pergelangan tangan.",
@@ -67,21 +94,10 @@
 		"commercial_family": "TRAVEL_CAR_BAG",
 		"usage_tags": ["car"],
 		"mode_fit": ["FRAMES"],
-		"visual_risk_notes": "Keep the bottle tiny and the label readable.",
+		"visual_risk_notes": "",
 		"status": "approved"
 	},
-	"avatar": {
-		"page_id": "3854775a-f48a-80a7-9365-000bbe671ff7",
-		"title": "Rafi Car UGC",
-		"avatar_code": "RAF_CAR_001",
-		"prompt_v1": "Malaysian male presenter, natural in-car UGC, relaxed expression, one-hand product hold.",
-		"character_name": "Rafi",
-		"environment": "Inside parked car with soft daylight through the windshield.",
-		"wardrobe": "Casual neutral tee.",
-		"lighting": "Soft daylight.",
-		"expression": "Calm and confident.",
-		"usage_tags": "UGC"
-	},
+	"avatar": {},
 	"copy_pack": {
 		"page_id": "8054775a-f48a-823f-8b5a-071b0dc3a4e0",
 		"lane": "BOSMAX",
@@ -94,7 +110,10 @@
 		"usp2": "Tak semak.",
 		"usp3": "",
 		"cta": "Tap tengok harga sekarang, boss.",
-		"usage_tags": "car",
+		"usage_tags": ["car"],
+		"commercial_family": "TRAVEL_CAR_BAG",
+		"scene_context_seed": "Dalam kereta di parkir, lelaki mengambil Bosmax dari konsol dan menyapu pada pergelangan tangan.",
 		"status": "approved"
-	}
+	},
+	"asset_role_map": {}
 }

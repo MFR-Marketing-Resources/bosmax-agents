@@ -3,61 +3,66 @@
 ## Purpose
 
 `scripts/notion_video_prompt_worker.py` is the Notion-backed BOSMAX Video Prompt
-Compiler Bridge. It treats Notion as operator intake only, resolves authority
-relations in code, validates mode-specific requirements, generates a clean
-compiler payload, and writes the result back to the selected row.
+Compiler Bridge. Notion is operator intake only. The worker resolves authority
+relations in code, validates mode-specific asset requirements, generates a clean
+compiler payload, and writes the result back to the selected operator row.
 
-## Supported run modes
+## Operator-facing databases
 
-- `HYBRID` -> compiler `intake_mode=PRODUCT_ONLY`
-- `FRAMES` -> compiler `intake_mode=READY_FRAME`
-- `INGREDIENTS` -> compiler `intake_mode=ASSET_SET`
+The only operator-facing databases are:
+
+- `BOSMAX HYBRID Operator Intake`
+- `BOSMAX FRAMES Operator Intake`
+- `BOSMAX INGREDIENTS Operator Intake`
+
+`BOSMAX Video Prompt Requests`, `BOSMAX_VIDEO_PROMPT_RUNS`, and the old combined front-end surfaces are backend/admin surfaces. The backend database export is invalid for operators.
 
 ## Required live inputs
 
-- relation fields:
+- shared authority relations:
   - `Product`
-  - `Engine Rule`
-  - `Angle`
-  - `Avatar AI` optional
-  - exactly one of `Copy Pack BOSMAX` or `Copy Pack MWTCB`
-- shared gates:
-  - `Compiler Method = EXTERNAL_COMPILER`
-  - `Output Reactivity = SYSTEM_WRITTEN_OUTPUT`
-  - `Compiler Output Status = READY_TO_COMPILE`
-- mode gates:
-  - `HYBRID`: `Product Reference Provided = true`
-  - `FRAMES`: `Frame Provided = true` and non-empty `Uploaded Asset Notes`
-  - `INGREDIENTS`: `Product Reference Provided = true`, `Asset Roles Verified = true`, and non-empty `Asset Role Map`
-  - `INGREDIENTS` with avatar: `Avatar Reference Provided = true`
+  - `Engine + Duration`
+  - `Copy Source`
+  - exactly one of `BOSMAX Copy Set` or `MWTCB Copy Set`
+- mode-specific asset inputs:
+  - `HYBRID`
+    - `Product Photo Upload`
+    - `Scene Context`
+    - optional `Avatar Ai`
+  - `FRAMES`
+    - `Completed Frame Upload`
+    - `Motion Delta`
+    - `Frame Context`
+  - `INGREDIENTS`
+    - `Product Reference Photo`
+    - `Avatar Reference Photo`
+    - `Style Scene Reference Photo` when required by `Asset Role Map`
+    - `Asset Role Map`
+    - `style_scene_source`
 
 ## Writeback contract
 
-The worker writes to whichever field set exists on the row:
+The worker writes only to operator-facing output fields already present on the
+row:
 
-- prompt payload:
-  - `Compiler Payload / RAW Prompt`
-  - fallback: `RAW_PROMPT_COMPILED`
-- final 9-section output:
-  - `Final Output 9 Section`
-  - fallback: `FINAL_OUTPUT_9_SECTION`
-- validation notes:
-  - `QA Notes`
-  - fallback: `Compiler Output Notes`
-- request status:
-  - `Request Status`
-  - fallback: `Prompt Status`
+- `Compiler Payload / RAW Prompt`
+- `Output From Compiler`
+- `QA Notes`
+- `Request Status`
 
-The worker also writes `Compiler Contract Version`, `Compiler Job ID`,
-`Compiler Input Snapshot`, `Compiler Error`, `Compiler Output Status`, and
-`COMPILER_QA_STATUS`.
+No backend rollup, formula, debug, compiler-status, or admin-only fields are
+added to the three operator intake databases.
 
 ## Setup
 
-1. From repo root, install the repo dependencies already used by the compiler lane.
+1. Install the repo dependencies already used by the compiler lane.
 2. Set `NOTION_API_TOKEN` for live runs.
-3. Prepare a row in `BOSMAX_VIDEO_PROMPT_RUNS` using one of the canonical operator templates.
-4. Set `Compiler Output Status` to `READY_TO_COMPILE`.
+3. Create or open a row in one of:
+   - `BOSMAX HYBRID Operator Intake`
+   - `BOSMAX FRAMES Operator Intake`
+   - `BOSMAX INGREDIENTS Operator Intake`
+4. Fill the required authority relations and mode-specific asset fields.
+5. Keep `Request Status = Not started` until the worker picks the row up.
 
 ## Commands
 
@@ -76,11 +81,11 @@ set NOTION_API_TOKEN=secret_xxx
 python scripts/notion_video_prompt_worker.py --run-page https://app.notion.com/p/<row-id>
 ```
 
-READY queue sweep:
+Operator queue sweep across the three intake databases:
 
 ```bash
 set NOTION_API_TOKEN=secret_xxx
-python scripts/notion_video_prompt_worker.py --data-source-id 537c35a1-fd7a-453a-909b-eeb839b6b979 --page-size 10
+python scripts/notion_video_prompt_worker.py --page-size 10
 ```
 
 ## Tests
@@ -99,15 +104,12 @@ python scripts/validate_notion_video_prompt_worker.py
 
 This validator proves:
 
-- mode detection for `HYBRID`, `FRAMES`, `INGREDIENTS`
+- HYBRID/FRAMES/INGREDIENTS mode detection and schema exclusivity
+- correct operator-facing data source IDs
 - deterministic normalization to `PRODUCT_ONLY`, `READY_FRAME`, `ASSET_SET`
-- final output stays `MULTI_PROMPT SET` for GROK 16s `[10,6]`
-- Section 9 remains `NO_OVERLAY`
-- row URL parsing works
-- writeback alias resolution works for old and new field names
-
-## Retained local package files
-
-The bridge keeps the retained local package files as sidecar references, but the
-live compile path is relation-driven and repo-governed. It does not depend on
-Notion formulas or manual text stitching to generate the final raw prompt.
+- generated compiler payload contains only the correct mode-specific sections
+- `product_truth_ref`, engine/duration, and hook/body/CTA are populated
+- missing required assets fail closed
+- backend operator export is blocked by governance docs
+- `Compiler Payload / RAW Prompt` and `Output From Compiler` are the correct
+  operator export surfaces

@@ -22,10 +22,23 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATA_SOURCE_ID = "537c35a1-fd7a-453a-909b-eeb839b6b979"
 NOTION_API_BASE = "https://api.notion.com/v1"
 NOTION_API_VERSION = "2025-09-03"
 WORKER_CONTRACT_VERSION = "BOSMAX_EXT_COMPILER_WORKER_v1.0"
+
+BACKEND_RUNS_DATA_SOURCE_ID = "537c35a1-fd7a-453a-909b-eeb839b6b979"
+LEGACY_REQUESTS_DATA_SOURCE_ID = "b9ea23b2-82f9-4256-b1cd-89d53c9157ac"
+LEGACY_FRONTEND_DATA_SOURCE_ID = "2cccc189-74e6-4ef2-a1d1-4ac4c8e1d5f7"
+HYBRID_OPERATOR_DATA_SOURCE_ID = "a47a36cc-ca74-40f7-88d3-2bd9ad67987d"
+FRAMES_OPERATOR_DATA_SOURCE_ID = "e87788b4-1c0e-45df-91b4-4a8869a56c73"
+INGREDIENTS_OPERATOR_DATA_SOURCE_ID = "e179ea64-9691-4802-bbb6-cf896284a709"
+ASSET_ROLE_MAP_AUTHORITY_DATA_SOURCE_ID = "e97ff5ec-508a-4c1e-8302-50cf10a45953"
+
+DEFAULT_OPERATOR_DATA_SOURCE_IDS = (
+    HYBRID_OPERATOR_DATA_SOURCE_ID,
+    FRAMES_OPERATOR_DATA_SOURCE_ID,
+    INGREDIENTS_OPERATOR_DATA_SOURCE_ID,
+)
 
 MODE_TO_INTAKE = {
     "HYBRID": "PRODUCT_ONLY",
@@ -33,11 +46,41 @@ MODE_TO_INTAKE = {
     "INGREDIENTS": "ASSET_SET",
 }
 
+OPERATOR_SOURCE_PROFILES = {
+    HYBRID_OPERATOR_DATA_SOURCE_ID: {
+        "name": "BOSMAX HYBRID Operator Intake",
+        "mode": "HYBRID",
+        "request_status_sent": "In progress",
+        "request_status_success": "Done",
+        "request_status_error": "Not started",
+    },
+    FRAMES_OPERATOR_DATA_SOURCE_ID: {
+        "name": "BOSMAX FRAMES Operator Intake",
+        "mode": "FRAMES",
+        "request_status_sent": "In progress",
+        "request_status_success": "Done",
+        "request_status_error": "Not started",
+    },
+    INGREDIENTS_OPERATOR_DATA_SOURCE_ID: {
+        "name": "BOSMAX INGREDIENTS Operator Intake",
+        "mode": "INGREDIENTS",
+        "request_status_sent": "In progress",
+        "request_status_success": "Done",
+        "request_status_error": "Not started",
+    },
+}
+BACKEND_ONLY_SOURCE_NAMES = {
+    BACKEND_RUNS_DATA_SOURCE_ID: "BOSMAX_VIDEO_PROMPT_RUNS",
+    LEGACY_REQUESTS_DATA_SOURCE_ID: "BOSMAX Video Prompt Requests",
+    LEGACY_FRONTEND_DATA_SOURCE_ID: "BOSMAX Video Operator Front-End",
+}
+
 OUTPUT_PROMPT_FIELD_ALIASES = (
     "Compiler Payload / RAW Prompt",
     "RAW_PROMPT_COMPILED",
 )
 FINAL_OUTPUT_FIELD_ALIASES = (
+    "Output From Compiler",
     "FINAL_OUTPUT_9_SECTION",
     "Final Output 9 Section",
 )
@@ -143,6 +186,23 @@ def _extract_property_value(prop: dict[str, Any]) -> Any:
         return str(prop.get("url") or "")
     if prop_type == "relation":
         return [_normalize_page_id(item.get("id") or "") for item in (prop.get("relation") or [])]
+    if prop_type == "files":
+        files: list[dict[str, str]] = []
+        for item in prop.get("files") or []:
+            if not isinstance(item, dict):
+                continue
+            file_type = str(item.get("type") or "")
+            target = item.get(file_type) or {}
+            if not isinstance(target, dict):
+                target = {}
+            files.append(
+                {
+                    "name": str(item.get("name") or ""),
+                    "type": file_type,
+                    "url": str(target.get("url") or ""),
+                }
+            )
+        return files
     if prop_type == "formula":
         formula = prop.get("formula") or {}
         formula_type = formula.get("type")
@@ -210,11 +270,117 @@ def _build_select_property(value: str | None) -> dict[str, Any]:
     return {"select": {"name": value}}
 
 
+def _build_option_property(value: str | None, prop_type: str) -> dict[str, Any]:
+    normalized_type = str(prop_type or "").strip().lower()
+    if normalized_type == "status":
+        if not value:
+            return {"status": None}
+        return {"status": {"name": value}}
+    return _build_select_property(value)
+
+
 def _page_property_names(page: dict[str, Any]) -> set[str]:
     props = page.get("properties") or {}
     if not isinstance(props, dict):
         return set()
     return {str(key) for key in props}
+
+
+def _page_property_types(page: dict[str, Any]) -> dict[str, str]:
+    props = page.get("properties") or {}
+    if not isinstance(props, dict):
+        return {}
+    result: dict[str, str] = {}
+    for key, value in props.items():
+        if isinstance(value, dict):
+            result[str(key)] = str(value.get("type") or "")
+    return result
+
+
+def _relation_ids(page: dict[str, Any], prop_name: str) -> list[str]:
+    value = _get_prop(page, prop_name, default=[])
+    if not isinstance(value, list):
+        return []
+    return [str(item) for item in value if str(item).strip()]
+
+
+def _extract_file_refs(page: dict[str, Any], prop_name: str) -> list[str]:
+    value = _get_prop(page, prop_name, default=[])
+    if not isinstance(value, list):
+        return []
+    refs: list[str] = []
+    for item in value:
+        if isinstance(item, dict):
+            ref = str(item.get("url") or item.get("name") or "").strip()
+        else:
+            ref = str(item or "").strip()
+        if ref:
+            refs.append(ref)
+    return refs
+
+
+def _normalize_string_list(value: Any) -> list[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    text = str(value or "").strip()
+    if not text:
+        return []
+    return [chunk.strip() for chunk in re.split(r"[,|]", text) if chunk.strip()]
+
+
+def _parent_data_source_id(page: dict[str, Any]) -> str:
+    parent = page.get("parent") or {}
+    if not isinstance(parent, dict):
+        return ""
+    parent_type = str(parent.get("type") or "")
+    if parent_type == "data_source_id":
+        return _normalize_page_id(str(parent.get("data_source_id") or ""))
+    if parent_type == "database_id":
+        return _normalize_page_id(str(parent.get("database_id") or ""))
+    return ""
+
+
+def _normalize_copy_source(value: Any) -> str:
+    token = str(value or "").strip().upper().replace(" ", "_")
+    if token in {"BOSMAX", "COPYWRITING_BANK_BOSMAX"}:
+        return "BOSMAX"
+    if token in {"MWTCB", "COPYWRITING_BANK_MWTCB", "MINYAK_WARISAN_TOK_CAP_BURUNG"}:
+        return "MWTCB"
+    return ""
+
+
+def _maybe_retrieve_single_relation_page(
+    client: "NotionClient",
+    relation_ids: list[str],
+) -> dict[str, Any] | None:
+    if len(relation_ids) != 1:
+        return None
+    return client.retrieve_page(relation_ids[0])
+
+
+def _infer_engine_from_title(title: str) -> str:
+    token = str(title or "").upper()
+    if "GOOGLE FLOW" in token or "FLOW" in token:
+        return "GOOGLE_FLOW"
+    if "GROK" in token:
+        return "GROK"
+    return ""
+
+
+def _infer_duration_seconds(title: str) -> int | None:
+    match = re.search(r"(\d+)\s*S\b", str(title or "").upper())
+    if not match:
+        return None
+    return int(match.group(1))
+
+
+def _infer_block_plan_reference(engine: str, duration_seconds: int | None) -> str:
+    rules = {
+        ("GROK", 16): "[10,6]",
+        ("GOOGLE_FLOW", 16): "[8,8]",
+        ("GOOGLE_FLOW", 40): "[10,10,10,10]",
+    }
+    return rules.get((str(engine or "").upper(), int(duration_seconds or 0)), "")
 
 
 def _resolve_field_alias(
@@ -224,7 +390,7 @@ def _resolve_field_alias(
     for alias in aliases:
         if alias in available_fields:
             return alias
-    return aliases[-1]
+    return ""
 
 
 def _resolve_writeback_field_map(available_fields: set[str]) -> dict[str, str]:
@@ -278,19 +444,20 @@ class NotionClient:
     def retrieve_page(self, page_id: str) -> dict[str, Any]:
         return self._request("GET", f"/pages/{_normalize_page_id(page_id)}")
 
-    def query_ready_rows(self, data_source_id: str, *, page_size: int) -> list[dict[str, Any]]:
+    def query_ready_rows(
+        self,
+        data_source_id: str,
+        *,
+        page_size: int,
+        request_status_property: str,
+        request_status_value: str,
+    ) -> list[dict[str, Any]]:
         response = self._request(
             "POST",
             f"/data_sources/{_normalize_page_id(data_source_id)}/query",
             body={
                 "page_size": page_size,
-                "filter": {
-                    "and": [
-                        {"property": "Compiler Method", "select": {"equals": "EXTERNAL_COMPILER"}},
-                        {"property": "Compiler Output Status", "select": {"equals": "READY_TO_COMPILE"}},
-                        {"property": "Output Reactivity", "select": {"equals": "SYSTEM_WRITTEN_OUTPUT"}},
-                    ]
-                },
+                "filter": {"property": request_status_property, "status": {"equals": request_status_value}},
             },
         )
         results = response.get("results") or []
@@ -306,33 +473,37 @@ class NotionClient:
         )
 
 
-def _extract_run_snapshot(run_page: dict[str, Any]) -> dict[str, Any]:
+def _extract_operator_run_snapshot(
+    run_page: dict[str, Any],
+    *,
+    profile: dict[str, Any],
+    data_source_id: str,
+) -> dict[str, Any]:
     available_fields = _page_property_names(run_page)
     return {
         "page_id": _normalize_page_id(str(run_page.get("id") or "")),
-        "run_name": str(_get_prop(run_page, "Run Name", default=_title_from_page(run_page)) or ""),
-        "mode": str(_get_prop(run_page, "Mode") or ""),
-        "platform": str(_get_prop(run_page, "Platform", default="TikTok") or "TikTok"),
+        "data_source_id": data_source_id,
+        "data_source_name": str(profile.get("name") or ""),
+        "run_name": str(_get_prop(run_page, "Request Name", default=_title_from_page(run_page)) or ""),
+        "mode": str(profile.get("mode") or ""),
+        "platform": str(_get_prop(run_page, "Platform", default="TikTok Shop Malaysia") or "TikTok Shop Malaysia"),
         "target_language": str(_get_prop(run_page, "Target Language", default="Malay") or "Malay"),
         "overlay_allowed": bool(_get_prop(run_page, "Overlay Allowed", default=False)),
-        "product_reference_provided": bool(_get_prop(run_page, "Product Reference Provided", default=False)),
-        "frame_provided": bool(_get_prop(run_page, "Frame Provided", default=False)),
-        "avatar_reference_provided": bool(_get_prop(run_page, "Avatar Reference Provided", default=False)),
-        "style_reference_provided": bool(_get_prop(run_page, "Style Reference Provided", default=False)),
-        "asset_roles_verified": bool(_get_prop(run_page, "Asset Roles Verified", default=False)),
-        "uploaded_asset_notes": str(_get_prop(run_page, "Uploaded Asset Notes") or ""),
-        "scene_context_override": str(_get_prop(run_page, "Scene Context Override") or ""),
-        "safety_override": str(_get_prop(run_page, "Safety Override") or ""),
-        "asset_role_map_text": str(_get_prop(run_page, "Asset Role Map") or ""),
-        "compiler_method": str(_get_prop(run_page, "Compiler Method") or ""),
-        "compiler_output_status": str(_get_prop(run_page, "Compiler Output Status") or ""),
-        "prompt_status": str(_get_prop(run_page, "Prompt Status") or ""),
-        "operator_use": str(_get_prop(run_page, "Operator Use") or ""),
-        "output_reactivity": str(_get_prop(run_page, "Output Reactivity") or ""),
-        "manual_product_route": str(_get_prop(run_page, "MANUAL_product_route") or ""),
-        "manual_engine_rule": str(_get_prop(run_page, "MANUAL_engine_rule") or ""),
-        "manual_angle_id": str(_get_prop(run_page, "MANUAL_angle_id") or ""),
+        "avatar_source": str(_get_prop(run_page, "Avatar Source") or ""),
+        "copy_source": _normalize_copy_source(_get_prop(run_page, "Copy Source")),
+        "copy_source_raw": str(_get_prop(run_page, "Copy Source") or ""),
+        "scene_context": str(_get_prop(run_page, "Scene Context") or ""),
+        "style_scene_source": str(_get_prop(run_page, "style_scene_source") or ""),
+        "motion_delta": str(_get_prop(run_page, "Motion Delta") or ""),
+        "frame_context": str(_get_prop(run_page, "Frame Context") or ""),
+        "request_status": str(_get_prop(run_page, "Request Status") or ""),
+        "product_photo_uploads": _extract_file_refs(run_page, "Product Photo Upload"),
+        "completed_frame_uploads": _extract_file_refs(run_page, "Completed Frame Upload"),
+        "product_reference_photos": _extract_file_refs(run_page, "Product Reference Photo"),
+        "avatar_reference_photos": _extract_file_refs(run_page, "Avatar Reference Photo"),
+        "style_scene_reference_photos": _extract_file_refs(run_page, "Style Scene Reference Photo"),
         "available_fields": sorted(available_fields),
+        "property_types": _page_property_types(run_page),
         "writeback_field_map": _resolve_writeback_field_map(available_fields),
     }
 
@@ -354,12 +525,21 @@ def _extract_product_snapshot(page: dict[str, Any]) -> dict[str, Any]:
 
 
 def _extract_engine_snapshot(page: dict[str, Any]) -> dict[str, Any]:
+    title = str(_get_prop(page, "Rule", default=_title_from_page(page)) or "")
+    engine = str(_get_prop(page, "engine") or "").strip() or _infer_engine_from_title(title)
+    duration_seconds = _get_prop(page, "duration_seconds")
+    if duration_seconds in (None, ""):
+        duration_seconds = _infer_duration_seconds(title)
+    duration_int = int(duration_seconds) if duration_seconds not in (None, "") else None
+    block_plan_reference = str(_get_prop(page, "block_plan_reference") or "").strip()
+    if not block_plan_reference:
+        block_plan_reference = _infer_block_plan_reference(engine, duration_int)
     return {
         "page_id": _normalize_page_id(str(page.get("id") or "")),
-        "title": str(_get_prop(page, "Rule", default=_title_from_page(page)) or ""),
-        "engine": str(_get_prop(page, "engine") or ""),
-        "duration_seconds": _get_prop(page, "duration_seconds"),
-        "block_plan_reference": str(_get_prop(page, "block_plan_reference") or ""),
+        "title": title,
+        "engine": engine,
+        "duration_seconds": duration_int,
+        "block_plan_reference": block_plan_reference,
         "block_rule_label": str(_get_prop(page, "block_rule_label") or ""),
         "compile_output_type": str(_get_prop(page, "compile_output_type") or ""),
         "continuation_rule": str(_get_prop(page, "continuation_rule") or ""),
@@ -370,8 +550,6 @@ def _extract_engine_snapshot(page: dict[str, Any]) -> dict[str, Any]:
 
 
 def _extract_angle_snapshot(page: dict[str, Any]) -> dict[str, Any]:
-    usage_tags = _get_prop(page, "usage_tags", default=[])
-    mode_fit = _get_prop(page, "mode_fit", default=[])
     return {
         "page_id": _normalize_page_id(str(page.get("id") or "")),
         "title": str(_get_prop(page, "Angle", default=_title_from_page(page)) or ""),
@@ -380,8 +558,8 @@ def _extract_angle_snapshot(page: dict[str, Any]) -> dict[str, Any]:
         "scene_context_seed": str(_get_prop(page, "scene_context_seed") or ""),
         "auto_scene_context": str(_get_prop(page, "AUTO_scene_context") or ""),
         "commercial_family": str(_get_prop(page, "commercial_family") or ""),
-        "usage_tags": usage_tags if isinstance(usage_tags, list) else [str(usage_tags)],
-        "mode_fit": mode_fit if isinstance(mode_fit, list) else [str(mode_fit)],
+        "usage_tags": _normalize_string_list(_get_prop(page, "usage_tags", default=[])),
+        "mode_fit": _normalize_string_list(_get_prop(page, "mode_fit", default=[])),
         "visual_risk_notes": str(_get_prop(page, "visual_risk_notes") or ""),
         "status": str(_get_prop(page, "status") or ""),
     }
@@ -415,42 +593,109 @@ def _extract_copy_pack_snapshot(page: dict[str, Any], lane: str) -> dict[str, An
         "usp2": str(_get_prop(page, "usp2") or ""),
         "usp3": str(_get_prop(page, "usp3") or ""),
         "cta": str(_get_prop(page, "cta") or ""),
-        "usage_tags": str(_get_prop(page, "usage_tags") or ""),
+        "usage_tags": _normalize_string_list(_get_prop(page, "usage_tags") or ""),
+        "commercial_family": str(_get_prop(page, "commercial_family") or ""),
+        "scene_context_seed": str(_get_prop(page, "scene_context_seed") or ""),
         "status": str(_get_prop(page, "status") or ""),
+    }
+
+
+def _extract_asset_role_map_snapshot(page: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "page_id": _normalize_page_id(str(page.get("id") or "")),
+        "title": str(_get_prop(page, "Role Map", default=_title_from_page(page)) or ""),
+        "map_id": str(_get_prop(page, "map_id") or ""),
+        "mode": str(_get_prop(page, "mode") or ""),
+        "status": str(_get_prop(page, "status") or ""),
+        "minimum_valid_path": str(_get_prop(page, "minimum_valid_path") or ""),
+        "product_reference_rule": str(_get_prop(page, "product_reference_rule") or ""),
+        "avatar_reference_rule": str(_get_prop(page, "avatar_reference_rule") or ""),
+        "style_scene_reference_rule": str(_get_prop(page, "style_scene_reference_rule") or ""),
+        "fail_conditions": str(_get_prop(page, "fail_conditions") or ""),
+    }
+
+
+def _build_synthetic_angle_snapshot(run: dict[str, Any], copy_pack: dict[str, Any]) -> dict[str, Any]:
+    scene_context = (
+        str(run.get("scene_context") or "").strip()
+        or str(copy_pack.get("scene_context_seed") or "").strip()
+        or str(copy_pack.get("hook") or "").strip()
+    )
+    return {
+        "page_id": "",
+        "title": str(copy_pack.get("title") or f"{run['mode']} Operator Scene").strip(),
+        "angle_id": str(copy_pack.get("angle_id") or f"{run['mode']}_SCENE_CONTEXT").strip(),
+        "product_id": str(copy_pack.get("product_id") or "").strip(),
+        "scene_context_seed": scene_context,
+        "auto_scene_context": scene_context,
+        "commercial_family": str(copy_pack.get("commercial_family") or "").strip(),
+        "usage_tags": _normalize_string_list(copy_pack.get("usage_tags") or []),
+        "mode_fit": [str(run.get("mode") or "").strip()],
+        "visual_risk_notes": "",
+        "status": "approved",
     }
 
 
 def build_live_snapshot(client: NotionClient, run_page_id: str) -> dict[str, Any]:
     run_page = client.retrieve_page(run_page_id)
-    product_id = _single_relation_id(run_page, "Product", required=True)
-    engine_rule_id = _single_relation_id(run_page, "Engine Rule", required=True)
-    angle_id = _single_relation_id(run_page, "Angle", required=True)
-    avatar_id = _single_relation_id(run_page, "Avatar AI", required=False)
-    copy_bosmax_id = _single_relation_id(run_page, "Copy Pack BOSMAX", required=False)
-    copy_mwtcb_id = _single_relation_id(run_page, "Copy Pack MWTCB", required=False)
-    if bool(copy_bosmax_id) == bool(copy_mwtcb_id):
+    data_source_id = _parent_data_source_id(run_page)
+    if data_source_id in BACKEND_ONLY_SOURCE_NAMES:
         raise WorkerError(
-            "Exactly one copy pack relation must be selected across 'Copy Pack BOSMAX' and 'Copy Pack MWTCB'."
+            f"{BACKEND_ONLY_SOURCE_NAMES[data_source_id]} is BACKEND / ADMIN ONLY / DO NOT USE AS OPERATOR UI."
+        )
+    profile = OPERATOR_SOURCE_PROFILES.get(data_source_id)
+    if not profile:
+        raise WorkerError(
+            "Live worker only accepts rows from BOSMAX HYBRID Operator Intake, "
+            "BOSMAX FRAMES Operator Intake, or BOSMAX INGREDIENTS Operator Intake."
         )
 
-    product_page = client.retrieve_page(product_id)
-    engine_rule_page = client.retrieve_page(engine_rule_id)
-    angle_page = client.retrieve_page(angle_id)
-    avatar_page = client.retrieve_page(avatar_id) if avatar_id else None
-    copy_pack_page = client.retrieve_page(copy_bosmax_id or copy_mwtcb_id)
+    run_snapshot = _extract_operator_run_snapshot(run_page, profile=profile, data_source_id=data_source_id)
+    product_relation_ids = _relation_ids(run_page, "Product")
+    engine_relation_ids = _relation_ids(run_page, "Engine + Duration")
+    avatar_relation_ids = _relation_ids(run_page, "Avatar Ai")
+    bosmax_copy_relation_ids = _relation_ids(run_page, "BOSMAX Copy Set")
+    mwtcb_copy_relation_ids = _relation_ids(run_page, "MWTCB Copy Set")
+    asset_role_map_relation_ids = _relation_ids(run_page, "Asset Role Map")
 
-    snapshot = {
-        "run": _extract_run_snapshot(run_page),
-        "product": _extract_product_snapshot(product_page),
-        "engine_rule": _extract_engine_snapshot(engine_rule_page),
-        "angle": _extract_angle_snapshot(angle_page),
-        "avatar": _extract_avatar_snapshot(avatar_page) if avatar_page else {},
-        "copy_pack": _extract_copy_pack_snapshot(
-            copy_pack_page,
-            lane="BOSMAX" if copy_bosmax_id else "MWTCB",
-        ),
+    run_snapshot.update(
+        {
+            "product_relation_ids": product_relation_ids,
+            "engine_rule_relation_ids": engine_relation_ids,
+            "avatar_relation_ids": avatar_relation_ids,
+            "bosmax_copy_relation_ids": bosmax_copy_relation_ids,
+            "mwtcb_copy_relation_ids": mwtcb_copy_relation_ids,
+            "asset_role_map_relation_ids": asset_role_map_relation_ids,
+        }
+    )
+
+    product_page = _maybe_retrieve_single_relation_page(client, product_relation_ids)
+    engine_rule_page = _maybe_retrieve_single_relation_page(client, engine_relation_ids)
+    avatar_page = _maybe_retrieve_single_relation_page(client, avatar_relation_ids)
+    copy_lane = "BOSMAX" if len(bosmax_copy_relation_ids) == 1 else "MWTCB"
+    copy_page = _maybe_retrieve_single_relation_page(
+        client,
+        bosmax_copy_relation_ids if len(bosmax_copy_relation_ids) == 1 else mwtcb_copy_relation_ids,
+    )
+    asset_role_map_page = _maybe_retrieve_single_relation_page(client, asset_role_map_relation_ids)
+
+    product_snapshot = _extract_product_snapshot(product_page) if product_page else {}
+    engine_snapshot = _extract_engine_snapshot(engine_rule_page) if engine_rule_page else {}
+    avatar_snapshot = _extract_avatar_snapshot(avatar_page) if avatar_page else {}
+    copy_pack_snapshot = _extract_copy_pack_snapshot(copy_page, lane=copy_lane) if copy_page else {}
+    asset_role_map_snapshot = (
+        _extract_asset_role_map_snapshot(asset_role_map_page) if asset_role_map_page else {}
+    )
+
+    return {
+        "run": run_snapshot,
+        "product": product_snapshot,
+        "engine_rule": engine_snapshot,
+        "angle": _build_synthetic_angle_snapshot(run_snapshot, copy_pack_snapshot),
+        "avatar": avatar_snapshot,
+        "copy_pack": copy_pack_snapshot,
+        "asset_role_map": asset_role_map_snapshot,
     }
-    return snapshot
 
 
 def _normalize_product_lane(product: dict[str, Any]) -> str:
@@ -477,19 +722,18 @@ def _normalize_engine(engine_rule: dict[str, Any]) -> str:
     raise WorkerError(f"Unsupported engine for external compiler worker: {engine!r}")
 
 
-def _parse_asset_role_map(run: dict[str, Any], mode: str) -> dict[str, str]:
-    text = str(run.get("asset_role_map_text") or "").strip()
-    if text:
-        parsed = yaml.safe_load(text)
-        if not isinstance(parsed, dict):
-            raise WorkerError("Asset Role Map must parse to a mapping when provided.")
-        return {str(key): str(value) for key, value in parsed.items()}
-    if mode != "INGREDIENTS":
+def _parse_asset_role_map(snapshot: dict[str, Any], mode: str) -> dict[str, str]:
+    asset_role_map = snapshot.get("asset_role_map") or {}
+    if not asset_role_map:
         return {}
     return {
-        "image_1": "PRODUCT_REFERENCE",
-        "image_2": "AVATAR_REFERENCE",
-        "image_3": "STYLE_SCENE_REFERENCE",
+        "map_id": str(asset_role_map.get("map_id") or ""),
+        "minimum_valid_path": str(asset_role_map.get("minimum_valid_path") or ""),
+        "product_reference_rule": str(asset_role_map.get("product_reference_rule") or ""),
+        "avatar_reference_rule": str(asset_role_map.get("avatar_reference_rule") or ""),
+        "style_scene_reference_rule": str(asset_role_map.get("style_scene_reference_rule") or ""),
+        "fail_conditions": str(asset_role_map.get("fail_conditions") or ""),
+        "mode": mode,
     }
 
 
@@ -512,11 +756,13 @@ def _build_visual_seed(snapshot: dict[str, Any]) -> str:
     angle = snapshot["angle"]
     avatar = snapshot.get("avatar") or {}
     parts = [
-        str(run.get("scene_context_override") or "").strip(),
+        str(run.get("scene_context") or "").strip(),
         str(angle.get("auto_scene_context") or "").strip(),
         str(angle.get("scene_context_seed") or "").strip(),
         str(avatar.get("environment") or "").strip(),
-        str(run.get("uploaded_asset_notes") or "").strip(),
+        str(run.get("frame_context") or "").strip(),
+        str(run.get("motion_delta") or "").strip(),
+        str(run.get("style_scene_source") or "").strip(),
         str(angle.get("visual_risk_notes") or "").strip(),
     ]
     deduped: list[str] = []
@@ -544,7 +790,6 @@ def _build_body(copy_pack: dict[str, Any]) -> str:
 
 
 def _build_compliance_notes(snapshot: dict[str, Any]) -> str:
-    run = snapshot["run"]
     product = snapshot["product"]
     angle = snapshot["angle"]
     engine_rule = snapshot["engine_rule"]
@@ -552,10 +797,20 @@ def _build_compliance_notes(snapshot: dict[str, Any]) -> str:
         [
             str(product.get("safety_notes") or ""),
             str(angle.get("visual_risk_notes") or ""),
-            str(run.get("safety_override") or ""),
             str(engine_rule.get("continuation_rule") or ""),
         ]
     )
+
+
+def _asset_role_requires_style_scene(asset_role_map: dict[str, Any]) -> bool:
+    token = " ".join(
+        [
+            str(asset_role_map.get("minimum_valid_path") or ""),
+            str(asset_role_map.get("style_scene_reference_rule") or ""),
+            str(asset_role_map.get("fail_conditions") or ""),
+        ]
+    ).upper()
+    return "STYLE_SCENE" in token
 
 
 def validate_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> tuple[list[str], list[str]]:
@@ -564,82 +819,92 @@ def validate_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> tuple
     engine_rule = snapshot["engine_rule"]
     angle = snapshot["angle"]
     copy_pack = snapshot["copy_pack"]
+    asset_role_map = snapshot.get("asset_role_map") or {}
     mode = str(run.get("mode") or "").strip().upper()
 
     errors: list[str] = []
     warnings: list[str] = []
 
-    if str(run.get("compiler_method") or "") != "EXTERNAL_COMPILER":
-        errors.append("Compiler Method must be EXTERNAL_COMPILER.")
-    if str(run.get("output_reactivity") or "") != "SYSTEM_WRITTEN_OUTPUT":
-        errors.append("Output Reactivity must be SYSTEM_WRITTEN_OUTPUT.")
-    if not force and str(run.get("compiler_output_status") or "") != "READY_TO_COMPILE":
-        errors.append("Compiler Output Status must be READY_TO_COMPILE unless --force is used.")
-    if not force and str(run.get("prompt_status") or "") not in {"Ready", "Sent to Compiler"}:
-        errors.append("Prompt Status must be Ready unless --force is used.")
-    if any(str(run.get(key) or "").strip() for key in ("manual_product_route", "manual_engine_rule", "manual_angle_id")):
-        errors.append("Manual fallback fields are populated; external compiler lane requires authority relations only.")
+    data_source_id = str(run.get("data_source_id") or "")
+    if data_source_id in BACKEND_ONLY_SOURCE_NAMES:
+        errors.append(
+            f"{BACKEND_ONLY_SOURCE_NAMES[data_source_id]} is BACKEND / ADMIN ONLY / DO NOT USE AS OPERATOR UI."
+        )
+    if data_source_id not in OPERATOR_SOURCE_PROFILES:
+        errors.append("Live worker accepts only the three mode-specific operator intake databases.")
     if mode not in MODE_TO_INTAKE:
         errors.append(f"Unsupported run mode: {mode!r}")
+    if not run.get("writeback_field_map", {}).get("raw_prompt_field"):
+        errors.append("Operator intake row is missing 'Compiler Payload / RAW Prompt'.")
+    if not run.get("writeback_field_map", {}).get("qa_notes_field"):
+        errors.append("Operator intake row is missing 'QA Notes'.")
+    if not run.get("writeback_field_map", {}).get("request_status_field"):
+        errors.append("Operator intake row is missing 'Request Status'.")
+    if len(run.get("product_relation_ids") or []) != 1:
+        errors.append("Operator intake must select exactly one Product relation.")
+    if len(run.get("engine_rule_relation_ids") or []) != 1:
+        errors.append("Operator intake must select exactly one Engine + Duration relation.")
+    copy_source = str(run.get("copy_source") or "")
+    if copy_source not in {"BOSMAX", "MWTCB"}:
+        errors.append("Copy Source must be BOSMAX or MWTCB.")
+    if copy_source == "BOSMAX" and len(run.get("bosmax_copy_relation_ids") or []) != 1:
+        errors.append("Copy Source BOSMAX requires exactly one BOSMAX Copy Set relation.")
+    if copy_source == "MWTCB" and len(run.get("mwtcb_copy_relation_ids") or []) != 1:
+        errors.append("Copy Source MWTCB requires exactly one MWTCB Copy Set relation.")
+    if (len(run.get("bosmax_copy_relation_ids") or []) + len(run.get("mwtcb_copy_relation_ids") or [])) != 1:
+        errors.append("Operator intake must select exactly one copy-set relation across BOSMAX Copy Set or MWTCB Copy Set.")
 
     if not str(product.get("product_id") or "").strip():
         errors.append("Product authority row is missing product_id.")
     if not str(product.get("product_truth_ref") or "").strip() and not str(product.get("product_truth_lock") or "").strip():
         errors.append("Product authority row must supply product_truth_ref or product_truth_lock.")
     if not str(engine_rule.get("engine") or "").strip():
-        errors.append("Engine Rule row is missing engine.")
+        errors.append("Engine + Duration authority row is missing engine.")
     if not engine_rule.get("duration_seconds"):
-        errors.append("Engine Rule row is missing duration_seconds.")
+        errors.append("Engine + Duration authority row is missing duration_seconds.")
     if str(engine_rule.get("compile_output_type") or "") == "BLOCKED_UNTIL_LANE":
-        errors.append("Engine Rule row is blocked for compile_output_type.")
-    if not str(angle.get("angle_id") or "").strip():
-        errors.append("Angle authority row is missing angle_id.")
+        errors.append("Engine + Duration authority row is blocked for compile_output_type.")
     if not str(angle.get("auto_scene_context") or angle.get("scene_context_seed") or "").strip():
-        errors.append("Angle authority row is missing scene context.")
+        errors.append("Scene Context is missing from operator intake / copy authority.")
     if not str(copy_pack.get("hook") or "").strip():
         errors.append("Copy pack row is missing hook.")
-    if not str(copy_pack.get("cta") or "").strip():
-        warnings.append("Copy pack row is missing cta; worker will fall back to the product default CTA when available.")
+    if not str(copy_pack.get("cta") or product.get("cta_text_default") or "").strip():
+        errors.append("Copy pack row is missing cta and product default CTA is empty.")
     if not _build_body(copy_pack):
         errors.append("Copy pack row is missing body material (subhook/usp1/usp2/usp3).")
 
     product_id = str(product.get("product_id") or "").strip()
-    if product_id and str(angle.get("product_id") or "").strip() and str(angle.get("product_id")) != product_id:
-        errors.append("Angle authority product_id does not match Product authority product_id.")
     if product_id and str(copy_pack.get("product_id") or "").strip() and str(copy_pack.get("product_id")) != product_id:
         errors.append("Copy pack product_id does not match Product authority product_id.")
-    if str(copy_pack.get("angle_id") or "").strip() and str(copy_pack.get("angle_id")) != str(angle.get("angle_id") or ""):
-        errors.append("Copy pack angle_id does not match the selected Angle row.")
 
     if str(product.get("status") or "").lower() not in {"", "approved"}:
         warnings.append(f"Product authority status is {product.get('status')!r}, not approved.")
-    if str(angle.get("status") or "").lower() not in {"", "approved"}:
-        warnings.append(f"Angle authority status is {angle.get('status')!r}, not approved.")
     if str(engine_rule.get("status") or "").lower() not in {"", "approved"}:
-        warnings.append(f"Engine Rule status is {engine_rule.get('status')!r}, not approved.")
+        warnings.append(f"Engine + Duration status is {engine_rule.get('status')!r}, not approved.")
     if str(copy_pack.get("status") or "").lower() not in {"", "approved"}:
         warnings.append(f"Copy pack status is {copy_pack.get('status')!r}, not approved.")
 
-    mode_fit = [str(item).upper() for item in (angle.get("mode_fit") or []) if str(item).strip()]
-    if mode_fit and mode not in mode_fit:
-        warnings.append(f"Angle mode_fit {mode_fit!r} does not explicitly include run mode {mode!r}.")
-
-    if mode == "HYBRID" and not _coerce_bool(run.get("product_reference_provided")):
-        errors.append("HYBRID runs require Product Reference Provided = true.")
+    if mode == "HYBRID":
+        if len(run.get("product_photo_uploads") or []) < 1:
+            errors.append("HYBRID intake requires Product Photo Upload.")
     if mode == "FRAMES":
-        if not _coerce_bool(run.get("frame_provided")):
-            errors.append("FRAMES runs require Frame Provided = true.")
-        if not str(run.get("uploaded_asset_notes") or "").strip():
-            errors.append("FRAMES runs require Uploaded Asset Notes containing the motion delta / frame continuation context.")
+        if len(run.get("completed_frame_uploads") or []) < 1:
+            errors.append("FRAMES intake requires Completed Frame Upload.")
+        if not str(run.get("motion_delta") or "").strip():
+            errors.append("FRAMES intake requires Motion Delta.")
+        if not str(run.get("frame_context") or "").strip():
+            errors.append("FRAMES intake requires Frame Context.")
     if mode == "INGREDIENTS":
-        if not _coerce_bool(run.get("product_reference_provided")):
-            errors.append("INGREDIENTS runs require Product Reference Provided = true.")
-        if not _coerce_bool(run.get("asset_roles_verified")):
-            errors.append("INGREDIENTS runs require Asset Roles Verified = true.")
-        if not str(run.get("asset_role_map_text") or "").strip():
-            errors.append("INGREDIENTS runs require a non-empty Asset Role Map.")
-        if snapshot.get("avatar") and not _coerce_bool(run.get("avatar_reference_provided")):
-            errors.append("INGREDIENTS runs with Avatar AI selected require Avatar Reference Provided = true.")
+        if len(run.get("product_reference_photos") or []) < 1:
+            errors.append("INGREDIENTS intake requires Product Reference Photo.")
+        if len(run.get("avatar_reference_photos") or []) < 1:
+            errors.append("INGREDIENTS intake requires Avatar Reference Photo.")
+        if len(run.get("asset_role_map_relation_ids") or []) != 1:
+            errors.append("INGREDIENTS intake requires exactly one Asset Role Map relation.")
+        if asset_role_map and str(asset_role_map.get("mode") or "").upper() not in {"", "INGREDIENTS"}:
+            errors.append("Asset Role Map authority row is not marked for INGREDIENTS mode.")
+        if _asset_role_requires_style_scene(asset_role_map) and len(run.get("style_scene_reference_photos") or []) < 1:
+            errors.append("INGREDIENTS intake requires Style Scene Reference Photo for the selected Asset Role Map.")
 
     return errors, warnings
 
@@ -656,7 +921,7 @@ def build_worker_payload(snapshot: dict[str, Any]) -> dict[str, Any]:
     engine = _normalize_engine(engine_rule)
     duration_seconds = int(engine_rule.get("duration_seconds") or 0)
     duration = f"{duration_seconds}s"
-    asset_role_map = _parse_asset_role_map(run, mode)
+    asset_role_map = _parse_asset_role_map(snapshot, mode)
     copy_cta = str(copy_pack.get("cta") or product.get("cta_text_default") or "").strip()
     hook = str(copy_pack.get("hook") or "").strip()
     body = _build_body(copy_pack)
@@ -677,6 +942,7 @@ def build_worker_payload(snapshot: dict[str, Any]) -> dict[str, Any]:
         "commercial_angle_id": str(angle.get("angle_id") or "").strip(),
         "commercial_angle_name": str(angle.get("title") or "").strip(),
         "duration": duration,
+        "target_language": str(run.get("target_language") or engine_rule.get("target_language_default") or "Malay").strip(),
         "hook": hook,
         "body": body,
         "cta": copy_cta,
@@ -686,7 +952,7 @@ def build_worker_payload(snapshot: dict[str, Any]) -> dict[str, Any]:
         "product_truth_lock": str(product.get("product_truth_lock") or "").strip(),
         "scale_lock": str(product.get("scale_lock") or "").strip(),
         "product_input": f"Selected approved product authority row for {product.get('product_name_full') or product.get('title')}.",
-        "avatar_source": "NOTION_AVATAR_AI" if avatar else "AVATAR_POOL",
+        "avatar_source": "NOTION_AVATAR_AI" if avatar else (str(run.get("avatar_source") or "").strip() or "AVATAR_POOL"),
         "avatar_brief": avatar_brief,
         "compliance_notes": _build_compliance_notes(snapshot),
         "overlay_allowed": bool(run.get("overlay_allowed")),
@@ -694,10 +960,16 @@ def build_worker_payload(snapshot: dict[str, Any]) -> dict[str, Any]:
         "claim_class": "STANDARD",
     }
 
-    if mode == "FRAMES":
-        payload["ready_frame_input"] = (
-            str(run.get("uploaded_asset_notes") or "").strip()
-            or "One uploaded finished frame already contains the presenter, product, and scene."
+    if mode == "HYBRID":
+        payload["product_reference_assets"] = run.get("product_photo_uploads") or []
+        payload["scene_context"] = str(run.get("scene_context") or "").strip()
+    elif mode == "FRAMES":
+        payload["completed_frame_assets"] = run.get("completed_frame_uploads") or []
+        payload["ready_frame_input"] = _join_sentences(
+            [
+                str(run.get("frame_context") or "").strip(),
+                str(run.get("motion_delta") or "").strip(),
+            ]
         )
         payload["frame_truth_lock"] = (
             "The uploaded finished frame is the visual truth. Lock identity, wardrobe, pose, "
@@ -706,6 +978,9 @@ def build_worker_payload(snapshot: dict[str, Any]) -> dict[str, Any]:
         )
         payload["visual_authority"] = "USER_UPLOAD"
     elif mode == "INGREDIENTS":
+        payload["product_reference_assets"] = run.get("product_reference_photos") or []
+        payload["avatar_reference_assets"] = run.get("avatar_reference_photos") or []
+        payload["style_scene_reference_assets"] = run.get("style_scene_reference_photos") or []
         payload["asset_role_map"] = asset_role_map
         payload["asset_hierarchy"] = "PRODUCT_TRUTH > AVATAR_IDENTITY > STYLE_SCENE"
         payload["avatar_reference_lock"] = (
@@ -715,7 +990,7 @@ def build_worker_payload(snapshot: dict[str, Any]) -> dict[str, Any]:
             else ""
         )
         payload["style_scene_limit"] = (
-            "Uploaded style/scene references may influence mood, environment, and lighting only; "
+            f"{str(run.get('style_scene_source') or 'Uploaded style/scene references')} may influence mood, environment, and lighting only; "
             "they must never override product truth or avatar identity."
         )
 
@@ -729,6 +1004,7 @@ def render_raw_prompt_compiled(payload: dict[str, Any]) -> str:
         "duration",
         "intake_mode",
         "platform",
+        "target_language",
         "product_lane",
         "product_input",
         "product_truth_ref",
@@ -736,6 +1012,11 @@ def render_raw_prompt_compiled(payload: dict[str, Any]) -> str:
         "scale_lock",
         "avatar_source",
         "avatar_brief",
+        "product_reference_assets",
+        "completed_frame_assets",
+        "avatar_reference_assets",
+        "style_scene_reference_assets",
+        "scene_context",
         "ready_frame_input",
         "frame_truth_lock",
         "asset_role_map",
@@ -759,12 +1040,14 @@ def render_raw_prompt_compiled(payload: dict[str, Any]) -> str:
 def _build_snapshot_summary(snapshot: dict[str, Any]) -> dict[str, Any]:
     return {
         "run_page_id": snapshot["run"].get("page_id"),
+        "operator_data_source_id": snapshot["run"].get("data_source_id"),
+        "operator_data_source_name": snapshot["run"].get("data_source_name"),
         "product_page_id": snapshot["product"].get("page_id"),
         "engine_rule_page_id": snapshot["engine_rule"].get("page_id"),
-        "angle_page_id": snapshot["angle"].get("page_id"),
         "avatar_page_id": (snapshot.get("avatar") or {}).get("page_id", ""),
         "copy_pack_page_id": snapshot["copy_pack"].get("page_id"),
         "copy_pack_lane": snapshot["copy_pack"].get("lane"),
+        "asset_role_map_page_id": (snapshot.get("asset_role_map") or {}).get("page_id", ""),
         "mode": snapshot["run"].get("mode"),
         "engine": snapshot["engine_rule"].get("engine"),
         "duration_seconds": snapshot["engine_rule"].get("duration_seconds"),
@@ -790,18 +1073,13 @@ def compile_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> dict[s
         qa_warnings = [*warnings, *qa_warnings]
         qa["qa_warnings"] = qa_warnings
 
+    profile = OPERATOR_SOURCE_PROFILES.get(str(snapshot["run"].get("data_source_id") or ""), {})
     if qa_errors:
         compiler_output_status = "QA_FAILED"
-        prompt_status = "Failed"
-        compiler_qa_status = "FAILED"
-    elif qa_warnings:
-        compiler_output_status = "COMPILED"
-        prompt_status = "Final Received"
-        compiler_qa_status = "REVIEW"
+        request_status_value = str(profile.get("request_status_error") or "Not started")
     else:
-        compiler_output_status = "QA_PASSED"
-        prompt_status = "Final Received"
-        compiler_qa_status = "PASSED"
+        compiler_output_status = "COMPILED" if qa_warnings else "QA_PASSED"
+        request_status_value = str(profile.get("request_status_success") or "Done")
 
     notes = " | ".join(
         part
@@ -811,9 +1089,16 @@ def compile_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> dict[s
             f"qa_status={qa.get('qa_status') or ''}",
             f"block_plan={','.join(str(item) for item in (compiled.get('duration') or {}).get('block_plan') or [])}",
             "" if not qa_warnings else f"warnings={len(qa_warnings)}",
+            "" if not qa_errors else f"errors={len(qa_errors)}",
         ]
         if part
     )
+    if qa_warnings:
+        warning_blob = " || ".join(qa_warnings)
+        notes = f"{notes} | warnings_detail={warning_blob}" if notes else warning_blob
+    if qa_errors:
+        error_blob = " || ".join(qa_errors)
+        notes = f"{notes} | errors_detail={error_blob}" if notes else error_blob
 
     job_id = f"{_utc_job_stamp()}-{str(snapshot['run'].get('page_id') or '')[:8]}"
     result = {
@@ -826,18 +1111,14 @@ def compile_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> dict[s
         "final_output_9_section": str(compiler.get("final_prompt_text") or ""),
         "compiled_template": compiled,
         "writeback_properties": {
-            "Compiler Contract Version": WORKER_CONTRACT_VERSION,
-            "Compiler Job ID": job_id,
-            "Compiler Input Snapshot": _as_json_text(_build_snapshot_summary(snapshot)),
-            "RAW_PROMPT_COMPILED": raw_prompt_compiled,
-            "FINAL_OUTPUT_9_SECTION": str(compiler.get("final_prompt_text") or ""),
-            "Compiler Output Notes": notes,
-            "Compiler Error": "",
-            "Compiler Output Status": compiler_output_status,
-            "Prompt Status": prompt_status,
-            "COMPILER_QA_STATUS": compiler_qa_status,
+            "raw_prompt": raw_prompt_compiled,
+            "final_output": str(compiler.get("final_prompt_text") or ""),
+            "qa_notes": notes,
+            "request_status": request_status_value,
+            "compiler_output_status": compiler_output_status,
         },
         "writeback_field_map": dict(snapshot["run"].get("writeback_field_map") or {}),
+        "property_types": dict(snapshot["run"].get("property_types") or {}),
     }
     return result
 
@@ -850,44 +1131,57 @@ def write_result(path: Path, result: dict[str, Any]) -> None:
     path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
+def _set_text_writeback(properties: dict[str, Any], field_name: str, value: str) -> None:
+    if field_name:
+        properties[field_name] = _build_text_property(value)
+
+
+def _set_option_writeback(
+    properties: dict[str, Any],
+    field_name: str,
+    value: str,
+    property_types: dict[str, Any],
+) -> None:
+    if field_name:
+        properties[field_name] = _build_option_property(value, str(property_types.get(field_name) or ""))
+
+
 def update_run_as_sent(
     client: NotionClient,
     run_page_id: str,
     *,
-    job_id: str,
     field_map: dict[str, str],
+    property_types: dict[str, Any],
+    request_status_value: str,
 ) -> None:
-    client.update_page_properties(
-        run_page_id,
-        {
-            "Compiler Job ID": _build_text_property(job_id),
-            "Compiler Error": _build_text_property(""),
-            field_map["qa_notes_field"]: _build_text_property("External compiler worker picked up this row."),
-            "Compiler Output Status": _build_select_property("SENT_TO_COMPILER"),
-            field_map["request_status_field"]: _build_select_property("Sent to Compiler"),
-            "COMPILER_QA_STATUS": _build_select_property("NOT_SENT"),
-        },
+    properties: dict[str, Any] = {}
+    _set_text_writeback(properties, field_map.get("qa_notes_field", ""), "External compiler worker picked up this row.")
+    _set_option_writeback(
+        properties,
+        field_map.get("request_status_field", ""),
+        request_status_value,
+        property_types,
     )
+    if properties:
+        client.update_page_properties(run_page_id, properties)
 
 
 def update_run_with_result(client: NotionClient, run_page_id: str, result: dict[str, Any]) -> None:
     props = result["writeback_properties"]
     field_map = result["writeback_field_map"]
-    client.update_page_properties(
-        run_page_id,
-        {
-            "Compiler Contract Version": _build_text_property(str(props["Compiler Contract Version"])),
-            "Compiler Job ID": _build_text_property(str(props["Compiler Job ID"])),
-            "Compiler Input Snapshot": _build_text_property(str(props["Compiler Input Snapshot"])),
-            field_map["raw_prompt_field"]: _build_text_property(str(props["RAW_PROMPT_COMPILED"])),
-            field_map["final_output_field"]: _build_text_property(str(props["FINAL_OUTPUT_9_SECTION"])),
-            field_map["qa_notes_field"]: _build_text_property(str(props["Compiler Output Notes"])),
-            "Compiler Error": _build_text_property(str(props["Compiler Error"])),
-            "Compiler Output Status": _build_select_property(str(props["Compiler Output Status"])),
-            field_map["request_status_field"]: _build_select_property(str(props["Prompt Status"])),
-            "COMPILER_QA_STATUS": _build_select_property(str(props["COMPILER_QA_STATUS"])),
-        },
+    property_types = result.get("property_types") or {}
+    properties: dict[str, Any] = {}
+    _set_text_writeback(properties, field_map.get("raw_prompt_field", ""), str(props["raw_prompt"]))
+    _set_text_writeback(properties, field_map.get("final_output_field", ""), str(props["final_output"]))
+    _set_text_writeback(properties, field_map.get("qa_notes_field", ""), str(props["qa_notes"]))
+    _set_option_writeback(
+        properties,
+        field_map.get("request_status_field", ""),
+        str(props["request_status"]),
+        property_types,
     )
+    if properties:
+        client.update_page_properties(run_page_id, properties)
 
 
 def update_run_with_error(
@@ -895,21 +1189,24 @@ def update_run_with_error(
     run_page_id: str,
     *,
     message: str,
-    job_id: str,
     field_map: dict[str, str],
+    property_types: dict[str, Any],
+    request_status_value: str,
 ) -> None:
-    client.update_page_properties(
-        run_page_id,
-        {
-            "Compiler Contract Version": _build_text_property(WORKER_CONTRACT_VERSION),
-            "Compiler Job ID": _build_text_property(job_id),
-            "Compiler Error": _build_text_property(message),
-            field_map["qa_notes_field"]: _build_text_property("External compiler worker blocked this row before final output writeback."),
-            "Compiler Output Status": _build_select_property("BLOCKED"),
-            field_map["request_status_field"]: _build_select_property("Failed"),
-            "COMPILER_QA_STATUS": _build_select_property("FAILED"),
-        },
+    properties: dict[str, Any] = {}
+    _set_text_writeback(
+        properties,
+        field_map.get("qa_notes_field", ""),
+        f"External compiler worker blocked this row before final output writeback. {message}",
     )
+    _set_option_writeback(
+        properties,
+        field_map.get("request_status_field", ""),
+        request_status_value,
+        property_types,
+    )
+    if properties:
+        client.update_page_properties(run_page_id, properties)
 
 
 def process_snapshot_path(snapshot_path: Path, *, output_path: Path | None, force: bool) -> dict[str, Any]:
@@ -930,9 +1227,16 @@ def process_live_run(
 ) -> dict[str, Any]:
     snapshot = build_live_snapshot(client, run_page_id)
     field_map = dict(snapshot["run"].get("writeback_field_map") or {})
-    job_id = f"{_utc_job_stamp()}-{str(snapshot['run'].get('page_id') or '')[:8]}"
+    property_types = dict(snapshot["run"].get("property_types") or {})
+    profile = OPERATOR_SOURCE_PROFILES.get(str(snapshot["run"].get("data_source_id") or ""), {})
     if not dry_run:
-        update_run_as_sent(client, run_page_id, job_id=job_id, field_map=field_map)
+        update_run_as_sent(
+            client,
+            run_page_id,
+            field_map=field_map,
+            property_types=property_types,
+            request_status_value=str(profile.get("request_status_sent") or "In progress"),
+        )
 
     try:
         result = compile_snapshot(snapshot, force=force)
@@ -942,8 +1246,9 @@ def process_live_run(
                 client,
                 run_page_id,
                 message=str(exc),
-                job_id=job_id,
                 field_map=field_map,
+                property_types=property_types,
+                request_status_value=str(profile.get("request_status_error") or "Not started"),
             )
         raise
 
@@ -957,7 +1262,7 @@ def process_live_run(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Resolve BOSMAX Notion video prompt runs into RAW_PROMPT_COMPILED and FINAL_OUTPUT_9_SECTION."
+        description="Resolve BOSMAX operator intake rows into Compiler Payload / RAW Prompt and clean compiler output."
     )
     source_group = parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument("--snapshot", help="Local YAML/JSON worker snapshot file.")
@@ -987,8 +1292,8 @@ def main() -> None:
             "job_id": result["job_id"],
             "contract_version": result["contract_version"],
             "qa_status": result["compiled_template"]["qa"]["qa_status"],
-            "compiler_output_status": result["writeback_properties"]["Compiler Output Status"],
-            "prompt_status": result["writeback_properties"]["Prompt Status"],
+            "compiler_output_status": result["writeback_properties"]["compiler_output_status"],
+            "request_status": result["writeback_properties"]["request_status"],
         }, ensure_ascii=False, indent=2))
         return
 
@@ -1009,34 +1314,54 @@ def main() -> None:
             "run_page_id": _normalize_page_id(args.run_page_id),
             "job_id": result["job_id"],
             "qa_status": result["compiled_template"]["qa"]["qa_status"],
-            "compiler_output_status": result["writeback_properties"]["Compiler Output Status"],
-            "prompt_status": result["writeback_properties"]["Prompt Status"],
+            "compiler_output_status": result["writeback_properties"]["compiler_output_status"],
+            "request_status": result["writeback_properties"]["request_status"],
         }, ensure_ascii=False, indent=2))
         return
 
-    data_source_id = args.data_source_id or DEFAULT_DATA_SOURCE_ID
-    ready_rows = client.query_ready_rows(data_source_id, page_size=max(1, args.page_size))
+    data_source_ids = [
+        _normalize_page_id(args.data_source_id)
+    ] if args.data_source_id else list(DEFAULT_OPERATOR_DATA_SOURCE_IDS)
     processed: list[dict[str, Any]] = []
-    for row in ready_rows:
-        run_page_id = _normalize_page_id(str(row.get("id") or ""))
-        result = process_live_run(
-            client,
-            run_page_id,
-            output_dir=output_dir,
-            dry_run=args.dry_run,
-            force=args.force,
+    for data_source_id in data_source_ids:
+        if data_source_id in BACKEND_ONLY_SOURCE_NAMES:
+            raise WorkerError(
+                f"{BACKEND_ONLY_SOURCE_NAMES[data_source_id]} is BACKEND / ADMIN ONLY / DO NOT USE AS OPERATOR UI."
+            )
+        profile = OPERATOR_SOURCE_PROFILES.get(data_source_id)
+        if not profile:
+            raise WorkerError(
+                f"Unsupported operator intake data source: {data_source_id}. "
+                "Allowed sources are HYBRID, FRAMES, and INGREDIENTS operator intake databases only."
+            )
+        ready_rows = client.query_ready_rows(
+            data_source_id,
+            page_size=max(1, args.page_size),
+            request_status_property="Request Status",
+            request_status_value=str(profile.get("request_status_error") or "Not started"),
         )
-        processed.append(
-            {
-                "run_page_id": run_page_id,
-                "job_id": result["job_id"],
-                "qa_status": result["compiled_template"]["qa"]["qa_status"],
-                "compiler_output_status": result["writeback_properties"]["Compiler Output Status"],
-            }
-        )
+        for row in ready_rows:
+            run_page_id = _normalize_page_id(str(row.get("id") or ""))
+            result = process_live_run(
+                client,
+                run_page_id,
+                output_dir=output_dir,
+                dry_run=args.dry_run,
+                force=args.force,
+            )
+            processed.append(
+                {
+                    "run_page_id": run_page_id,
+                    "operator_data_source_id": data_source_id,
+                    "operator_data_source_name": profile["name"],
+                    "job_id": result["job_id"],
+                    "qa_status": result["compiled_template"]["qa"]["qa_status"],
+                    "compiler_output_status": result["writeback_properties"]["compiler_output_status"],
+                }
+            )
 
     print(json.dumps({
-        "data_source_id": _normalize_page_id(data_source_id),
+        "data_source_ids": data_source_ids,
         "processed_count": len(processed),
         "processed": processed,
     }, ensure_ascii=False, indent=2))
