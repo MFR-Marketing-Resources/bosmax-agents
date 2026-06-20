@@ -231,6 +231,103 @@ Compiled exports produce:
   - `final_prompt_block_text`
   - `qa_status`
 
+## External Compiler Worker Contract
+
+`scripts/notion_video_prompt_worker.py` is the governed bridge between the live
+Notion operator rows and this runtime lane.
+
+It owns exactly three responsibilities:
+
+1. read one READY row or a READY queue from `BOSMAX_VIDEO_PROMPT_RUNS`
+2. resolve the selected authority relations
+   - `Product`
+   - `Engine Rule`
+   - `Angle`
+   - `Avatar AI` (optional)
+   - exactly one copy pack lane
+3. compile and write back:
+   - `RAW_PROMPT_COMPILED`
+   - `FINAL_OUTPUT_9_SECTION`
+   - compiler status / QA fields
+
+### Live queue entry rule
+
+The worker only accepts rows when all of the following are true:
+
+- `Compiler Method = EXTERNAL_COMPILER`
+- `Output Reactivity = SYSTEM_WRITTEN_OUTPUT`
+- `Compiler Output Status = READY_TO_COMPILE`
+- authority relations are selected; manual fallback fields are empty
+
+Mode-specific gates:
+
+- `HYBRID`
+  - `Product Reference Provided = true`
+- `FRAMES`
+  - `Frame Provided = true`
+- `INGREDIENTS`
+  - `Product Reference Provided = true`
+  - `Asset Roles Verified = true`
+  - if `Avatar AI` is selected, `Avatar Reference Provided = true`
+
+### Writeback ownership
+
+The worker writes:
+
+- `Compiler Contract Version = BOSMAX_EXT_COMPILER_WORKER_v1.0`
+- `Compiler Job ID`
+- `Compiler Input Snapshot`
+- `RAW_PROMPT_COMPILED`
+- `FINAL_OUTPUT_9_SECTION`
+- `Compiler Output Notes`
+- `Compiler Error`
+- `Compiler Output Status`
+- `Prompt Status`
+- `COMPILER_QA_STATUS`
+
+State mapping:
+
+- compile start
+  - `Compiler Output Status = SENT_TO_COMPILER`
+  - `Prompt Status = Sent to Compiler`
+- compile success with no QA warnings
+  - `Compiler Output Status = QA_PASSED`
+  - `Prompt Status = Final Received`
+  - `COMPILER_QA_STATUS = PASSED`
+- compile success with warnings but no hard QA errors
+  - `Compiler Output Status = COMPILED`
+  - `Prompt Status = Final Received`
+  - `COMPILER_QA_STATUS = REVIEW`
+- blocked / failed
+  - `Compiler Output Status = BLOCKED` or `QA_FAILED`
+  - `Prompt Status = Failed`
+  - `COMPILER_QA_STATUS = FAILED`
+
+### Runtime commands
+
+Single offline snapshot proof:
+
+```bash
+python scripts/notion_video_prompt_worker.py ^
+  --snapshot tests/video_template_compiler/notion_worker_snapshot_bosmax.json
+```
+
+Single live row:
+
+```bash
+set NOTION_API_TOKEN=secret_xxx
+python scripts/notion_video_prompt_worker.py --run-page-id <page-id>
+```
+
+READY queue sweep:
+
+```bash
+set NOTION_API_TOKEN=secret_xxx
+python scripts/notion_video_prompt_worker.py ^
+  --data-source-id 537c35a1-fd7a-453a-909b-eeb839b6b979 ^
+  --page-size 10
+```
+
 ## Validators
 
 Run these from repo root:
@@ -239,6 +336,7 @@ Run these from repo root:
 python scripts/validate_video_template_schema.py
 python scripts/validate_video_prompt_compiler.py
 python scripts/validate_video_template_export_readiness.py
+python scripts/validate_notion_video_prompt_worker.py
 ```
 
 Recommended repo-wide evidence checks:

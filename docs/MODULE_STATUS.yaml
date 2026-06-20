@@ -54,6 +54,8 @@ modules:
       - scripts/video_template_parser.py
       - scripts/video_storyboard_builder.py
       - scripts/video_prompt_compiler.py
+      - scripts/notion_video_prompt_worker.py
+      - scripts/validate_notion_video_prompt_worker.py
       - scripts/validate_video_raw_prompt_template_contract.py
       - scripts/validate_video_template_schema.py
       - scripts/validate_video_prompt_compiler.py

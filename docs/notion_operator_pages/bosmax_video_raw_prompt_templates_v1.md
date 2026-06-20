@@ -27,6 +27,10 @@
 - **Section 9 defaults `NO_OVERLAY`.** Text overlay only if explicitly requested.
 - If the derived plan has more than one block, the final output must say
   **`MULTI-PROMPT SET`** — never `one final 9-section prompt`.
+- External worker ownership:
+  - `RAW_PROMPT_COMPILED` is system-written from the selected relations.
+  - `FINAL_OUTPUT_9_SECTION` is system-written by `scripts/notion_video_prompt_worker.py`.
+  - Queue only when `Compiler Output Status = READY_TO_COMPILE`.
 
 ---
 
