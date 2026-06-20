@@ -246,8 +246,10 @@ It owns exactly three responsibilities:
    - `Avatar AI` (optional)
    - exactly one copy pack lane
 3. compile and write back:
-   - `RAW_PROMPT_COMPILED`
-   - `FINAL_OUTPUT_9_SECTION`
+   - `RAW_PROMPT_COMPILED` or `Compiler Payload / RAW Prompt`
+   - `FINAL_OUTPUT_9_SECTION` or `Final Output 9 Section`
+   - `Compiler Output Notes` or `QA Notes`
+   - `Prompt Status` or `Request Status`
    - compiler status / QA fields
 
 ### Live queue entry rule
@@ -265,9 +267,11 @@ Mode-specific gates:
   - `Product Reference Provided = true`
 - `FRAMES`
   - `Frame Provided = true`
+  - `Uploaded Asset Notes` must describe the continuation / motion delta
 - `INGREDIENTS`
   - `Product Reference Provided = true`
   - `Asset Roles Verified = true`
+  - `Asset Role Map` must be a non-empty YAML mapping
   - if `Avatar AI` is selected, `Avatar Reference Provided = true`
 
 ### Writeback ownership
@@ -277,13 +281,19 @@ The worker writes:
 - `Compiler Contract Version = BOSMAX_EXT_COMPILER_WORKER_v1.0`
 - `Compiler Job ID`
 - `Compiler Input Snapshot`
-- `RAW_PROMPT_COMPILED`
-- `FINAL_OUTPUT_9_SECTION`
-- `Compiler Output Notes`
+- `RAW_PROMPT_COMPILED` or `Compiler Payload / RAW Prompt`
+- `FINAL_OUTPUT_9_SECTION` or `Final Output 9 Section`
+- `Compiler Output Notes` or `QA Notes`
 - `Compiler Error`
 - `Compiler Output Status`
-- `Prompt Status`
+- `Prompt Status` or `Request Status`
 - `COMPILER_QA_STATUS`
+
+Field alias resolution is deterministic:
+
+- if the new operator-facing names exist, the worker writes there
+- otherwise it falls back to the legacy field names
+- row input accepts either a raw page id or a full Notion row URL
 
 State mapping:
 
@@ -316,7 +326,7 @@ Single live row:
 
 ```bash
 set NOTION_API_TOKEN=secret_xxx
-python scripts/notion_video_prompt_worker.py --run-page-id <page-id>
+python scripts/notion_video_prompt_worker.py --run-page <page-id-or-row-url>
 ```
 
 READY queue sweep:

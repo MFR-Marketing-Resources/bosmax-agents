@@ -33,6 +33,23 @@ MODE_TO_INTAKE = {
     "INGREDIENTS": "ASSET_SET",
 }
 
+OUTPUT_PROMPT_FIELD_ALIASES = (
+    "Compiler Payload / RAW Prompt",
+    "RAW_PROMPT_COMPILED",
+)
+FINAL_OUTPUT_FIELD_ALIASES = (
+    "FINAL_OUTPUT_9_SECTION",
+    "Final Output 9 Section",
+)
+VALIDATION_NOTES_FIELD_ALIASES = (
+    "QA Notes",
+    "Compiler Output Notes",
+)
+REQUEST_STATUS_FIELD_ALIASES = (
+    "Request Status",
+    "Prompt Status",
+)
+
 
 class WorkerError(RuntimeError):
     """Raised when the external compiler worker cannot continue safely."""
@@ -193,6 +210,32 @@ def _build_select_property(value: str | None) -> dict[str, Any]:
     return {"select": {"name": value}}
 
 
+def _page_property_names(page: dict[str, Any]) -> set[str]:
+    props = page.get("properties") or {}
+    if not isinstance(props, dict):
+        return set()
+    return {str(key) for key in props}
+
+
+def _resolve_field_alias(
+    available_fields: set[str],
+    aliases: tuple[str, ...],
+) -> str:
+    for alias in aliases:
+        if alias in available_fields:
+            return alias
+    return aliases[-1]
+
+
+def _resolve_writeback_field_map(available_fields: set[str]) -> dict[str, str]:
+    return {
+        "raw_prompt_field": _resolve_field_alias(available_fields, OUTPUT_PROMPT_FIELD_ALIASES),
+        "final_output_field": _resolve_field_alias(available_fields, FINAL_OUTPUT_FIELD_ALIASES),
+        "qa_notes_field": _resolve_field_alias(available_fields, VALIDATION_NOTES_FIELD_ALIASES),
+        "request_status_field": _resolve_field_alias(available_fields, REQUEST_STATUS_FIELD_ALIASES),
+    }
+
+
 class NotionClient:
     def __init__(self, token: str) -> None:
         self.token = token.strip()
@@ -264,6 +307,7 @@ class NotionClient:
 
 
 def _extract_run_snapshot(run_page: dict[str, Any]) -> dict[str, Any]:
+    available_fields = _page_property_names(run_page)
     return {
         "page_id": _normalize_page_id(str(run_page.get("id") or "")),
         "run_name": str(_get_prop(run_page, "Run Name", default=_title_from_page(run_page)) or ""),
@@ -288,6 +332,8 @@ def _extract_run_snapshot(run_page: dict[str, Any]) -> dict[str, Any]:
         "manual_product_route": str(_get_prop(run_page, "MANUAL_product_route") or ""),
         "manual_engine_rule": str(_get_prop(run_page, "MANUAL_engine_rule") or ""),
         "manual_angle_id": str(_get_prop(run_page, "MANUAL_angle_id") or ""),
+        "available_fields": sorted(available_fields),
+        "writeback_field_map": _resolve_writeback_field_map(available_fields),
     }
 
 
@@ -580,13 +626,18 @@ def validate_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> tuple
 
     if mode == "HYBRID" and not _coerce_bool(run.get("product_reference_provided")):
         errors.append("HYBRID runs require Product Reference Provided = true.")
-    if mode == "FRAMES" and not _coerce_bool(run.get("frame_provided")):
-        errors.append("FRAMES runs require Frame Provided = true.")
+    if mode == "FRAMES":
+        if not _coerce_bool(run.get("frame_provided")):
+            errors.append("FRAMES runs require Frame Provided = true.")
+        if not str(run.get("uploaded_asset_notes") or "").strip():
+            errors.append("FRAMES runs require Uploaded Asset Notes containing the motion delta / frame continuation context.")
     if mode == "INGREDIENTS":
         if not _coerce_bool(run.get("product_reference_provided")):
             errors.append("INGREDIENTS runs require Product Reference Provided = true.")
         if not _coerce_bool(run.get("asset_roles_verified")):
             errors.append("INGREDIENTS runs require Asset Roles Verified = true.")
+        if not str(run.get("asset_role_map_text") or "").strip():
+            errors.append("INGREDIENTS runs require a non-empty Asset Role Map.")
         if snapshot.get("avatar") and not _coerce_bool(run.get("avatar_reference_provided")):
             errors.append("INGREDIENTS runs with Avatar AI selected require Avatar Reference Provided = true.")
 
@@ -786,6 +837,7 @@ def compile_snapshot(snapshot: dict[str, Any], *, force: bool = False) -> dict[s
             "Prompt Status": prompt_status,
             "COMPILER_QA_STATUS": compiler_qa_status,
         },
+        "writeback_field_map": dict(snapshot["run"].get("writeback_field_map") or {}),
     }
     return result
 
@@ -798,15 +850,21 @@ def write_result(path: Path, result: dict[str, Any]) -> None:
     path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def update_run_as_sent(client: NotionClient, run_page_id: str, *, job_id: str) -> None:
+def update_run_as_sent(
+    client: NotionClient,
+    run_page_id: str,
+    *,
+    job_id: str,
+    field_map: dict[str, str],
+) -> None:
     client.update_page_properties(
         run_page_id,
         {
             "Compiler Job ID": _build_text_property(job_id),
             "Compiler Error": _build_text_property(""),
-            "Compiler Output Notes": _build_text_property("External compiler worker picked up this row."),
+            field_map["qa_notes_field"]: _build_text_property("External compiler worker picked up this row."),
             "Compiler Output Status": _build_select_property("SENT_TO_COMPILER"),
-            "Prompt Status": _build_select_property("Sent to Compiler"),
+            field_map["request_status_field"]: _build_select_property("Sent to Compiler"),
             "COMPILER_QA_STATUS": _build_select_property("NOT_SENT"),
         },
     )
@@ -814,33 +872,41 @@ def update_run_as_sent(client: NotionClient, run_page_id: str, *, job_id: str) -
 
 def update_run_with_result(client: NotionClient, run_page_id: str, result: dict[str, Any]) -> None:
     props = result["writeback_properties"]
+    field_map = result["writeback_field_map"]
     client.update_page_properties(
         run_page_id,
         {
             "Compiler Contract Version": _build_text_property(str(props["Compiler Contract Version"])),
             "Compiler Job ID": _build_text_property(str(props["Compiler Job ID"])),
             "Compiler Input Snapshot": _build_text_property(str(props["Compiler Input Snapshot"])),
-            "RAW_PROMPT_COMPILED": _build_text_property(str(props["RAW_PROMPT_COMPILED"])),
-            "FINAL_OUTPUT_9_SECTION": _build_text_property(str(props["FINAL_OUTPUT_9_SECTION"])),
-            "Compiler Output Notes": _build_text_property(str(props["Compiler Output Notes"])),
+            field_map["raw_prompt_field"]: _build_text_property(str(props["RAW_PROMPT_COMPILED"])),
+            field_map["final_output_field"]: _build_text_property(str(props["FINAL_OUTPUT_9_SECTION"])),
+            field_map["qa_notes_field"]: _build_text_property(str(props["Compiler Output Notes"])),
             "Compiler Error": _build_text_property(str(props["Compiler Error"])),
             "Compiler Output Status": _build_select_property(str(props["Compiler Output Status"])),
-            "Prompt Status": _build_select_property(str(props["Prompt Status"])),
+            field_map["request_status_field"]: _build_select_property(str(props["Prompt Status"])),
             "COMPILER_QA_STATUS": _build_select_property(str(props["COMPILER_QA_STATUS"])),
         },
     )
 
 
-def update_run_with_error(client: NotionClient, run_page_id: str, *, message: str, job_id: str) -> None:
+def update_run_with_error(
+    client: NotionClient,
+    run_page_id: str,
+    *,
+    message: str,
+    job_id: str,
+    field_map: dict[str, str],
+) -> None:
     client.update_page_properties(
         run_page_id,
         {
             "Compiler Contract Version": _build_text_property(WORKER_CONTRACT_VERSION),
             "Compiler Job ID": _build_text_property(job_id),
             "Compiler Error": _build_text_property(message),
-            "Compiler Output Notes": _build_text_property("External compiler worker blocked this row before final output writeback."),
+            field_map["qa_notes_field"]: _build_text_property("External compiler worker blocked this row before final output writeback."),
             "Compiler Output Status": _build_select_property("BLOCKED"),
-            "Prompt Status": _build_select_property("Failed"),
+            field_map["request_status_field"]: _build_select_property("Failed"),
             "COMPILER_QA_STATUS": _build_select_property("FAILED"),
         },
     )
@@ -863,15 +929,22 @@ def process_live_run(
     force: bool,
 ) -> dict[str, Any]:
     snapshot = build_live_snapshot(client, run_page_id)
+    field_map = dict(snapshot["run"].get("writeback_field_map") or {})
     job_id = f"{_utc_job_stamp()}-{str(snapshot['run'].get('page_id') or '')[:8]}"
     if not dry_run:
-        update_run_as_sent(client, run_page_id, job_id=job_id)
+        update_run_as_sent(client, run_page_id, job_id=job_id, field_map=field_map)
 
     try:
         result = compile_snapshot(snapshot, force=force)
     except Exception as exc:
         if not dry_run:
-            update_run_with_error(client, run_page_id, message=str(exc), job_id=job_id)
+            update_run_with_error(
+                client,
+                run_page_id,
+                message=str(exc),
+                job_id=job_id,
+                field_map=field_map,
+            )
         raise
 
     if output_dir:
@@ -888,7 +961,12 @@ def parse_args() -> argparse.Namespace:
     )
     source_group = parser.add_mutually_exclusive_group(required=True)
     source_group.add_argument("--snapshot", help="Local YAML/JSON worker snapshot file.")
-    source_group.add_argument("--run-page-id", help="Single Notion run page id to compile and write back.")
+    source_group.add_argument(
+        "--run-page",
+        "--run-page-id",
+        dest="run_page_id",
+        help="Single Notion run page id or full Notion row URL to compile and write back.",
+    )
     source_group.add_argument("--data-source-id", help="Notion data source id to sweep for READY_TO_COMPILE rows.")
     parser.add_argument("--output", help="Single output file path for --snapshot runs.")
     parser.add_argument("--output-dir", help="Optional directory for per-run JSON artifacts.")
