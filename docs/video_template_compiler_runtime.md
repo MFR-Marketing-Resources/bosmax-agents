@@ -236,72 +236,87 @@ Compiled exports produce:
 `scripts/notion_video_prompt_worker.py` is the governed bridge between the live
 Notion operator rows and this runtime lane.
 
+Mode-specific operator intake is the only approved UI for the video prompt
+worker. The only operator-facing databases are:
+
+- `BOSMAX HYBRID Operator Intake`
+- `BOSMAX FRAMES Operator Intake`
+- `BOSMAX INGREDIENTS Operator Intake`
+
+`BOSMAX Video Prompt Requests` and `BOSMAX_VIDEO_PROMPT_RUNS` are
+`BACKEND / ADMIN ONLY / DO NOT USE AS OPERATOR UI`. Exporting backend Notion
+pages is not an operator workflow.
+
 It owns exactly three responsibilities:
 
-1. read one READY row or a READY queue from `BOSMAX_VIDEO_PROMPT_RUNS`
+1. read one row by URL or a queue sweep from the three mode-specific operator
+   intake databases only
 2. resolve the selected authority relations
    - `Product`
-   - `Engine Rule`
-   - `Angle`
-   - `Avatar AI` (optional)
-   - exactly one copy pack lane
+   - `Engine + Duration`
+   - `Copy Source`
+   - exactly one copy-set lane
+   - `Avatar Ai` when present on the HYBRID intake
+   - `Asset Role Map` for INGREDIENTS
 3. compile and write back:
-   - `RAW_PROMPT_COMPILED`
-   - `FINAL_OUTPUT_9_SECTION`
-   - compiler status / QA fields
+   - `Compiler Payload / RAW Prompt`
+   - `Output From Compiler`
+   - `QA Notes`
+   - `Request Status`
 
 ### Live queue entry rule
 
-The worker only accepts rows when all of the following are true:
+The worker only accepts rows from:
 
-- `Compiler Method = EXTERNAL_COMPILER`
-- `Output Reactivity = SYSTEM_WRITTEN_OUTPUT`
-- `Compiler Output Status = READY_TO_COMPILE`
-- authority relations are selected; manual fallback fields are empty
+- `BOSMAX HYBRID Operator Intake`
+- `BOSMAX FRAMES Operator Intake`
+- `BOSMAX INGREDIENTS Operator Intake`
+
+Backend/admin surfaces are rejected fail-closed:
+
+- `BOSMAX Video Prompt Requests`
+- `BOSMAX_VIDEO_PROMPT_RUNS`
+- legacy combined front-end/backend views
 
 Mode-specific gates:
 
 - `HYBRID`
-  - `Product Reference Provided = true`
+  - `Product Photo Upload` must be present
+  - `Scene Context` must be present
 - `FRAMES`
-  - `Frame Provided = true`
+  - `Completed Frame Upload` must be present
+  - `Motion Delta` must be present
+  - `Frame Context` must be present
 - `INGREDIENTS`
-  - `Product Reference Provided = true`
-  - `Asset Roles Verified = true`
-  - if `Avatar AI` is selected, `Avatar Reference Provided = true`
+  - `Product Reference Photo` must be present
+  - `Avatar Reference Photo` must be present
+  - `Asset Role Map` relation must be present
+  - `Style Scene Reference Photo` is required whenever the selected Asset Role
+    Map requires it
 
 ### Writeback ownership
 
 The worker writes:
 
-- `Compiler Contract Version = BOSMAX_EXT_COMPILER_WORKER_v1.0`
-- `Compiler Job ID`
-- `Compiler Input Snapshot`
-- `RAW_PROMPT_COMPILED`
-- `FINAL_OUTPUT_9_SECTION`
-- `Compiler Output Notes`
-- `Compiler Error`
-- `Compiler Output Status`
-- `Prompt Status`
-- `COMPILER_QA_STATUS`
+- `Compiler Payload / RAW Prompt`
+- `Output From Compiler`
+- `QA Notes`
+- `Request Status`
+
+Field alias resolution is deterministic:
+
+- if the operator-facing names exist, the worker writes there
+- legacy names remain supported for offline fixture compatibility only
+- row input accepts either a raw page id or a full Notion row URL
 
 State mapping:
 
 - compile start
-  - `Compiler Output Status = SENT_TO_COMPILER`
-  - `Prompt Status = Sent to Compiler`
-- compile success with no QA warnings
-  - `Compiler Output Status = QA_PASSED`
-  - `Prompt Status = Final Received`
-  - `COMPILER_QA_STATUS = PASSED`
-- compile success with warnings but no hard QA errors
-  - `Compiler Output Status = COMPILED`
-  - `Prompt Status = Final Received`
-  - `COMPILER_QA_STATUS = REVIEW`
+  - `Request Status = In progress`
+- compile success
+  - `Request Status = Done`
 - blocked / failed
-  - `Compiler Output Status = BLOCKED` or `QA_FAILED`
-  - `Prompt Status = Failed`
-  - `COMPILER_QA_STATUS = FAILED`
+  - `Request Status = Not started`
 
 ### Runtime commands
 
@@ -316,7 +331,7 @@ Single live row:
 
 ```bash
 set NOTION_API_TOKEN=secret_xxx
-python scripts/notion_video_prompt_worker.py --run-page-id <page-id>
+python scripts/notion_video_prompt_worker.py --run-page <page-id-or-row-url>
 ```
 
 READY queue sweep:
@@ -324,7 +339,6 @@ READY queue sweep:
 ```bash
 set NOTION_API_TOKEN=secret_xxx
 python scripts/notion_video_prompt_worker.py ^
-  --data-source-id 537c35a1-fd7a-453a-909b-eeb839b6b979 ^
   --page-size 10
 ```
 

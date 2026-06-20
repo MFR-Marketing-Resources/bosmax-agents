@@ -24,6 +24,21 @@ dianggap stale / secondary.
 
 ---
 
+## Notion Worker UI Boundary
+
+Mode-specific Notion operator intake is the only approved UI for the video prompt worker.
+
+Operator-facing databases:
+- `BOSMAX HYBRID Operator Intake`
+- `BOSMAX FRAMES Operator Intake`
+- `BOSMAX INGREDIENTS Operator Intake`
+
+Do not use backend databases/pages as operator UI or export source.
+`BOSMAX Video Prompt Requests` dan `BOSMAX_VIDEO_PROMPT_RUNS` ialah backend/admin
+surfaces sahaja.
+
+---
+
 ## Top-Level Execution Authority
 
 **`BOSMAX_EXECUTION_KERNEL_CONTRACT_v1.md`** adalah fail kontrak kernel tertinggi.
