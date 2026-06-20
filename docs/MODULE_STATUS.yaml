@@ -202,3 +202,18 @@ modules:
       validation scripts. MWTCB is the first seeded product under this module.
       Excel remains export-only. This lane does not authorize Notion writes,
       prompt runtime edits, or unrelated BOSMAX module changes.
+  bosmax_command_centre_repository_governance:
+    status: IN_PROGRESS
+    owner: CODEX
+    scope:
+      - docs/MODULE_STATUS.yaml
+      - Bosmax-Command-Centre/**
+      - .github/pull_request_template.md
+      - .gitignore
+      - .gitattributes
+    notes: >
+      Governed repository-init lane for the Bosmax Command Centre retained
+      knowledge pack. Authorizes project-subfolder packaging, validator scripts,
+      QA and release documentation, and syntax-safe YAML parseability fixes only.
+      Does not authorize business-copy rewrites, workbook-content rewrites, or
+      casual product-truth edits.
