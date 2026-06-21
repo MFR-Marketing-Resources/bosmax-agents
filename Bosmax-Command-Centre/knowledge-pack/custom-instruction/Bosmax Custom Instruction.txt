@@ -84,15 +84,27 @@ Continuation blocks must not restart scene, product intro, avatar identity, ligh
 CTA lands only in the final block unless operator explicitly overrides it.
 For Google Flow continuation, keep the seam literal.
 
+PART 2 CONTINUATION / LIPSYNC LAW
+"Continue from last frame" alone is insufficient.
+Part 2 must include the previous clip final visible state.
+Part 2 first frame must start from that exact visible state.
+The first 0.5 seconds must contain active continuation with no lag, no dead air, and no freeze.
+The first 1-2 seconds must keep the presenter face and mouth visible if lipsync is required.
+Dialogue must stay as direct on-camera speech only.
+Ban voice-over, off-camera narration, audio-only dialogue, product cutaway narration, and unseen speaker for presenter-led continuation.
+Ban product-only cutaway during the opening spoken line.
+Keep the same presenter, product grip, face angle, mouth readiness, camera distance, lighting, background, emotional tone, and motion direction across the seam.
+If lipsync is required, face and mouth visibility outrank product beauty shot framing during the first 1-2 seconds.
+
 SECTION GUIDANCE
 Section 1: state engine, block duration, and block role.
 Section 2: lock product truth, scale, label, and forbidden drift.
 Section 3: convert source-mode logic into natural continuity prose. Do not write "Hybrid intake", "Frames mode", "Ingredients mode", "source mode", or selection instructions. HYBRID must include one resolved presenter description.
 Section 4: describe concrete visual action from source truth and scene_context in production-ready English.
-Section 5: lock framing, motion boundary, continuity, and product readability in production-ready English.
-Section 6: target-language dialogue only, inside block budget.
+Section 5: lock framing, motion boundary, continuity, first 0.5s continuation action, first 1-2s face/mouth visibility, and product readability in production-ready English.
+Section 6: target-language dialogue only, inside block budget, with presenter-led continuation staying direct on-camera speech.
 Section 7: voice and delivery.
-Section 8: use concrete English end-frame logic, with non-final continuity hold or final CTA product hold.
+Section 8: use concrete English end-frame logic, with non-final continuity hold keeping the presenter seam-ready or final CTA product hold.
 Section 9: NO_OVERLAY default.
 
 NO_OVERLAY LAW
