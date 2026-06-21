@@ -129,6 +129,42 @@ BM_DIALOGUE_LEAK_PATTERNS = [
     r"\bcta beat\b",
 ]
 
+CONTINUATION_FORBIDDEN_PATTERNS = [
+    r"voice-?over says",
+    r"voiceover says",
+    r"narrator says",
+    r"audio says",
+    r"\bwe hear\b",
+    r"CTA is heard",
+    r"spoken CTA over product shot",
+    r"product shot with dialogue",
+    r"background narration",
+    r"off-?camera line",
+    r"voice plays while product is shown",
+    r"product close-?up while (?:the )?line continues",
+    r"after a brief pause",
+    r"then he begins speaking",
+    r"he looks at the product first",
+    r"he prepares to speak",
+    r"he takes a moment",
+    r"slowly starts",
+    r"scene settles before dialogue",
+    r"(?<!re-)introduce the presenter",
+    r"show the product again",
+    r"start with a fresh shot",
+    r"\bnew angle\b",
+    r"\bnew scene\b",
+    r"establishing shot",
+    r"cut to the room",
+    r"presenter appears holding product",
+    r"product hero shot",
+    r"beauty product insert",
+    r"macro product close-?up",
+    r"cut to label",
+    r"focus only on bottle",
+    r"product showcase while dialogue plays",
+]
+
 
 class CompilerError(RuntimeError):
     """Raised when the prompt compiler is blocked by governance or QA."""
@@ -423,6 +459,10 @@ def _role_phrase(role: str) -> str:
     return str(role or "").replace("_", " ").lower().strip() or "this"
 
 
+def _is_lipsync_route(presenter_route: str) -> bool:
+    return presenter_route != "PRODUCT_ONLY_VO"
+
+
 def _resolve_presenter_route(template: dict[str, Any]) -> str:
     route = str(template["identity"].get("presenter_route") or "").strip().upper()
     if route in {"PRESENTER_FULL", "PRESENTER_HYBRID", "PRODUCT_ONLY_VO"}:
@@ -453,9 +493,9 @@ def _section1_role_objective(
             "do not try to tell the whole story inside this clip."
         )
     return (
-        f"{objective} This continues seamlessly from the previous segment with the same "
-        "presenter, product, scene, and momentum; render only this beat and do not restart "
-        "or recap."
+        f"{objective} This continues from the exact final visible state of the previous "
+        "segment with the same presenter, product, scene, and momentum; render only this "
+        "beat with no pause, no reset, and no recap."
     )
 
 
@@ -466,34 +506,86 @@ def _section6_spoken_dialogue(presenter_route: str, dialogue: str) -> str:
             "Voiceover narration over product-only visuals — no on-camera speaker, no face in "
             f"frame, lip-sync not applicable: {line}"
         )
-    if presenter_route == "PRESENTER_FULL":
-        return (
-            "On-camera presenter delivers every line straight to camera with natural, "
-            "frame-accurate lip-sync — the mouth must match each spoken word: "
-            f"{line}"
-        )
-    # PRESENTER_HYBRID
     return (
-        "On-camera presenter speaks the lines to camera with accurate lip-sync; on any "
-        "product-hero cutaway the same line continues as tightly synced voice with no "
-        f"audio gap: {line}"
+        "On-camera presenter says the line directly to camera with visible mouth, lips, jaw, "
+        "and facial muscles in frame-accurate lip-sync from the first moment. No "
+        "voice-over. No narration. No off-camera speech. No audio-only dialogue. No unseen "
+        f"speaker: {line}"
     )
 
 
 def _section7_voice_delivery(
-    presenter_route: str, language: str, pace_class: str, duration: int
+    presenter_route: str, language: str, pace_class: str, duration: int, is_continuation: bool
 ) -> str:
     """Natural delivery directive carrying the WPS intent (fill the beat, no dead
     air) WITHOUT leaking any numeric budget metadata."""
     lang = _LANGUAGE_NAME.get(str(language or "").upper(), "Malay")
     pace = _PACE_PHRASE.get(str(pace_class or "").upper(), "natural commercial")
     speaker = "voiceover" if presenter_route == "PRODUCT_ONLY_VO" else "presenter"
+    lead = (
+        "Start the first spoken word within the first 0.2-0.5 seconds of the clip. "
+        if is_continuation and _is_lipsync_route(presenter_route)
+        else ""
+    )
     return (
         f"Spoken delivery in {lang} at a {pace} pace. Keep the {speaker} talking naturally "
-        f"across the full {duration} seconds with real breaths between phrases — fill the beat "
+        f"across the full {duration} seconds with real breaths between phrases — {lead}fill the beat "
         "edge to edge so there is no silent dead air for the model to fill with drifting or "
         "glitching motion. Do not rush the words or clip the final phrase."
     )
+
+
+def _continuation_state_lines(
+    block: dict[str, Any], presenter_route: str, engine: str
+) -> list[str]:
+    if int(block["block_index"]) <= 1:
+        return []
+    lines = [
+        "Continue directly from the previous prompt set. Do not restart the scene, product intro, avatar identity, lighting, scale, wardrobe, camera style, or commercial arc.",
+        f"Part 1 final frame state: {block.get('part1_final_frame_state', '')}",
+        f"Part 2 first frame must match that exact visible state: {block.get('part2_first_frame_state', '')}",
+    ]
+    if engine == "GOOGLE_FLOW":
+        lines.extend(
+            [
+                f"Previous clip final second state: {block.get('previous_clip_final_second_state', '')}",
+                f"Continuity seam instruction: {block.get('block_continuity_anchor', '')}",
+            ]
+        )
+    if _is_lipsync_route(presenter_route):
+        lines.extend(
+            [
+                "Part 2 starts from the exact final visible state of Part 1. The presenter is already poised to continue speaking with the same product hand, grip, bottle angle, label direction, camera distance, lighting, background, emotional tone, and motion direction.",
+                "No pause. No freeze. No voice-over. No off-camera narration. No product-only cutaway during the opening spoken line.",
+            ]
+        )
+    return [line for line in lines if line]
+
+
+def _continuation_visual_prefix(block: dict[str, Any], presenter_route: str) -> str:
+    if int(block["block_index"]) <= 1:
+        return ""
+    parts = [f"First 0.5 seconds: {block.get('part2_first_0_5s_action', '')}"]
+    if _is_lipsync_route(presenter_route):
+        parts.append(
+            "The first visible beat must keep the presenter actively continuing the same spoken thread rather than re-establishing the scene."
+        )
+    return " ".join(part for part in parts if part)
+
+
+def _continuation_camera_rules(block: dict[str, Any], presenter_route: str) -> list[str]:
+    if int(block["block_index"]) <= 1:
+        return []
+    lines = [f"First 0.5 seconds: {block.get('part2_first_0_5s_action', '')}"]
+    if _is_lipsync_route(presenter_route):
+        lines.extend(
+            [
+                str(block.get("part2_first_1s_lipsync_lock", "")).strip(),
+                str(block.get("part2_no_voiceover_lock", "")).strip(),
+                str(block.get("part2_no_product_cutaway_until_lipsync_established", "")).strip(),
+            ]
+        )
+    return [line for line in lines if line]
 
 
 def _build_prompt_set_sections(
@@ -513,7 +605,7 @@ def _build_prompt_set_sections(
     presenter_route = _resolve_presenter_route(template)
     cta = str(template["parsed"].get("cta", "")).strip()
     continuation_text = (
-        "Continue directly from the previous prompt set. Do not restart the scene, product intro, avatar identity, lighting, scale, wardrobe, camera style, or commercial arc."
+        "Continue directly from the previous prompt set."
         if not is_first
         else "This is the opening prompt set. Establish the scene cleanly without implying any prior unseen clip."
     )
@@ -529,10 +621,20 @@ def _build_prompt_set_sections(
             0,
             f"Previous clip final second state: {block.get('previous_clip_final_second_state', '')}",
         )
+    continuation_state_lines = _continuation_state_lines(
+        block,
+        presenter_route,
+        str(identity["engine"]),
+    )
+    continuation_camera_rules = _continuation_camera_rules(block, presenter_route)
     cta_text = (
         f"Deliver the spoken CTA naturally: {cta} End frame: {block['block_end_state']}"
         if is_final
-        else f"No CTA yet unless the operator explicitly overrides it. End frame: {block['block_end_state']} Carry the commercial tension into Set {int(block['block_index']) + 1}."
+        else (
+            f"No CTA yet unless the operator explicitly overrides it. End frame: "
+            f"{block['block_end_state']} Carry the commercial tension into Set "
+            f"{int(block['block_index']) + 1}."
+        )
     )
     overlay_text = (
         "NO_OVERLAY. No visual text layer of any kind. Spoken hook/body/CTA must remain spoken and never be converted into visual copy."
@@ -561,7 +663,12 @@ def _build_prompt_set_sections(
             "section_heading": PROMPT_SET_SECTION_HEADINGS[2],
             "section_text": " ".join(
                 part
-                for part in [continuation_text, *mode_truth_lines, *continuity_tail]
+                for part in [
+                    continuation_text,
+                    *mode_truth_lines,
+                    *continuation_state_lines,
+                    *continuity_tail,
+                ]
                 if part
             ),
         },
@@ -569,6 +676,7 @@ def _build_prompt_set_sections(
             "section_index": 4,
             "section_heading": PROMPT_SET_SECTION_HEADINGS[3],
             "section_text": (
+                f"{_continuation_visual_prefix(block, presenter_route)} "
                 f"Visual action: {block['block_visual_action']} "
                 f"{'Continue from that exact state into this next action. ' if (template['identity']['engine'] == 'GOOGLE_FLOW' and not is_first) else ''}"
                 f"Narrative function: {block['block_narrative_function']}."
@@ -577,7 +685,14 @@ def _build_prompt_set_sections(
         {
             "section_index": 5,
             "section_heading": PROMPT_SET_SECTION_HEADINGS[4],
-            "section_text": _build_engine_rules(identity, block, is_first),
+            "section_text": " ".join(
+                line
+                for line in [
+                    _build_engine_rules(identity, block, is_first),
+                    *continuation_camera_rules,
+                ]
+                if line
+            ),
         },
         {
             "section_index": 6,
@@ -592,6 +707,7 @@ def _build_prompt_set_sections(
                 str(wps_budget.get("language", "")),
                 str(wps_budget.get("pace_class", "")),
                 int(block["block_duration"]),
+                not is_first,
             ),
         },
         {
@@ -707,6 +823,29 @@ def validate_compiled_prompt_structure(template: dict[str, Any]) -> list[str]:
             findings.append(f"prompt_set {index} safe_max_words mismatch")
         if str(prompt_set.get("dialogue_budget_status") or "") == "FAIL":
             findings.append(f"prompt_set {index} dialogue budget failed safe_max_words")
+        presenter_route = _resolve_presenter_route(template)
+        if index > 1:
+            part1_final_frame_state = str(prompt_set.get("part1_final_frame_state") or "")
+            if not part1_final_frame_state:
+                findings.append(f"prompt_set {index} continuation must expose part1_final_frame_state")
+            if "Part 1 final frame state:" not in section_text_blob:
+                findings.append(f"prompt_set {index} continuation must spell out Part 1 final frame state")
+            if "Part 2 first frame must match that exact visible state:" not in section_text_blob:
+                findings.append(f"prompt_set {index} continuation must lock Part 2 first frame state")
+            if "First 0.5 seconds:" not in section_text_blob:
+                findings.append(f"prompt_set {index} continuation must define the first 0.5 seconds")
+            if _is_lipsync_route(presenter_route):
+                if "For the first 1-2 seconds, keep the presenter face and mouth clearly visible" not in section_text_blob:
+                    findings.append(f"prompt_set {index} continuation must keep face and mouth visible for the first 1-2 seconds")
+                if "No voice-over. No narration. No off-camera speech. No audio-only dialogue." not in section_text_blob:
+                    findings.append(f"prompt_set {index} continuation must ban voice-over and off-camera dialogue")
+                if "No product-only cutaway during the opening spoken line." not in section_text_blob:
+                    findings.append(f"prompt_set {index} continuation must ban product-only cutaway during the opening spoken line")
+                if "first spoken word within the first 0.2-0.5 seconds" not in section_text_blob:
+                    findings.append(f"prompt_set {index} continuation must start spoken delivery within the first 0.2-0.5 seconds")
+                for pattern in CONTINUATION_FORBIDDEN_PATTERNS:
+                    if re.search(pattern, section_text_blob, flags=re.IGNORECASE):
+                        findings.append(f"prompt_set {index} continuation contains forbidden phrase: {pattern}")
         if engine == "GOOGLE_FLOW":
             if int(prompt_set.get("set_duration") or 0) not in {8, 10}:
                 findings.append(f"prompt_set {index} Google Flow duration must stay on 8s or 10s blocks")
@@ -801,6 +940,15 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
             "block_source": block["block_id"],
             "continuation_from_previous_set": int(block["block_index"]) > 1,
             "previous_clip_final_second_state": block.get("previous_clip_final_second_state", ""),
+            "part1_final_frame_state": block.get("part1_final_frame_state", ""),
+            "part2_first_frame_state": block.get("part2_first_frame_state", ""),
+            "part2_first_0_5s_action": block.get("part2_first_0_5s_action", ""),
+            "part2_first_1s_lipsync_lock": block.get("part2_first_1s_lipsync_lock", ""),
+            "part2_no_voiceover_lock": block.get("part2_no_voiceover_lock", ""),
+            "part2_no_product_cutaway_until_lipsync_established": block.get(
+                "part2_no_product_cutaway_until_lipsync_established", ""
+            ),
+            "part2_dialogue_word_target": dict(block.get("part2_dialogue_word_target") or {}),
             "wps_budget": dict(block.get("block_wps_budget") or {}),
             "dialogue_word_count": block.get("block_dialogue_word_count", 0),
             "safe_max_words": safe_max_words,
@@ -816,6 +964,7 @@ def compile_template(template: dict[str, Any]) -> dict[str, Any]:
                 "block_duration": block["block_duration"],
                 "set_role": block["block_narrative_function"],
                 "continuation_from_previous_set": int(block["block_index"]) > 1,
+                "part1_final_frame_state": block.get("part1_final_frame_state", ""),
                 "dialogue_word_count": block.get("block_dialogue_word_count", 0),
                 "safe_max_words": safe_max_words,
                 "dialogue_budget_status": dialogue_budget_status,

@@ -34,12 +34,13 @@ avatar_source: AVATAR_POOL
 avatar_brief: "Malaysian adult presenter from the approved avatar pool, natural UGC look, one-hand product hold; BOSMAX selects the exact persona."
 
 # --- action + dialogue (spoken Malay; CTA spoken; dialogue_required defaults YES) ---
-action_seed: "Presenter speaks to camera, opens cap, quick roll-on motion, pockets the product."
-dialogue_seed: "Hook (pain) -> friction (bulky products) -> relief (compact roll-on) -> spoken CTA. Per-block budget respected for GROK 16s [10,6]."
+action_seed: "Presenter speaks to camera, opens cap, quick roll-on motion, and keeps the product visible near chest level instead of drifting into product-only coverage."
+continuation_action_seed: "Part 1 ends continuation-ready: same hand, same grip, same label direction, same camera distance, mouth still live. Part 2 starts from that exact visible state, resumes inside 0.2-0.5s, and keeps face/mouth visible before any beauty framing."
+dialogue_seed: "Hook (pain) -> friction (bulky products) -> relief (compact roll-on) -> spoken CTA. Continuation stays direct on-camera Malay speech only: no voice-over, no off-camera narration, no product-only cutaway carrying the line."
 hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
 body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."
 cta: "Tap tengok harga sekarang, boss."
-visual_seed: "Brisk handheld UGC framing, product in palm, quick cap-open motion, label readable."
+visual_seed: "Brisk handheld UGC framing, product in palm, quick cap-open motion, same hand/grip/label direction across the seam, label readable."
 
 # --- safety / overlay ---
 overlay_allowed: false         # Section 9 defaults NO_OVERLAY

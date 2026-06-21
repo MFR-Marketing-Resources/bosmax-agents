@@ -20,18 +20,20 @@ frame_truth_lock: >
   The uploaded finished frame is the single visual truth source. Set 1 starts
   from that frame. Set 2 continues from Set 1 final state. Do not rebuild the
   avatar, product, scene, wardrobe, lighting, grip, label direction, or scale.
+  Set 2 must start from the exact final visible state with no pause, no reset,
+  and no scene re-establishing beat.
 product_truth_ref: products/BOSMAX_SERUM.yaml
 product_truth_lock: >
   BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
   slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
   HERBS wordmark, leaf icon, and "Herbal Oil Roll On" label. Keep it exactly
   lip balm / chapstick size.
-continuation_action_seed: "Motion-delta only from the uploaded frame; Set 2 continues from the prior final frame into the next spoken action."
-dialogue_seed: "Hook -> relief -> spoken CTA, budgeted separately for each 8s Flow set."
+continuation_action_seed: "Motion-delta only from the uploaded frame; Set 2 states the prior final frame explicitly, starts the next spoken phrase inside 0.2-0.5s, and keeps face/mouth visible before any product emphasis."
+dialogue_seed: "Hook -> relief -> spoken CTA, budgeted separately for each 8s Flow set. Continuation stays direct on-camera Malay speech only."
 hook: "Tengah hari rasa lesu, badan tak selesa sepanjang kerja?"
 body: "Sambung terus dari babak tadi, sapu cepat, kulit rasa segar serta-merta. Senang sambung rutin harian sebab produk ni kecil sangat, ringan, dan muat dalam poket dengan mudah."
 cta: "Tap tengok harga sekarang, boss."
-visual_seed: "Continue from the uploaded frame with the same identity, grip, product position, and label readability."
+visual_seed: "Continue from the uploaded frame with the same identity, grip, product position, label readability, and motion direction."
 overlay_allowed: false
 safety_guardrails: "No medical cure / guaranteed-result / sexual-performance claims; no risky direct-body-use instructions."
 forbidden_claims:

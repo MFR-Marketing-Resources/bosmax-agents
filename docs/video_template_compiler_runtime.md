@@ -67,12 +67,26 @@ GROK 16s away from `[10,6]` or GOOGLE_FLOW 16s away from `[8,8]`.
 For Google Flow continuation sets, the compiled prompt must spell out:
 
 - `Previous clip final second state: ...`
+- `Part 1 final frame state: ...`
+- `Part 2 first frame must match that exact visible state: ...`
+- `First 0.5 seconds: ...`
 - `Continue from that exact state into ...`
 - `Continuity seam instruction: ...`
 
 and it must keep product position / label / scale, avatar identity / wardrobe /
 pose, scene / lighting / camera direction, and commercial chronology locked
 across the seam.
+
+When the continuation route is presenter-led (`PRESENTER_FULL` or
+`PRESENTER_HYBRID`), the seam also must:
+
+- start the first spoken word within the first `0.2-0.5` seconds
+- keep the presenter face and mouth clearly visible for the first `1-2` seconds
+- keep direct on-camera speech only (`no voice-over`, `no narration`,
+  `no off-camera speech`, `no audio-only dialogue`)
+- block product-only cutaways during the opening spoken line
+- keep the same hand, grip, bottle angle, label direction, camera distance,
+  lighting, background, tone, and motion direction from the prior final frame
 
 ## Mode Semantics
 
@@ -112,6 +126,8 @@ child block rows, or `final_prompt_text`.
   - extension-first seam logic
   - no greeting reset on extension blocks
   - continuity must resume within the BOSMAX seam window
+  - continuation blocks must inherit the literal final visible frame, not just
+    a vague "continue from last frame" shorthand
 - `GOOGLE_FLOW`
   - dual deterministic lanes that never mix in one render:
     - `FLOW_EXTEND_UI` (8s chain): 8, 16=[8,8], 24=[8,8,8]
@@ -121,6 +137,8 @@ child block rows, or `final_prompt_text`.
   - must never use the GROK [10,6] split
   - chronological continuation only
   - previous-clip-final-second state must be explicit for non-first blocks
+  - continuation blocks must also expose Part 1 final frame state, first 0.5s
+    action, and lipsync-safe opening visibility when speech is on-camera
   - avoid vague shorthand such as “same as last frame”
 - `VEO_3_1` / `VEO_3_1_LITE`
   - clip-chain continuity
@@ -164,8 +182,10 @@ presenter because the avatar comes from pool / description.
 
 - `PRESENTER_FULL` — on-camera presenter speaks every line straight to camera with
   frame-accurate lip-sync.
-- `PRESENTER_HYBRID` — presenter speaks to camera with lip-sync; product-hero
-  cutaways keep the same line as tightly synced voice.
+- `PRESENTER_HYBRID` — presenter speaks to camera with lip-sync. In continuation
+  blocks the face and mouth still outrank product-beauty framing during the
+  opening spoken line, so product-only cutaway fallback is blocked until lipsync
+  is visibly established.
 - `PRODUCT_ONLY_VO` — faceless product-only visuals with voiceover narration;
   lip-sync is not applicable.
 

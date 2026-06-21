@@ -160,11 +160,28 @@ Required examples:
 For Google Flow continuation sets, the compiler must make the seam explicit:
 
 - `previous_clip_final_second_state` must be surfaced in the prompt set payload
+- `part1_final_frame_state` must be surfaced in the prompt set payload
 - the prompt text must literally state `Previous clip final second state: ...`
+- the prompt text must literally state `Part 1 final frame state: ...`
+- the prompt text must literally state
+  `Part 2 first frame must match that exact visible state: ...`
+- the prompt text must literally state `First 0.5 seconds: ...`
 - the prompt text must literally state `Continue from that exact state into ...`
 - the seam must lock product position / label / scale, avatar identity /
   wardrobe / pose, scene / lighting / camera direction, and the next action
 - vague shorthand such as `continue naturally` or `from last frame` is not sufficient
+
+For any presenter-led continuation (`PRESENTER_FULL` / `PRESENTER_HYBRID`):
+
+- the first spoken word starts within `0.2-0.5s`
+- the first `1-2s` keep face and mouth visible on camera
+- dialogue stays direct on-camera speech only
+- `voice-over`, `narration`, `off-camera speech`, `audio-only dialogue`, and
+  `unseen speaker` fallbacks are blocked
+- product-only cutaway is blocked during the opening spoken line
+- Part 1 must end continuation-ready: same hand, same grip, same label
+  direction, same camera distance, same lighting, same background, same motion
+  direction, no full-stop pose, no frozen hand
 
 ---
 
@@ -180,6 +197,10 @@ For Google Flow continuation sets, the compiler must make the seam explicit:
   the final per-block spoken lines.
 - For GROK 16s `[10,6]`, block 1 uses the 10s budget and block 2 uses the 6s
   budget. The runtime must never budget the dialogue as one 16s spoken block.
+- Continuation-specific soft targets may sit below the retained safe band, but
+  they never replace the retained WPS minimum floor. Current continuation hints:
+  GROK 6s Malay aims for `11-13` words as a seam target while still respecting
+  the retained hard floor; GOOGLE_FLOW 8s Malay aims for `14-18` words.
 
 ## J. Overlay law
 

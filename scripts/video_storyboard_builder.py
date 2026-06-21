@@ -83,6 +83,57 @@ def _join_spoken(*parts: str) -> str:
     return out.strip()
 
 
+def _is_malay(language: str) -> bool:
+    token = str(language or "").strip().upper()
+    return token in {"BM", "MS", "MALAY", "BAHASA MELAYU"}
+
+
+def _continuation_dialogue_target(
+    engine: str, duration_seconds: int, language: str, block_index: int
+) -> dict[str, Any]:
+    if block_index <= 1 or not _is_malay(language):
+        return {}
+    engine_id = str(engine or "").strip().upper()
+    if engine_id == "GROK" and duration_seconds == 6:
+        return {
+            "target_min_words": 11,
+            "target_max_words": 13,
+            "notes": (
+                "Soft continuation target only. Compiler still respects the retained "
+                "base WPS floor and safe corridor."
+            ),
+        }
+    if engine_id == "GOOGLE_FLOW" and duration_seconds == 8:
+        return {
+            "target_min_words": 14,
+            "target_max_words": 18,
+            "notes": (
+                "Continuation target stays inside the retained Malay corridor while "
+                "biasing toward faster visible lipsync startup."
+            ),
+        }
+    return {}
+
+
+def _continuation_ready_end_state() -> str:
+    return (
+        "End with the presenter still facing camera, product held near chest level in "
+        "the same hand and grip, bottle angle and label direction unchanged, mouth "
+        "slightly parted or just finishing the previous phrase, eyes still engaged, "
+        "hand motion gently continuing, no full-stop pose, no product-only cutaway, "
+        "no lowered product, and no frozen hand."
+    )
+
+
+def _continuation_first_frame_state(previous_end_state: str) -> str:
+    if previous_end_state:
+        return previous_end_state
+    return (
+        "Match the prior clip's final visible state exactly before the next spoken "
+        "word begins."
+    )
+
+
 def _derive_storyline(template: dict[str, Any]) -> str:
     parsed = template["parsed"]
     storyline = _join_parts(parsed.get("hook", ""), parsed.get("body", ""), parsed.get("cta", ""))
@@ -204,15 +255,22 @@ def build_storyboard(template: dict[str, Any]) -> dict[str, Any]:
             else f"Open on the first proof beat for {identity['product_lane']} with the same presenter and product in hand."
         )
         end_state = (
-            f"End on a clear product-facing frame with {role.lower()} tension carried into the next beat."
+            _continuation_ready_end_state()
             if index < len(declared_plan)
             else "End on a clean CTA close with product hero visibility preserved."
         )
         continuity_anchor = (
-            "Resume from the exact prior frame's body angle, prop position, and spoken thread."
+            "Resume from the exact prior frame's visible state: same presenter, same product hand, same grip, same bottle angle, same label direction, same camera distance, same lighting, same background, same emotional tone, and the same motion direction."
             if index > 1
             else "Establish the opening continuity anchor from zero."
         )
+        continuation_target = _continuation_dialogue_target(
+            identity["engine"],
+            int(plan_block["block_duration_seconds"]),
+            parsed.get("language", "Malay"),
+            index,
+        )
+        part1_final_frame_state = previous_end_state if index > 1 else ""
         block_scripts.append(
             {
                 "block_id": block_id,
@@ -242,6 +300,52 @@ def build_storyboard(template: dict[str, Any]) -> dict[str, Any]:
                 "requires_frame_bridge": bool(plan_block.get("requires_frame_bridge")),
                 "requires_previous_clip_final_second": bool(plan_block.get("requires_previous_clip_final_second")),
                 "previous_clip_final_second_state": previous_end_state if index > 1 else "",
+                "part1_final_frame_state": part1_final_frame_state,
+                "part2_first_frame_state": _continuation_first_frame_state(part1_final_frame_state),
+                "part2_first_0_5s_action": (
+                    "Inside the first 0.2-0.5 seconds, continue the same hand motion and start the next spoken phrase immediately while keeping the product visible near chest level."
+                    if index > 1
+                    else ""
+                ),
+                "part2_first_1s_lipsync_lock": (
+                    "For the first 1-2 seconds, keep the presenter face and mouth clearly visible. Lips, jaw, and facial movement must stay readable on-camera."
+                    if index > 1
+                    else ""
+                ),
+                "part2_no_voiceover_lock": (
+                    "No voice-over. No narration. No off-camera speech. No audio-only dialogue. No unseen speaker."
+                    if index > 1
+                    else ""
+                ),
+                "part2_no_product_cutaway_until_lipsync_established": (
+                    "No product-only cutaway during the opening spoken line. Face and mouth visibility outrank product beauty framing until lipsync is clearly established."
+                    if index > 1
+                    else ""
+                ),
+                "part2_dialogue_word_target": continuation_target,
+                "part1_end_frame_requirement": (
+                    _continuation_ready_end_state() if index < len(declared_plan) else ""
+                ),
+                "continuation_qa_checks": [
+                    "first_frame_match",
+                    "presenter_identity_continuity",
+                    "product_grip_continuity",
+                    "product_position_continuity",
+                    "camera_continuity",
+                    "lighting_continuity",
+                    "first_0_5s_movement",
+                    "first_1s_mouth_movement",
+                    "dialogue_starts_within_target",
+                    "visible_lipsync",
+                    "no_voiceover",
+                    "no_dead_air",
+                    "no_product_cutaway_during_opening_line",
+                    "product_label_readable",
+                    "CTA_not_rushed",
+                    "end_frame_readable",
+                ]
+                if index > 1
+                else [],
                 "bridge_in_required": bool(plan_block.get("bridge_in_required")),
                 "bridge_out_required": bool(plan_block.get("bridge_out_required")),
             }

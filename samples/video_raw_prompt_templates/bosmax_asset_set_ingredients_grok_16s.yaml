@@ -35,12 +35,13 @@ avatar_reference_lock: "Use image_2 for identity / wardrobe / pose generally; up
 style_scene_limit: "image_3 influences mood / environment / lighting only; it must never override product identity or avatar identity."
 
 # --- action + dialogue (spoken Malay; CTA spoken) ---
-action_seed: "Avatar interacts naturally with the product, performs the requested motion, speaks to camera."
-dialogue_seed: "Hook (pain) -> friction -> relief (product) -> spoken CTA. Per-block budget respected for GROK 16s [10,6]."
+action_seed: "Avatar interacts naturally with the product, performs the requested motion, and keeps face-plus-product continuity readable on camera."
+continuation_action_seed: "Part 1 ends with the presenter still facing camera and the product still in the same hand. Part 2 inherits that exact final visible state, starts speaking inside 0.2-0.5s, and blocks product-only cutaway until lipsync is established."
+dialogue_seed: "Hook (pain) -> friction -> relief (product) -> spoken CTA. Continuation stays direct on-camera Malay speech only with no voice-over fallback."
 hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
 body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."
 cta: "Tap tengok harga sekarang, boss."
-visual_seed: "Asset-set UGC cadence; product truth from product reference; avatar interacts naturally; label readable."
+visual_seed: "Asset-set UGC cadence; product truth from product reference; avatar interacts naturally; same hand/grip/label direction must survive the seam; label readable."
 
 # --- safety / overlay ---
 overlay_allowed: false         # Section 9 defaults NO_OVERLAY

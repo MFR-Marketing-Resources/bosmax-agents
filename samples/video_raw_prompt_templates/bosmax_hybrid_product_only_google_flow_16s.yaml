@@ -25,12 +25,13 @@ product_truth_lock: >
 scale_lock: "EXACTLY lip balm size / EXACTLY chapstick size; fits into fingers naturally."
 avatar_source: AVATAR_POOL
 avatar_brief: "Malaysian adult presenter from the approved avatar pool, natural UGC look, one-hand product hold."
-action_seed: "Two continuous 8s Flow beats: Set 1 opens the proof beat, Set 2 continues from the final frame into CTA without resetting scale or identity."
-dialogue_seed: "Hook (pain) -> friction -> relief -> spoken CTA, split across two 8s Flow sets."
+action_seed: "Two continuous 8s Flow beats: Set 1 opens the proof beat, Set 2 continues from the literal final frame into CTA without resetting scale, identity, grip, or label direction."
+continuation_action_seed: "Set 2 must state the prior final frame explicitly, start the next spoken word inside 0.2-0.5s, keep face/mouth visible for the first 1-2s, and block product-only cutaway during the opening line."
+dialogue_seed: "Hook (pain) -> friction -> relief -> spoken CTA, split across two 8s Flow sets. Continuation remains direct on-camera Malay speech only."
 hook: "Tengah hari rasa tak selesa, badan cepat rasa berat?"
 body: "Produk lain besar menyusahkan, berat, tak muat poket bila nak keluar rumah. BOSMAX roll-on kecil macam lip balm ni senang bawa, sapu sekali terus rasa segar dan ringan."
 cta: "Tap tengok harga sekarang, boss."
-visual_seed: "Bright handheld UGC framing, product in palm, label readable, seam-ready continuation."
+visual_seed: "Bright handheld UGC framing, product in palm, label readable, same hand/grip/label direction across the seam, seam-ready continuation."
 overlay_allowed: false
 safety_guardrails: "No medical cure / guaranteed-result / sexual-performance claims; no risky direct-body-use instructions."
 forbidden_claims:

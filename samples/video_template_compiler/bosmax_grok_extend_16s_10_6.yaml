@@ -10,7 +10,8 @@ presenter_route: PRESENTER_HYBRID
 hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
 body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."
 cta: "Tap tengok harga sekarang, boss."
-visual_seed: "Brisk handheld UGC framing, product in palm, quick cap-open motion, label readable."
+continuation_action_seed: "Part 1 ends with the presenter still facing camera, product still in the same hand, and the mouth still live. Part 2 starts from that exact visible state with the first spoken word inside 0.2-0.5s and no product-only cutaway during the opening line."
+visual_seed: "Brisk handheld UGC framing, product in palm, quick cap-open motion, same hand/grip/label direction across the seam, label readable."
 product_truth_ref: products/BOSMAX_SERUM.yaml
 forbidden_claims:
   - menyembuhkan penyakit
