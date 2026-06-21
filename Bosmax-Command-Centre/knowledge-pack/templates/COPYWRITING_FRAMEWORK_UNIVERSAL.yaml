@@ -30,6 +30,34 @@ runtime_resolution_order:
     - Do not hallucinate a product-specific workbook that does not exist.
     - Do not mix two product copy banks into one output.
 
+video_continuation_copy_rules:
+  continuation_law:
+    - Part 2 closes the existing idea, not a new sales angle.
+    - Part 2 CTA must be short, speakable, and direct on-camera Malay.
+    - Avoid long multi-clause CTA.
+    - No new concept in Part 2.
+    - Dialogue must not require product-only cutaway.
+    - Dialogue must not be framed as voice-over, narration, audio-only line, or off-camera speech.
+  target_ranges:
+    - engine: GROK
+      duration_seconds: 6
+      language: Malay
+      target_words: 11-13
+      note: Soft continuation target only; retained WPS minimums still govern pass/fail.
+    - engine: GOOGLE_FLOW
+      duration_seconds: 8
+      language: Malay
+      target_words: 14-18
+      note: Continuation target stays inside retained WPS minimums.
+  banned_vo_trigger_phrases:
+    - voice-over
+    - voiceover
+    - narration
+    - audio says
+    - CTA is heard
+    - off-camera speech
+    - audio-only dialogue
+
 framework_generation_mode:
   trigger_conditions:
     - unknown_product_id

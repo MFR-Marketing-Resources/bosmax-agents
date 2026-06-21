@@ -24,7 +24,7 @@ rules:
     - GROK 16s = [10,6].
     - GROK uses 6s or 10s blocks only.
     - Google Flow 16s = [8,8].
-    - Google Flow must use a single lane only: 8s-only or 10s-only.
+    - "Google Flow must use a single lane only: 8s-only or 10s-only."
     - Google Flow 40s is blocked until preferred_lane is chosen.
     - CTA lands only in the final block.
   source_mode_rules:
@@ -36,6 +36,30 @@ rules:
     - "STYLE_SCENE_REFERENCE is optional in INGREDIENTS; if absent, require style_scene_source: SCENE_CONTEXT_ONLY and derive environment only from SCENE_CONTEXT."
     - "If STYLE_SCENE_REFERENCE is declared but image_3 is absent or NOT PROVIDED, auto-normalize to the 2-image path: drop the style role and set style_scene_source: SCENE_CONTEXT_ONLY."
     - Product truth outranks avatar and style in all modes.
+  continuation_lipsync_contract:
+    applies_to:
+      - continuation blocks
+      - SET_2
+      - block_index > 1
+    required_fields:
+      - part1_final_frame_state
+      - part2_first_frame_state
+      - part2_first_0_5s_action
+      - part2_first_1s_lipsync_lock
+      - part2_no_voiceover_lock
+      - part2_no_product_cutaway_until_lipsync_established
+      - part2_dialogue_word_target
+    forbidden_phrases:
+      - voice-over
+      - voiceover
+      - narration
+      - audio says
+      - CTA is heard
+      - product hero shot while line plays
+      - product close-up while speaker says
+      - off-camera speech
+      - background narration
+      - audio-only dialogue
   output_rules:
     - Every block exports one complete 9-section prompt set.
     - Sections 1, 2, 3, 4, 5, 7, 8, and 9 must be written in English instruction prose only.
@@ -48,6 +72,10 @@ rules:
     - INGREDIENTS final prompts must say to use the uploaded references according to the asset role map, with product reference controlling product truth and avatar reference controlling identity.
     - If style_scene_source is SCENE_CONTEXT_ONLY, INGREDIENTS final prompts must say environment comes from SCENE_CONTEXT only.
     - If STYLE_SCENE_REFERENCE is provided, INGREDIENTS final prompts must say the style reference controls environment only.
+    - Section 4 or 5 for continuation blocks must define the first 0.5 seconds of action and the first 1-2 seconds of face/mouth visibility when lipsync is required.
+    - Section 6 for continuation blocks must say the presenter speaks directly to camera with visible mouth, lips, jaw, and facial muscles synchronized to every spoken Malay word from the first moment.
+    - Continuation blocks must explicitly say No voice-over. No narration. No off-camera speech. No audio-only dialogue. No product cutaway narration. No unseen speaker.
+    - Continuation blocks must keep the presenter face and mouth clearly visible for the first 1-2 seconds; the product may stay near chest level, but there is no product-only shot during the opening spoken line.
     - Section 8 must describe a concrete end frame, either as a non-final continuity hold or a final CTA product hold.
     - NO_OVERLAY is default unless explicitly overridden by authority.
     - Do not leak block_plan, WPS numbers, debug JSON, prompt_set_count, runtime metadata, avatar pool references, unresolved selection instructions, or internal labels into engine-facing prompt text.
