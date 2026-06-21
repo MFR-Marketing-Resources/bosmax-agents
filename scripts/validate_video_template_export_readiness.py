@@ -88,6 +88,11 @@ def main() -> None:
         expect(row["dialogue_budget_status"] in {"PASS", "WARN", "FAIL"}, f"child row missing dialogue_budget_status: {row}")
         expect(bool(row["set_role"]), f"child row missing set_role: {row}")
         parent = parent_map[row["parent_template_id"]]
+        if row["continuation_from_previous_set"] == "True":
+            expect("Part 1 final frame state:" in row["final_prompt_block_text"], f"Continuation export missing Part 1 final frame state: {row['block_id']}")
+            expect("First 0.5 seconds:" in row["final_prompt_block_text"], f"Continuation export missing first 0.5 second rule: {row['block_id']}")
+            expect("No voice-over. No narration. No off-camera speech. No audio-only dialogue." in row["final_prompt_block_text"], f"Continuation export missing no-voiceover lock: {row['block_id']}")
+            expect("No product-only cutaway during the opening spoken line." in row["final_prompt_block_text"], f"Continuation export missing cutaway lock: {row['block_id']}")
         if parent["engine"] == "GOOGLE_FLOW" and row["block_id"].endswith("02"):
             expect("Previous clip final second state:" in row["final_prompt_block_text"], f"Google Flow continuation export missing previous clip final state: {row['block_id']}")
 

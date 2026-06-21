@@ -89,6 +89,24 @@ def expect_prompt_set_contract(
             "previous_clip_final_second_state" in prompt_set,
             f"{name}: set {index} previous_clip_final_second_state field missing",
         )
+        section_blob = "\n".join(str(section["section_text"]) for section in prompt_set["final_prompt_9_sections"])
+        if index > 1:
+            expect(
+                bool(str(prompt_set.get("part1_final_frame_state") or "").strip()),
+                f"{name}: set {index} part1_final_frame_state missing",
+            )
+            expect(
+                "Part 1 final frame state:" in section_blob,
+                f"{name}: set {index} must spell out Part 1 final frame state",
+            )
+            expect(
+                "Part 2 first frame must match that exact visible state:" in section_blob,
+                f"{name}: set {index} must lock Part 2 first frame state",
+            )
+            expect(
+                "First 0.5 seconds:" in section_blob,
+                f"{name}: set {index} must define the first 0.5 seconds",
+            )
         expect(
             0 < int(prompt_set["wps_budget"]["duration_seconds"]) <= expected_durations[index - 1],
             f"{name}: set {index} WPS budget duration must stay inside the block duration",
@@ -102,7 +120,27 @@ def expect_prompt_set_contract(
             "NO_OVERLAY" in str(section_9["section_text"]),
             f"{name}: set {index} section 9 must preserve NO_OVERLAY",
         )
-        section_blob = "\n".join(str(section["section_text"]) for section in prompt_set["final_prompt_9_sections"])
+        if index > 1 and "PRODUCT_ONLY_VO" not in str(compiled["identity"].get("presenter_route") or ""):
+            expect(
+                "For the first 1-2 seconds, keep the presenter face and mouth clearly visible." in section_blob,
+                f"{name}: set {index} must keep face and mouth visible at the seam",
+            )
+            expect(
+                "No voice-over. No narration. No off-camera speech. No audio-only dialogue." in section_blob,
+                f"{name}: set {index} must ban voice-over and off-camera speech",
+            )
+            expect(
+                "No product-only cutaway during the opening spoken line." in section_blob,
+                f"{name}: set {index} must ban product-only cutaway during the opening line",
+            )
+            expect(
+                "first spoken word within the first 0.2-0.5 seconds" in section_blob,
+                f"{name}: set {index} must start spoken delivery inside 0.2-0.5s",
+            )
+            expect(
+                "product hero cutaway" not in section_blob.lower(),
+                f"{name}: set {index} must not allow product-hero cutaway lip-sync fallback",
+            )
         if engine == "GOOGLE_FLOW":
             expect(
                 int(prompt_set["wps_budget"]["duration_seconds"]) == expected_durations[index - 1],
@@ -317,12 +355,21 @@ def validate_google_flow_negative_guards() -> None:
         f"Previous clip final second state: {compiled['compiler']['prompt_sets'][1]['previous_clip_final_second_state']} ",
         "",
     )
+    missing_prompt_sets[1]["part1_final_frame_state"] = ""
+    missing_prompt_sets[1]["final_prompt_9_sections"][2]["section_text"] = missing_prompt_sets[1]["final_prompt_9_sections"][2]["section_text"].replace(
+        f"Part 1 final frame state: {compiled['compiler']['prompt_sets'][1]['part1_final_frame_state']} ",
+        "",
+    )
     missing_state["compiler"]["prompt_sets"] = missing_prompt_sets
     findings = validate_compiled_prompt_structure(missing_state)
     joined = "\n".join(findings)
     expect(
         "Google Flow continuation must expose previous_clip_final_second_state" in joined,
         "Flow continuation without previous clip state must fail",
+    )
+    expect(
+        "continuation must expose part1_final_frame_state" in joined,
+        "Continuation without part1_final_frame_state must fail",
     )
     print("PASS: Google Flow negative guards")
 

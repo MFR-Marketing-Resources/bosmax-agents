@@ -6,6 +6,7 @@ engine: GOOGLE_FLOW
 mode: HYBRID
 duration: 16s
 intake_mode: PRODUCT_ONLY
+presenter_route: PRESENTER_HYBRID
 product_input: "Uploaded product image only: BOSMAX Serum 5ML roll-on (no avatar uploaded)."
 product_truth_ref: products/BOSMAX_SERUM.yaml
 product_truth_lock: >
@@ -17,9 +18,10 @@ product_truth_lock: >
 scale_lock: "EXACTLY lip balm size / EXACTLY chapstick size; fits into fingers naturally."
 avatar_source: AVATAR_POOL
 avatar_brief: "Malaysian adult presenter, natural UGC look, one-hand product hold."
-hook: "Mula dengan produk di tapak tangan dan pain point disebut terus."
-body: "Beat pertama tunjuk produk kecil yang senang bawa; beat kedua sambung proof handling yang sama tanpa reset skala atau identiti avatar."
-cta: "Akhiri dengan CTA spoken sambil hero hold kekal stabil."
-visual_seed: "Bright indoor UGC framing, product in palm, label readable, continuation-ready motion."
+hook: "Mula dengan produk di tapak tangan, terus sebut rasa tak selesa."
+body: "Produk kecil ni senang bawa dan terus nampak kemas. Sambung dari frame sama, produk kecil ni masih kemas dan senang capai bila perlu."
+cta: "Tap tengok harga sekarang, boss."
+continuation_action_seed: "Set 2 must state the prior final frame explicitly, start the next spoken phrase inside 0.2-0.5s, keep face/mouth visible for the first 1-2s, and block product-only cutaway during the opening line."
+visual_seed: "Bright indoor UGC framing, product in palm, label readable, same hand/grip/label direction across the seam, continuation-ready motion."
 overlay_allowed: false
 

@@ -29,14 +29,14 @@ frame_truth_lock: >
 product_truth_ref: products/BOSMAX_SERUM.yaml
 
 # --- continuation action + dialogue (continuation only; spoken Malay) ---
-continuation_action_seed: "Hold the product naturally, slight tilt, small natural hand movement, natural expression while speaking. No new scene setup."
-dialogue_seed: "Continue from a natural opening line; relief (practical/easy); spoken CTA. Per-block budget respected for GROK 16s [10,6]."
+continuation_action_seed: "Hold the product naturally, keep the same grip and camera distance, continue the same spoken thread inside 0.2-0.5s, and keep face/mouth visible before any product emphasis. No new scene setup."
+dialogue_seed: "Continue from a natural opening line; relief (practical/easy); spoken CTA. Continuation stays direct on-camera Malay speech only with no voice-over or product-only cutaway carrying the line."
 hook: "Tengah hari rasa panas, badan tak selesa sepanjang hari kan?"
 body: "Produk lain besar menyusahkan, berat, tak muat poket bila keluar rumah, susah nak bawa ke mana-mana setiap masa. BOSMAX roll-on kecil macam lip balm, sapu sekali terus lega."
 cta: "Tap tengok harga sekarang, boss."
 # General specialist wording: the uploaded frame varies, so describe avatar /
 # product in general terms; the frame is the truth, not assumptions.
-visual_seed: "Continue from the uploaded frame; brisk UGC energy; keep identity, product position, and label readable as in the frame."
+visual_seed: "Continue from the uploaded frame; brisk UGC energy; keep identity, product position, grip, and label readable exactly as in the frame."
 
 # --- safety / overlay ---
 overlay_allowed: false         # Section 9 defaults NO_OVERLAY

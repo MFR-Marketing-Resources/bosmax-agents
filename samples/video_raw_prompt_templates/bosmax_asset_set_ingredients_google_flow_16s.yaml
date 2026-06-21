@@ -27,8 +27,9 @@ product_truth_lock: >
   lip balm / chapstick size and never reinterpret it as another package type.
 avatar_reference_lock: "Use image_2 for identity / wardrobe / pose; uploaded avatar overrides any registry persona."
 style_scene_limit: "image_3 controls mood / environment / lighting only; it must never override product or avatar identity."
-action_seed: "Set 1 opens with product truth from image_1 and avatar identity from image_2; Set 2 continues from the previous final frame with the same role hierarchy."
-dialogue_seed: "Hook -> friction -> relief -> spoken CTA, budgeted per 8s Flow set."
+action_seed: "Set 1 opens with product truth from image_1 and avatar identity from image_2; Set 2 continues from the previous final frame with the same role hierarchy, same hand/grip, and the same label direction."
+continuation_action_seed: "Set 2 spells out the prior final frame, starts the next spoken word inside 0.2-0.5s, keeps face/mouth visible for the first 1-2s, and blocks product-only cutaway during the opening spoken line."
+dialogue_seed: "Hook -> friction -> relief -> spoken CTA, budgeted per 8s Flow set. Continuation remains direct on-camera Malay speech only."
 hook: "Produk kecil tapi power, senang sangat nak bawa ke mana-mana."
 body: "Jangan biar style scene ambil alih produk atau identiti avatar asal. Produk kekal kecil macam lip balm, avatar kekal orang sama, scene cuma bantu mood dan pencahayaan."
 cta: "Tap tengok harga sekarang."

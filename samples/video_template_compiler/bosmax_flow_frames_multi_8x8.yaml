@@ -12,6 +12,8 @@ frame_truth_lock: >
   The uploaded finished frame is the visual truth. Set 1 starts from that frame.
   Set 2 must continue from Set 1 final state without rebuilding the avatar,
   product, scene, lighting, grip, wardrobe, label direction, or product scale.
+  Set 2 starts from that exact final visible state with no pause and no scene
+  re-establishing beat.
 product_truth_lock: >
   BOSMAX Serum 5ML / BOSMAX HERBS Herbal Oil Roll On. Preserve the exact tiny
   slim matte-black cylindrical roll-on bottle, glossy black cap, white BOSMAX
@@ -21,6 +23,7 @@ presenter_route: PRESENTER_HYBRID
 hook: "Mula terus dengan wajah yakin, produk sudah berada di tangan."
 body: "Tunjuk sapuan ringkas pada kulit, papar label dekat supaya nampak asli. Lepas tu terus ke reaksi lega, ringan, tanpa potong identiti atau lokasi asal."
 cta: "Akhiri dengan hero hold stabil, ajak tengok harga."
-visual_seed: "Warm bathroom mirror setup, handheld UGC energy, label readability preserved."
+continuation_action_seed: "Set 2 states the prior final frame explicitly, starts speaking inside 0.2-0.5s, keeps face/mouth visible for the first 1-2s, and blocks product-only cutaway during the opening spoken line."
+visual_seed: "Warm bathroom mirror setup, handheld UGC energy, label readability preserved, same grip and motion direction across the seam."
 product_truth_ref: products/BOSMAX_SERUM.yaml
 overlay_allowed: false

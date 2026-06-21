@@ -222,6 +222,26 @@ def validate_sample(path: Path) -> None:
             "NO_OVERLAY" in str(prompt_set["final_prompt_9_sections"][8]["section_text"]),
             f"{name}: set {index} section 9 preserves NO_OVERLAY",
         )
+        if index > 1:
+            section_blob = "\n".join(
+                str(section["section_text"]) for section in prompt_set["final_prompt_9_sections"]
+            )
+            check(
+                bool(str(prompt_set.get("part1_final_frame_state") or "").strip()),
+                f"{name}: set {index} exposes part1_final_frame_state",
+            )
+            check(
+                "Part 1 final frame state:" in section_blob,
+                f"{name}: set {index} spells out Part 1 final frame state",
+            )
+            check(
+                "Part 2 first frame must match that exact visible state:" in section_blob,
+                f"{name}: set {index} locks Part 2 first frame state",
+            )
+            check(
+                "First 0.5 seconds:" in section_blob,
+                f"{name}: set {index} defines the first 0.5 seconds",
+            )
     if engine == "GROK" and dur == 16:
         check(
             prompt_sets[0]["continuation_from_previous_set"] is False,
@@ -245,6 +265,14 @@ def validate_sample(path: Path) -> None:
         check(
             str(compiled["parsed"]["cta"]) in final_set_text,
             f"{name}: GROK 16s CTA lands in final prompt set",
+        )
+        check(
+            "No voice-over. No narration. No off-camera speech. No audio-only dialogue." in final_set_text,
+            f"{name}: GROK 16s final continuation bans voice-over fallback",
+        )
+        check(
+            "No product-only cutaway during the opening spoken line." in final_set_text,
+            f"{name}: GROK 16s final continuation bans product-only cutaway during opening line",
         )
         forbidden_surface = str(compiled["compiler"]["final_prompt_text"])
         for needle in (
@@ -286,6 +314,14 @@ def validate_sample(path: Path) -> None:
                 check(
                     "Continuity seam instruction:" in section_blob,
                     f"{name}: Google Flow set {index} includes seam instruction",
+                )
+                check(
+                    "No voice-over. No narration. No off-camera speech. No audio-only dialogue." in section_blob,
+                    f"{name}: Google Flow set {index} bans voice-over fallback",
+                )
+                check(
+                    "No product-only cutaway during the opening spoken line." in section_blob,
+                    f"{name}: Google Flow set {index} bans product-only cutaway during opening line",
                 )
         forbidden_surface = str(compiled["compiler"]["final_prompt_text"])
         for needle in (
