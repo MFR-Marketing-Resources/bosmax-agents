@@ -637,10 +637,10 @@ Purpose:
 Correct:
 
 ```text
-On-camera presenter speaks the lines to camera with accurate lip-sync; on any
-product-hero cutaway the same line continues as tightly synced voice with no audio
-gap: "Letak dalam drawer pun kemas, kecil je macam lip balm, senang standby dekat
-meja kerja."
+On-camera presenter says the line directly to camera with visible mouth, lips,
+jaw, and facial muscles synchronized to the spoken words. No product-only
+cutaway during the spoken line when lipsync is required: "Letak dalam drawer
+pun kemas, kecil je macam lip balm, senang standby dekat meja kerja."
 ```
 
 ---
@@ -890,6 +890,14 @@ Continuity seam: [lock product / label / scale / avatar / scene / camera directi
 **Guna Safe Words sebagai target minimum untuk final ad script.**  
 **Guna Max Words hanya untuk fast VO atau non-critical lines.**
 
+**Continuation-lipsync exception:**  
+For continuation-lipsync blocks, `LipSyncTargetMin` / `LipSyncTargetMax` may sit
+below general SafeWords because the first 1-2 seconds prioritize face-visible
+speech synchronization and seam continuity. This exception must never fall
+below the retained `BaseMinWords` for the selected language and block duration.
+SafeWords remain the general ad-script target; continuation-lipsync targets are
+specialized seam targets for Part 2 or continuation blocks.
+
 ---
 
 #### 6s Block (GROK Block Unit)
@@ -1093,8 +1101,9 @@ Part 2 is not a new shot. It is the next visible beat of the same shot-chain.
 - The first 0.5 seconds must show mouth movement beginning the next spoken phrase and hand/product micro-motion continuing immediately.
 - The first 1-2 seconds must keep face and mouth visible when lipsync is required.
 - The product stays visible in hand, but product-only cutaway is blocked until lipsync is established.
-- GROK 6s Malay continuation should target 11-13 words as a soft seam target while still respecting retained base WPS authority.
-- Google Flow 8s Malay continuation should target 14-18 words.
+- GROK 6s Malay continuation should target 11-13 words as a soft seam target. This remains valid because retained `BaseMinWords` for Malay 6s is 11, even though general `BaseSafeWords` is 14.
+- Google Flow 8s Malay continuation should target 14-18 words. This remains valid because retained `BaseMinWords` for Malay 8s is 14, even though general `BaseSafeWords` is 19.
+- Do not approve 8-10 Malay words for GROK 6s continuation. That falls below retained `BaseMinWords` 11 and is outside authority.
 - No product-only cutaway during the spoken line. The line must come from the visible presenter’s mouth.
 
 ## 11. Example Final Polished Output: FRAMES, GROK 16s [10,6]
