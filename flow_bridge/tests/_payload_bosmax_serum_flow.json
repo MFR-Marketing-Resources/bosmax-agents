@@ -1,0 +1,15 @@
+{
+  "template_name": "BOSMAX Serum 5ML Car Carry — Flow Live Test",
+  "template_id": "BOSMAX_SERUM_5ML_FLOW_LIVETEST",
+  "engine": "GOOGLE_FLOW",
+  "mode": "FRAMES",
+  "duration": 8,
+  "platform": "TikTok Shop MY",
+  "product_lane": "PRODUCT_ONLY",
+  "product_truth_lock": "BOSMAX Serum 5ML slim matte-black cylindrical roll-on, glossy black cap, white BOSMAX HERBS wordmark, leaf icon, Herbal Oil Roll On label.",
+  "scale_lock": "EXACTLY lip balm size, fits into fingers naturally.",
+  "visual_seed": "Dalam kereta di parkir, lelaki ambil BOSMAX dari konsol dan sapu pada pergelangan tangan, cahaya siang lembut.",
+  "hook": "Luar panas, badan cepat rasa tak selesa dalam kereta kan?",
+  "body": "BOSMAX kecil, senang capai, terus sapu masa berhenti.",
+  "cta": "Tap tengok harga sekarang, boss."
+}

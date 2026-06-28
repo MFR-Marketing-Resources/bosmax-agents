@@ -1,0 +1,13 @@
+{
+  "identity": {"engine": "GOOGLE_FLOW", "platform": "TikTok Shop Malaysia", "scene_id": "bosmax-car-001"},
+  "duration": {"prompt_execution_mode": "FLOW_EXTEND_UI"},
+  "parsed": {"hook": "Luar panas...", "cta": "Tap tengok harga", "overlay_allowed": false},
+  "product": {"product_truth_lock": "BOSMAX Serum 5ML slim matte-black roll-on.", "scale_lock": "EXACTLY lip balm size."},
+  "angle": {"scene_context_seed": "Dalam kereta di parkir, lelaki sapu Bosmax pada pergelangan tangan."},
+  "storyboard": {
+    "master_storyboard": "Car scene, product hero, wrist apply.",
+    "block_script_json": [
+      {"block": 1, "flow_prompt": "Slow push-in on a man in a parked car applying a slim black BOSMAX roll-on to his wrist; warm daylight; subtle wrist motion; product stays sharp and readable."}
+    ]
+  }
+}
