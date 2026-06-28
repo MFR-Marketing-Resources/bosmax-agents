@@ -13,7 +13,13 @@ from __future__ import annotations
 import base64
 import unittest
 
-from flow_bridge.client import FlowError, _find_first, _media_summary
+from flow_bridge.client import (
+    FlowError,
+    FlowExecClient,
+    _find_first,
+    _is_stale_captcha,
+    _media_summary,
+)
 from flow_bridge.envelope import (
     ASPECT_PORTRAIT,
     MODE_AI,
@@ -148,6 +154,61 @@ class TestFindFirst(unittest.TestCase):
     def test_top_level_and_missing(self):
         self.assertEqual(_find_first({"projectId": "p"}, "projectId"), "p")
         self.assertIsNone(_find_first({"a": {"b": 1}}, "projectId"))
+
+
+class TestCaptchaRecovery(unittest.TestCase):
+    def _client(self):
+        c = FlowExecClient(base="http://test")
+        c.reloads = 0
+
+        def fake_request(method, path, body=None, timeout=None):
+            if "reload-flow-tab" in path:
+                c.reloads += 1
+                return {"ok": True}
+            raise AssertionError(f"unexpected request {path}")
+
+        c._request = fake_request
+        return c
+
+    def test_markers(self):
+        self.assertTrue(_is_stale_captcha("CAPTCHA_FAILED: Cannot access contents of the page"))
+        self.assertTrue(_is_stale_captcha("ERR_MESSAGE_RESPONSE_TIMEOUT"))
+        self.assertFalse(_is_stale_captcha("No model for tier=PAYGATE_TIER_NOT_PAID"))
+
+    def test_reloads_then_succeeds(self):
+        c = self._client()
+        n = {"i": 0}
+
+        def flaky():
+            n["i"] += 1
+            if n["i"] < 3:
+                raise FlowError(403, "CAPTCHA_FAILED: Cannot access contents of the page")
+            return {"media_id": "ok"}
+
+        out = c.with_captcha_recovery(flaky, wait=0)
+        self.assertEqual(out["media_id"], "ok")
+        self.assertEqual(n["i"], 3)
+        self.assertEqual(c.reloads, 2)  # reloaded before each retry
+
+    def test_non_captcha_error_propagates_without_reload(self):
+        c = self._client()
+
+        def boom():
+            raise FlowError(500, "No model for tier=PAYGATE_TIER_NOT_PAID")
+
+        with self.assertRaises(FlowError):
+            c.with_captcha_recovery(boom, wait=0)
+        self.assertEqual(c.reloads, 0)
+
+    def test_exhausted_reraises(self):
+        c = self._client()
+
+        def always():
+            raise FlowError(403, "CAPTCHA_FAILED: must request permission")
+
+        with self.assertRaises(FlowError):
+            c.with_captcha_recovery(always, max_retries=2, wait=0)
+        self.assertEqual(c.reloads, 2)
 
 
 if __name__ == "__main__":

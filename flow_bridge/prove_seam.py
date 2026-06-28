@@ -84,10 +84,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[ok] project: {pid}")
         sf = env.start_frame
         if sf.mode == "upload":
-            frame = client.upload_image_base64(sf.image_base64, pid, mime_type=sf.mime_type)
+            frame = client.with_captcha_recovery(
+                client.upload_image_base64, sf.image_base64, pid, mime_type=sf.mime_type)
         else:
-            frame = client.generate_image(sf.image_prompt or env.prompt, pid,
-                                          user_paygate_tier=args.tier)
+            frame = client.with_captcha_recovery(
+                client.generate_image, sf.image_prompt or env.prompt, pid,
+                user_paygate_tier=args.tier)
         print(f"[ok] start frame media_id = {frame['media_id']}")
         if frame.get("fife_url"):
             print(f"     fifeUrl = {frame['fife_url']}")
