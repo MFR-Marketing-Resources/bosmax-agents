@@ -154,8 +154,54 @@ class FlowExecClient:
             time.sleep(interval)
         raise FlowError(0, f"job {job_id} timed out after {timeout}s")
 
+    # ---- captcha-stale auto-recovery (matches TANGAN PR #143) --------------
+    def reload_flow_tab(self) -> dict:
+        """Ask TANGAN to reload the Flow tab, re-initialising the reCAPTCHA
+        context. Used to recover a stale/discarded tab that makes the extension
+        throw the host-access captcha error."""
+        return self._request("GET", "/api/local-agent/reload-flow-tab", timeout=25)
+
+    def with_captcha_recovery(self, call, *args, max_retries: int = 6, wait: float = 8.0, **kwargs):
+        """Run a generate call; on a stale-captcha failure (host-access error or
+        cold-start timeout), reload the Flow tab and retry. Non-captcha FlowErrors
+        propagate immediately. Re-raises the last error if retries are exhausted.
+
+        Example: client.with_captcha_recovery(client.generate_image, prompt, pid)
+        """
+        last: Optional[FlowError] = None
+        for _ in range(max_retries):
+            try:
+                return call(*args, **kwargs)
+            except FlowError as e:
+                last = e
+                if not _is_stale_captcha(e.message):
+                    raise
+                try:
+                    self.reload_flow_tab()
+                except FlowError:
+                    pass  # reload itself may transiently fail; still retry the call
+                time.sleep(wait)
+        assert last is not None
+        raise last
+
 
 # ---- small extractors ------------------------------------------------------
+
+# Error fragments that mean "the captcha context is stale / not solvable right
+# now" — recoverable by reloading the Flow tab (TANGAN PR #143 fixes the root,
+# this is the OTAK-side second line of defence).
+_STALE_CAPTCHA_MARKERS = (
+    "CAPTCHA_FAILED",
+    "Cannot access contents",
+    "must request permission",
+    "ERR_MESSAGE_RESPONSE_TIMEOUT",
+    "ERR_RUNTIME_LASTERROR",
+)
+
+
+def _is_stale_captcha(text: str) -> bool:
+    t = text or ""
+    return any(m in t for m in _STALE_CAPTCHA_MARKERS)
 
 def _dig(obj: Any, *keys: str) -> Any:
     cur = obj
