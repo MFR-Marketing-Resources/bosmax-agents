@@ -45,13 +45,27 @@ ok, why = client.ready()               # check 3 preconditions first
 # job = client.shoot_oneshot(env.to_dict()); client.poll_job(job["job_id"])
 ```
 
-## Prove the seam on freemium (no Pro needed)
+## Prove the seam (freemium today; Pro burn tomorrow)
+Two real fixtures ship in `tests/`: `sample_compiled_flow_real.json` (a real
+BOSMAX Serum / GOOGLE_FLOW compiled template from the production pipeline) and
+`sample_envelope_real.json` (its projected AI-frame envelope).
+
 ```bash
-# shape only, no network
-python -m flow_bridge.prove_seam --template flow_bridge/tests/sample_compiled_flow.json --dry
-# live, against a running TANGAN backend + connected Flow tab (still no video burn)
-FLOW_API_BASE=http://127.0.0.1:8100 python -m flow_bridge.prove_seam --template <compiled.json>
+# shape only, no network (proves projection)
+python -m flow_bridge.prove_seam --template flow_bridge/tests/sample_compiled_flow_real.json --dry
+
+# AI start-frame path — live, freemium-safe (generate-image is 0 credits; stops before video)
+FLOW_API_BASE=http://127.0.0.1:8100 \
+  python -m flow_bridge.prove_seam --template flow_bridge/tests/sample_compiled_flow_real.json
+
+# UPLOAD start-frame path — real product photo already in the repo
+FLOW_API_BASE=http://127.0.0.1:8100 \
+  python -m flow_bridge.prove_seam \
+    --template flow_bridge/tests/sample_compiled_flow_real.json \
+    --mode upload --image reference_images/bosmax/bosmax_serum_5ml_primary.jpg
 ```
+Both paths run end-to-end up to the start-frame `media_id` on freemium; only the
+final `generate-video` needs a paid (Pro/Ultra) account.
 
 ## Status
 - ✅ envelope projection (verified: AI infer, upload, fail-loud) — `tests/sample_compiled_flow.json`
