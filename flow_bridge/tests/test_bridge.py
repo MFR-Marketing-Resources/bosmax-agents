@@ -13,7 +13,7 @@ from __future__ import annotations
 import base64
 import unittest
 
-from flow_bridge.client import FlowError, _media_summary
+from flow_bridge.client import FlowError, _find_first, _media_summary
 from flow_bridge.envelope import (
     ASPECT_PORTRAIT,
     MODE_AI,
@@ -135,6 +135,19 @@ class TestMediaSummary(unittest.TestCase):
     def test_no_media_id_fails_loud(self):
         with self.assertRaises(FlowError):
             _media_summary({"raw": {}})
+
+
+class TestFindFirst(unittest.TestCase):
+    def test_deep_trpc_create_project_envelope(self):
+        # the exact shape the LIVE create-project-raw returned (deep tRPC wrap)
+        resp = {"id": "x", "status": 200, "data": {"result": {"data": {"json": {
+            "result": {"projectId": "0a751ddd", "projectInfo": {"projectTitle": "t"}},
+            "status": 200}}}}}
+        self.assertEqual(_find_first(resp, "projectId"), "0a751ddd")
+
+    def test_top_level_and_missing(self):
+        self.assertEqual(_find_first({"projectId": "p"}, "projectId"), "p")
+        self.assertIsNone(_find_first({"a": {"b": 1}}, "projectId"))
 
 
 if __name__ == "__main__":

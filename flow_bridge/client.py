@@ -101,7 +101,7 @@ class FlowExecClient:
     def create_project(self, title: str, tool_name: str = "PINHOLE") -> str:
         r = self._request("POST", "/api/flow/create-project-raw",
                            {"project_title": title, "tool_name": tool_name})
-        pid = _dig(r, "projectId") or _dig(r, "project", "projectId") or _dig(r, "data", "projectId")
+        pid = _find_first(r, "projectId")
         if not pid:
             raise FlowError(502, f"create-project returned no projectId: {r}")
         return str(pid)
@@ -165,6 +165,25 @@ def _dig(obj: Any, *keys: str) -> Any:
         else:
             return None
     return cur
+
+
+def _find_first(obj: Any, key: str) -> Any:
+    """Depth-first search for the first non-empty value of `key` anywhere in a
+    nested dict/list. Robust against the deep tRPC envelope the live TANGAN
+    create-project returns (data.result.data.json.result.projectId)."""
+    if isinstance(obj, dict):
+        if obj.get(key):
+            return obj[key]
+        for v in obj.values():
+            found = _find_first(v, key)
+            if found:
+                return found
+    elif isinstance(obj, list):
+        for v in obj:
+            found = _find_first(v, key)
+            if found:
+                return found
+    return None
 
 
 def _media_summary(resp: Any) -> dict:
