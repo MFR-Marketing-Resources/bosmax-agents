@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import mimetypes
 import sys
 from pathlib import Path
 
@@ -47,12 +48,14 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     image_b64 = None
+    mime = "image/png"
     if args.image:
         image_b64 = base64.b64encode(Path(args.image).read_bytes()).decode()
+        mime = mimetypes.guess_type(args.image)[0] or "image/png"
 
     try:
         env = project(template, user_paygate_tier=args.tier, aspect_ratio=args.aspect,
-                      mode=args.mode, image_base64=image_b64)
+                      mode=args.mode, image_base64=image_b64, mime_type=mime)
     except EnvelopeError as e:
         print(f"[fail] projection: {e}", file=sys.stderr)
         return 3
