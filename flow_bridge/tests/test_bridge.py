@@ -28,6 +28,7 @@ from flow_bridge.envelope import (
     aspect_from_platform,
     extract_motion_prompt,
     project,
+    sanitize_image_prompt,
 )
 
 COMPILED = {
@@ -154,6 +155,45 @@ class TestFindFirst(unittest.TestCase):
     def test_top_level_and_missing(self):
         self.assertEqual(_find_first({"projectId": "p"}, "projectId"), "p")
         self.assertIsNone(_find_first({"a": {"b": 1}}, "projectId"))
+
+
+class TestSanitizeImagePrompt(unittest.TestCase):
+    QISTINA = (
+        "Create a photorealistic avatar reference image. Identity: Qistina, "
+        "Code: BOS_F_QISTINA_10. Demographic: Female. Role: Event Lifestyle. "
+        "Camera framing: Waist-up, clear face."
+    )
+
+    def test_strips_labels_code_and_adds_guard(self):
+        out = sanitize_image_prompt(self.QISTINA, avatar_code="BOS_F_QISTINA_10")
+        self.assertNotIn("BOS_F_QISTINA_10", out)        # internal code never in pixels
+        self.assertNotIn("Identity:", out)
+        self.assertNotIn("Code:", out)
+        self.assertNotIn("Camera framing:", out)
+        self.assertIn("No added text overlays", out)      # targeted no-overlay guard
+
+    def test_strips_internal_code_even_without_explicit_arg(self):
+        out = sanitize_image_prompt("Portrait of a woman. Code: MWT_F_NORA_2.")
+        self.assertNotIn("MWT_F_NORA_2", out)
+
+    def test_keeps_product_label_text(self):
+        # the crucial refinement over a blanket 'no text/no labels' guard:
+        # a product's own printed wordmark must still render
+        p = ("Photo of BOSMAX Serum bottle, white BOSMAX HERBS wordmark, "
+             "Herbal Oil Roll On label visible.")
+        out = sanitize_image_prompt(p)
+        self.assertIn("BOSMAX HERBS wordmark", out)
+        self.assertIn("Herbal Oil Roll On label", out)
+
+    def test_idempotent_guard(self):
+        once = sanitize_image_prompt("A cat.")
+        twice = sanitize_image_prompt(once)
+        self.assertEqual(once.lower().count("no added text"), 1)
+        self.assertEqual(twice.lower().count("no added text"), 1)
+
+    def test_empty_passthrough(self):
+        self.assertEqual(sanitize_image_prompt(""), "")
+        self.assertIsNone(sanitize_image_prompt(None))
 
 
 class TestCaptchaRecovery(unittest.TestCase):
