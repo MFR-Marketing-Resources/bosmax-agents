@@ -23,11 +23,12 @@ from .envelope import (
     EnvelopeError,
     StartFrame,
     project,
+    sanitize_image_prompt,
 )
 from .client import FlowError, FlowExecClient
 
 __all__ = [
-    "project", "Envelope", "StartFrame", "EnvelopeError",
+    "project", "Envelope", "StartFrame", "EnvelopeError", "sanitize_image_prompt",
     "FlowExecClient", "FlowError",
     "ASPECT_PORTRAIT", "ASPECT_LANDSCAPE", "MODE_AI", "MODE_UPLOAD",
     "TIER_ONE", "TIER_TWO",

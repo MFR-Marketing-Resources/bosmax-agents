@@ -28,6 +28,7 @@ Envelope shape (contract section 5):
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -206,6 +207,7 @@ def _derive_start_frame(
     image_base64: Optional[str],
     mime_type: str,
     image_prompt: Optional[str],
+    avatar_code: str = "",
 ) -> StartFrame:
     """Decide AI vs upload. Explicit args win; otherwise infer from the template's
     asset_role_map / source signals. Product photo present -> upload (BOSMAX
@@ -239,7 +241,52 @@ def _derive_start_frame(
             "composed from the template (no scene_context / angle seed / product "
             "truth). Pass image_prompt=... explicitly."
         )
+    # Strip label-metadata + guard against baked-in overlay text (Gemini/Nano
+    # Banana renders "Label: value" headers and internal codes as on-image badges).
+    image_prompt = sanitize_image_prompt(image_prompt, avatar_code=avatar_code)
     return StartFrame(mode=MODE_AI, image_prompt=image_prompt)
+
+
+# Label-style headers that image models (Gemini/Nano Banana) tend to render as
+# on-image badge text. Stripped from the prompt body (kept as media metadata).
+_LABEL_HEADER = re.compile(
+    r"\b(Identity|Code|Avatar\s*Reference|Reference|Role|Styling|Demographic|"
+    r"Skin\s*tone|Hair|Expression|Pose|Environment|Camera\s*framing|Safety|Subject)"
+    r"\s*:",
+    re.I,
+)
+# Internal asset/avatar codes like BOS_F_QISTINA_10, MWT_M_RIZAL_3 — must never
+# appear in rendered pixels; they live on the media record for registry linking.
+_INTERNAL_CODE = re.compile(r"\b[A-Z]{2,4}_[A-Z]_[A-Z0-9_]{2,}\b")
+# Targeted negative: kills ADDED overlays/badges/captions/watermarks WITHOUT
+# telling the model to drop a product's own printed packaging label (which BOSMAX
+# product-truth requires visible). Deliberately NOT a blanket "no text/no labels".
+_NO_OVERLAY_GUARD = (
+    "No added text overlays, reference labels, code badges, captions, "
+    "or watermarks anywhere on the image."
+)
+
+
+def sanitize_image_prompt(prompt: Optional[str], *, avatar_code: str = "") -> Optional[str]:
+    """Make an image prompt safe from baked-in overlay text.
+
+    Fixes the avatar-badge bug (Gemini rendering 'AVATAR REFERENCE / Code:
+    BOS_F_QISTINA_10' as an on-image badge): strip label headers + internal codes,
+    then append a targeted no-overlay negative. Same principle as the
+    prompt_set_count leak, applied to the image layer.
+
+    Note: targets *added overlays*, not all text — a product's own printed label
+    must still render, so this is intentionally not a blanket 'no labels'."""
+    if not prompt:
+        return prompt
+    if avatar_code:
+        prompt = prompt.replace(avatar_code, "")
+    prompt = _INTERNAL_CODE.sub("", prompt)
+    prompt = _LABEL_HEADER.sub("", prompt)
+    out = " ".join(prompt.split()).strip(" ,.;")
+    if "no added text" not in out.lower() and "no overlay" not in out.lower():
+        out = (out.rstrip(". ") + ". " + _NO_OVERLAY_GUARD).strip()
+    return out
 
 
 def _compose_scene_brief(template: dict[str, Any]) -> Optional[str]:
@@ -276,6 +323,7 @@ def project(
     mime_type: str = "image/png",
     image_prompt: Optional[str] = None,
     scene_id: Optional[str] = None,
+    avatar_code: str = "",
 ) -> Envelope:
     """
     Project a BOSMAX compiled video template into a contract-5 Envelope.
@@ -307,6 +355,7 @@ def project(
         image_base64=image_base64,
         mime_type=mime_type,
         image_prompt=image_prompt,
+        avatar_code=avatar_code,
     )
 
     sid = scene_id or _first(identity, "scene_id") or _first(run, "run_name") or "scene-1"
